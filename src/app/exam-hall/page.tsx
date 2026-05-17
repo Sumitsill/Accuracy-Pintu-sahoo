@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, Suspense } from "react";
 import {
   AlertTriangle, Clock, ChevronRight, CheckCircle2,
   AlertCircle, XCircle, SkipForward, Loader2, Target
@@ -9,7 +9,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
-export default function SecureExamHall() {
+function SecureExamHallContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const supabase = createClient();
@@ -575,5 +575,18 @@ export default function SecureExamHall() {
 
       </div>
     </div>
+  );
+}
+
+export default function SecureExamHall() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-[#0a0f18] flex items-center justify-center text-white flex-col gap-4">
+        <Loader2 className="w-10 h-10 animate-spin text-orange-500" />
+        <p className="font-bold text-white/50 tracking-widest uppercase">Initializing Exam Environment...</p>
+      </div>
+    }>
+      <SecureExamHallContent />
+    </Suspense>
   );
 }
