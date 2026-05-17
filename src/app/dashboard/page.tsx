@@ -26,7 +26,7 @@ export default async function StudentDashboard() {
   }
 
   // Check if they are an admin and verify their email against the whitelist
-  const ALLOWED_ADMINS = ["sumitsill2605@gmail.com", "sg.swapnanil.72@gmail.com"];
+  const ALLOWED_ADMINS = ["sumitsill2605@gmail.com", "sg.swapnanil.72@gmail.com", "impintusahoo786@gmail.com"];
   
   if (
     profile.role === "admin" && 

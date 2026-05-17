@@ -26,7 +26,7 @@ export default async function AdminDashboard() {
   }
 
   // Double check admin role authorization and email whitelist
-  const ALLOWED_ADMINS = ["sumitsill2605@gmail.com", "sg.swapnanil.72@gmail.com"];
+  const ALLOWED_ADMINS = ["sumitsill2605@gmail.com", "sg.swapnanil.72@gmail.com", "impintusahoo786@gmail.com"];
   
   if (
     profile.role !== "admin" || 

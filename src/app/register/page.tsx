@@ -44,7 +44,7 @@ function RegisterForm() {
   const onSubmit = async (data: RegisterFormValues) => {
     setGlobalError(null);
 
-    const allowedAdminEmails = ["sumitsill2605@gmail.com", "sg.swapnanil.72@gmail.com"];
+    const allowedAdminEmails = ["sumitsill2605@gmail.com", "sg.swapnanil.72@gmail.com", "impintusahoo786@gmail.com"];
     
     if (role === "admin" && !allowedAdminEmails.includes(data.email.toLowerCase().trim())) {
       setGlobalError("Access Denied: Your email is not authorized for Admin access.");
