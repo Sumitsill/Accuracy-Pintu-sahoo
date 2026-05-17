@@ -25,5 +25,17 @@ export default async function StudentDashboard() {
     redirect("/onboarding");
   }
 
+  // Check if they are an admin and verify their email against the whitelist
+  const ALLOWED_ADMINS = ["sumitsill2605@gmail.com", "sg.swapnanil.72@gmail.com"];
+  
+  if (
+    profile.role === "admin" && 
+    user.email && 
+    ALLOWED_ADMINS.includes(user.email.toLowerCase().trim())
+  ) {
+    redirect("/admin");
+  }
+
+  // If they are not a valid admin, send them to the student portal
   return <StudentPortalClient user={user} profile={profile} />;
 }
