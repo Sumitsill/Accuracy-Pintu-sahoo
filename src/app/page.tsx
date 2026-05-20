@@ -2,12 +2,50 @@ import Link from "next/link";
 import { ArrowRight, FlaskConical } from "lucide-react";
 import dynamic from "next/dynamic";
 
-const ThreeBackground = dynamic(() => import("@/components/ThreeBackground"), { ssr: false });
+const Hyperspeed = dynamic(() => import("@/components/Hyperspeed"), { ssr: false });
 
 export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-6 relative overflow-hidden bg-transparent text-neutral">
-      <ThreeBackground />
+      <div className="absolute inset-0 -z-10 w-full h-full bg-[#0a192f]">
+        <Hyperspeed
+          effectOptions={{
+            distortion: 'turbulentDistortion',
+            length: 400,
+            roadWidth: 10,
+            islandWidth: 2,
+            lanesPerRoad: 4,
+            fov: 90,
+            fovSpeedUp: 150,
+            speedUp: 2,
+            carLightsFade: 0.4,
+            totalSideLightSticks: 20,
+            lightPairsPerRoadWay: 40,
+            shoulderLinesWidthPercentage: 0.05,
+            brokenLinesWidthPercentage: 0.1,
+            brokenLinesLengthPercentage: 0.5,
+            lightStickWidth: [0.12, 0.5],
+            lightStickHeight: [1.3, 1.7],
+            movingAwaySpeed: [60, 80],
+            movingCloserSpeed: [-120, -160],
+            carLightsLength: [12, 80],
+            carLightsRadius: [0.05, 0.14],
+            carWidthPercentage: [0.3, 0.5],
+            carShiftX: [-0.8, 0.8],
+            carFloorSeparation: [0, 5],
+            colors: {
+              roadColor: 0x080808,
+              islandColor: 0x0a0a0a,
+              background: 0x0a192f,
+              shoulderLines: 0xffffff,
+              brokenLines: 0xffffff,
+              leftCars: [0xff8a00, 0xffa500, 0xff5500],
+              rightCars: [0x00f2ff, 0x00aaff, 0xffffff],
+              sticks: 0x00f2ff,
+            }
+          }}
+        />
+      </div>
       
       <div className="z-10 flex flex-col items-center text-center max-w-lg w-full">
         <div className="mb-6 p-4 rounded-2xl glassmorphism border-secondary/30 relative group mt-10 md:mt-0">
