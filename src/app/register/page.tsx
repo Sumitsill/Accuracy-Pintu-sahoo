@@ -79,7 +79,7 @@ function RegisterForm() {
         <p className="text-white/50 text-sm font-semibold">Master the Laws of the Universe</p>
       </div>
       
-      <div className="glassmorphism rounded-3xl p-8 border border-white/10 relative shadow-2xl backdrop-blur-xl bg-dark/60">
+      <div className="glassmorphism rounded-3xl p-6 sm:p-8 border border-white/10 relative shadow-2xl backdrop-blur-xl bg-dark/60">
         
         {/* Role Selector Tabs */}
         <div className="flex p-1 bg-dark/50 rounded-xl mb-6 border border-white/5">

@@ -89,7 +89,7 @@ function LoginForm() {
         </div>
       )}
 
-      <div className="glassmorphism rounded-3xl p-8 border border-white/10 relative overflow-hidden shadow-2xl backdrop-blur-xl bg-dark/40">
+      <div className="glassmorphism rounded-3xl p-6 sm:p-8 border border-white/10 relative overflow-hidden shadow-2xl backdrop-blur-xl bg-dark/40">
         <div className="absolute -top-32 -right-32 w-64 h-64 bg-secondary/10 rounded-full blur-[80px] pointer-events-none" />
         <div className="absolute -bottom-32 -left-32 w-64 h-64 bg-tertiary/10 rounded-full blur-[80px] pointer-events-none" />
         

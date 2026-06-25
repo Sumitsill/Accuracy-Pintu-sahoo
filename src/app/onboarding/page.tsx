@@ -94,7 +94,7 @@ export default function Onboarding() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-6 bg-primary text-neutral font-body relative overflow-hidden">
+    <main className="flex min-h-screen flex-col items-center justify-center p-4 sm:p-6 bg-primary text-neutral font-body relative overflow-hidden">
       {/* Background accents */}
       <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-secondary/10 rounded-full blur-[120px] -z-10 pointer-events-none" />
       <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] bg-tertiary/10 rounded-full blur-[120px] -z-10 pointer-events-none" />
@@ -105,7 +105,7 @@ export default function Onboarding() {
           <p className="text-white/60">Let's initialize your profile to customize your experience.</p>
         </div>
 
-        <div className="glassmorphism rounded-3xl p-8 border border-white/10 shadow-2xl relative overflow-hidden">
+        <div className="glassmorphism rounded-3xl p-5 sm:p-8 border border-white/10 shadow-2xl relative overflow-hidden">
           {error && (
             <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm">
               <p>{error}</p>
@@ -188,13 +188,13 @@ export default function Onboarding() {
 
                 <div className="space-y-1.5 mt-4">
                   <label className="text-xs font-bold tracking-widest text-white/50 uppercase font-label">Target Aspiration</label>
-                  <div className="flex gap-3">
+                  <div className="grid grid-cols-3 gap-2">
                     {["JEE", "NEET", "Boards Only"].map((asp) => (
                       <button
                         key={asp}
                         type="button"
                         onClick={() => setAspiration(asp)}
-                        className={`flex-1 py-3 rounded-xl border font-bold transition-all text-sm ${
+                        className={`py-3 rounded-xl border font-bold transition-all text-xs sm:text-sm ${
                           aspiration === asp 
                             ? "bg-orange-500/20 text-orange-400 border-orange-500 shadow-[0_0_10px_rgba(249,115,22,0.3)]" 
                             : "bg-dark/50 border-white/10 text-white/50 hover:bg-white/5 hover:text-white"

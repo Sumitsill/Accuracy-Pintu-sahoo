@@ -88,7 +88,7 @@ export default function AdminPortalClient({ user, profile }: { user: any, profil
       <main className="flex-1 flex flex-col h-full overflow-y-auto z-10 scrollbar-hide relative">
         
         {/* Top Header */}
-        <header className="px-8 py-6 flex items-center justify-between sticky top-0 bg-slate-950/80 backdrop-blur-md z-30 border-b border-white/5">
+        <header className="px-4 py-4 md:px-8 md:py-6 flex items-center justify-between sticky top-0 bg-slate-950/80 backdrop-blur-md z-30 border-b border-white/5">
           <div className="flex items-center gap-4">
             <button 
               className="md:hidden p-2 -ml-2 text-white/50 hover:text-white transition-colors"
@@ -134,7 +134,7 @@ export default function AdminPortalClient({ user, profile }: { user: any, profil
           </div>
         </header>
 
-        <div className="p-8 pb-24 md:pb-8 max-w-7xl mx-auto w-full">
+        <div className="p-4 md:p-8 pb-24 md:pb-8 max-w-7xl mx-auto w-full">
           {activeTab === "dashboard" && <AdminDashboardView displayName={displayName} setActiveTab={setActiveTab} />}
           {activeTab === "students" && <StudentManagementView />}
           {activeTab === "note" && <ResourceManagementView title="Notes Management" icon={BookOpen} action="Upload New Notes PDF" type="note" />}
@@ -174,7 +174,7 @@ function AdminDashboardView({ displayName, setActiveTab }: { displayName: string
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       
       {/* Welcome Banner */}
-      <div className="relative p-8 md:p-10 rounded-3xl bg-gradient-to-br from-[#1A0B05] via-[#2D1405] to-[#1A0B05] border border-orange-500/20 overflow-hidden shadow-2xl group">
+      <div className="relative p-6 md:p-10 rounded-3xl bg-gradient-to-br from-[#1A0B05] via-[#2D1405] to-[#1A0B05] border border-orange-500/20 overflow-hidden shadow-2xl group">
         <div className="absolute -right-20 -top-20 w-96 h-96 bg-orange-500/10 rounded-full blur-[80px] pointer-events-none group-hover:bg-orange-500/20 transition-all duration-700" />
         <div className="absolute -left-20 -bottom-20 w-64 h-64 bg-red-500/10 rounded-full blur-[60px] pointer-events-none" />
         
@@ -186,7 +186,7 @@ function AdminDashboardView({ displayName, setActiveTab }: { displayName: string
             </span>
             <p className="text-orange-500 font-bold tracking-widest text-[10px] uppercase">System Status: Optimal</p>
           </div>
-          <h2 className="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white via-orange-100 to-orange-400 mb-4 tracking-tight">
+          <h2 className="text-3xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white via-orange-100 to-orange-400 mb-4 tracking-tight">
             Command Center, {displayName}.
           </h2>
           <p className="text-white/60 max-w-xl text-sm md:text-base leading-relaxed">
@@ -204,7 +204,7 @@ function AdminDashboardView({ displayName, setActiveTab }: { displayName: string
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             
-            <div className="bg-slate-900/50 backdrop-blur-md border border-white/5 rounded-2xl p-6 relative overflow-hidden group hover:border-orange-500/30 transition-all">
+            <div className="bg-slate-900/50 backdrop-blur-md border border-white/5 rounded-2xl p-5 md:p-6 relative overflow-hidden group hover:border-orange-500/30 transition-all">
               <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/10 rounded-bl-full pointer-events-none transition-transform group-hover:scale-110" />
               <Users className="w-8 h-8 text-blue-400 mb-4" />
               <p className="text-3xl font-black text-white mb-1">
@@ -213,7 +213,7 @@ function AdminDashboardView({ displayName, setActiveTab }: { displayName: string
               <p className="text-xs text-white/40 font-bold uppercase tracking-wider">Registered Students</p>
             </div>
 
-            <div className="bg-slate-900/50 backdrop-blur-md border border-white/5 rounded-2xl p-6 relative overflow-hidden group hover:border-orange-500/30 transition-all">
+            <div className="bg-slate-900/50 backdrop-blur-md border border-white/5 rounded-2xl p-5 md:p-6 relative overflow-hidden group hover:border-orange-500/30 transition-all">
               <div className="absolute top-0 right-0 w-24 h-24 bg-purple-500/10 rounded-bl-full pointer-events-none transition-transform group-hover:scale-110" />
               <Target className="w-8 h-8 text-purple-400 mb-4" />
               <p className="text-3xl font-black text-white mb-1">
@@ -222,7 +222,7 @@ function AdminDashboardView({ displayName, setActiveTab }: { displayName: string
               <p className="text-xs text-white/40 font-bold uppercase tracking-wider">Active Tests & DPPs</p>
             </div>
 
-            <div className="bg-slate-900/50 backdrop-blur-md border border-white/5 rounded-2xl p-6 relative overflow-hidden group hover:border-orange-500/30 transition-all">
+            <div className="bg-slate-900/50 backdrop-blur-md border border-white/5 rounded-2xl p-5 md:p-6 relative overflow-hidden group hover:border-orange-500/30 transition-all">
               <div className="absolute top-0 right-0 w-24 h-24 bg-green-500/10 rounded-bl-full pointer-events-none transition-transform group-hover:scale-110" />
               <BookOpen className="w-8 h-8 text-green-400 mb-4" />
               <p className="text-3xl font-black text-white mb-1">
@@ -399,66 +399,129 @@ function StudentManagementView() {
         ) : filteredStudents.length === 0 ? (
           <div className="flex justify-center p-12 text-white/50">No students found in the selected batch.</div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="border-b border-white/10 text-white/50 text-xs uppercase tracking-widest">
-                  <th className="p-4 font-bold">Student Details</th>
-                  <th className="p-4 font-bold">Class & Aspiration</th>
-                  <th className="p-4 font-bold">Tests Taken</th>
-                  <th className="p-4 font-bold">Top Strengths</th>
-                  <th className="p-4 font-bold text-red-400">Weaknesses</th>
-                  <th className="p-4 font-bold text-right">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredStudents.map(s => (
-                  <tr key={s.id} onClick={() => setSelectedStudent(s)} className="border-b border-white/5 hover:bg-white/5 transition-colors cursor-pointer">
-                    <td className="p-4">
-                      <div className="font-medium text-white">{s.full_name || s.email}</div>
-                      <div className="text-xs text-white/50 font-mono mt-1">ID: {s.id.substring(0,8)}</div>
-                    </td>
-                    <td className="p-4">
-                      <div className="text-white/80 font-medium">Class {s.class}</div>
-                      <div className="text-xs text-cyan-400 font-bold tracking-wide mt-1">{s.aspiration}</div>
-                      <div className="text-[10px] text-orange-400 font-medium mt-1">{s.batch}</div>
-                    </td>
-                    <td className="p-4 text-orange-400 font-bold text-lg">{s.total_tests}</td>
-                    <td className="p-4 text-green-400/80 text-sm font-medium">{s.strengths.length > 0 ? s.strengths.join(', ') : '-'}</td>
-                    <td className="p-4 text-red-400/80 text-sm font-medium">{s.weaknesses.length > 0 ? s.weaknesses.join(', ') : '-'}</td>
-                    <td className="p-4 text-right">
-                      <button className="text-xs bg-white/5 hover:bg-white/10 text-white py-1.5 px-3 rounded-lg transition-colors border border-white/10">Details</button>
-                    </td>
+          <>
+            {/* Desktop Table View */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="border-b border-white/10 text-white/50 text-xs uppercase tracking-widest">
+                    <th className="p-4 font-bold">Student Details</th>
+                    <th className="p-4 font-bold">Class & Aspiration</th>
+                    <th className="p-4 font-bold">Tests Taken</th>
+                    <th className="p-4 font-bold">Top Strengths</th>
+                    <th className="p-4 font-bold text-red-400">Weaknesses</th>
+                    <th className="p-4 font-bold text-right">Action</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {filteredStudents.map(s => (
+                    <tr key={s.id} onClick={() => setSelectedStudent(s)} className="border-b border-white/5 hover:bg-white/5 transition-colors cursor-pointer">
+                      <td className="p-4">
+                        <div className="font-medium text-white">{s.full_name || s.email}</div>
+                        <div className="text-xs text-white/50 font-mono mt-1">ID: {s.id.substring(0,8)}</div>
+                      </td>
+                      <td className="p-4">
+                        <div className="text-white/80 font-medium">Class {s.class}</div>
+                        <div className="text-xs text-cyan-400 font-bold tracking-wide mt-1">{s.aspiration}</div>
+                        <div className="text-[10px] text-orange-400 font-medium mt-1">{s.batch}</div>
+                      </td>
+                      <td className="p-4 text-orange-400 font-bold text-lg">{s.total_tests}</td>
+                      <td className="p-4 text-green-400/80 text-sm font-medium">{s.strengths.length > 0 ? s.strengths.join(', ') : '-'}</td>
+                      <td className="p-4 text-red-400/80 text-sm font-medium">{s.weaknesses.length > 0 ? s.weaknesses.join(', ') : '-'}</td>
+                      <td className="p-4 text-right">
+                        <button className="text-xs bg-white/5 hover:bg-white/10 text-white py-1.5 px-3 rounded-lg transition-colors border border-white/10">Details</button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Cards View */}
+            <div className="grid grid-cols-1 gap-4 md:hidden">
+              {filteredStudents.map(s => (
+                <div 
+                  key={s.id} 
+                  onClick={() => setSelectedStudent(s)}
+                  className="p-5 rounded-2xl bg-white/5 border border-white/10 hover:border-orange-500/30 transition-all space-y-4 cursor-pointer"
+                >
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <div className="font-bold text-white text-base">{s.full_name || s.email}</div>
+                      <div className="text-xs text-white/40 font-mono mt-0.5">ID: {s.id.substring(0,8)}</div>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-xs bg-orange-500/10 text-orange-400 px-2.5 py-1 rounded-md font-bold block">
+                        {s.total_tests} {s.total_tests === 1 ? 'Test' : 'Tests'}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3 text-xs bg-slate-950/40 p-3 rounded-xl border border-white/5">
+                    <div>
+                      <span className="text-white/40 block mb-0.5">Class</span>
+                      <span className="text-white/80 font-bold">Class {s.class}</span>
+                    </div>
+                    <div>
+                      <span className="text-white/40 block mb-0.5">Aspiration</span>
+                      <span className="text-cyan-400 font-bold">{s.aspiration}</span>
+                    </div>
+                    <div className="col-span-2">
+                      <span className="text-white/40 block mb-0.5">Batch</span>
+                      <span className="text-orange-400 font-medium">{s.batch}</span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-1.5 text-xs">
+                    <div className="flex justify-between">
+                      <span className="text-white/40 font-semibold">Strengths:</span>
+                      <span className="text-green-400 font-medium text-right truncate max-w-[200px]" title={s.strengths.join(', ')}>
+                        {s.strengths.length > 0 ? s.strengths.join(', ') : '-'}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-white/40 font-semibold">Weaknesses:</span>
+                      <span className="text-red-400 font-medium text-right truncate max-w-[200px]" title={s.weaknesses.join(', ')}>
+                        {s.weaknesses.length > 0 ? s.weaknesses.join(', ') : '-'}
+                      </span>
+                    </div>
+                  </div>
+
+                  <button 
+                    onClick={(e) => { e.stopPropagation(); setSelectedStudent(s); }}
+                    className="w-full text-center py-2.5 bg-white/5 hover:bg-white/10 text-white font-bold text-sm rounded-xl transition-colors border border-white/10"
+                  >
+                    View Detailed Report Card
+                  </button>
+                </div>
+              ))}
+            </div>
+          </>
         )}
       </div>
 
       {/* Detailed Student Report Modal */}
       {selectedStudent && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
-          <div className="bg-slate-900 border border-white/10 rounded-3xl w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl relative animate-in zoom-in-95 p-8">
+          <div className="bg-slate-900 border border-white/10 rounded-3xl w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl relative animate-in zoom-in-95 p-5 md:p-8">
             <button 
               onClick={() => setSelectedStudent(null)}
-              className="absolute top-6 right-6 p-2 rounded-full hover:bg-white/10 text-white/50 hover:text-white transition-colors"
+              className="absolute top-4 right-4 md:top-6 md:right-6 p-2 rounded-full hover:bg-white/10 text-white/50 hover:text-white transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
             
             <h2 className="text-2xl font-bold text-white mb-1">Student Report Card</h2>
-            <div className="flex flex-col gap-1 mb-8">
+            <div className="flex flex-col gap-1 mb-6">
               <p className="text-cyan-400 font-medium text-lg">{selectedStudent.full_name || selectedStudent.email}</p>
-              <div className="flex items-center flex-wrap gap-3 text-sm text-white/50 mt-1">
-                <span className="font-mono">ID: {selectedStudent.id}</span>
-                <span>•</span>
-                <span>Class {selectedStudent.class}</span>
-                <span>•</span>
-                <span className="text-orange-400 font-bold">{selectedStudent.aspiration}</span>
-                <span>•</span>
-                <span className="text-green-400 font-medium">{selectedStudent.batch}</span>
+              <div className="flex items-center flex-wrap gap-2 text-xs md:text-sm text-white/50 mt-1">
+                <span className="font-mono bg-white/5 px-2 py-0.5 rounded break-all">ID: {selectedStudent.id}</span>
+                <span className="hidden sm:inline">•</span>
+                <span className="bg-white/5 px-2 py-0.5 rounded">Class {selectedStudent.class}</span>
+                <span className="hidden sm:inline">•</span>
+                <span className="text-orange-400 font-bold bg-orange-500/10 px-2 py-0.5 rounded">{selectedStudent.aspiration}</span>
+                <span className="hidden sm:inline">•</span>
+                <span className="text-green-400 font-medium bg-green-500/10 px-2 py-0.5 rounded">{selectedStudent.batch}</span>
               </div>
             </div>
 
@@ -495,8 +558,8 @@ function StudentManagementView() {
             <h3 className="text-lg font-bold mb-4 text-white/90 flex items-center gap-2">
               <BookOpen className="w-5 h-5 text-cyan-400" /> Test History
             </h3>
-            <div className="bg-white/5 rounded-xl border border-white/10 overflow-hidden">
-               <table className="w-full text-left text-sm">
+            <div className="bg-white/5 rounded-xl border border-white/10 overflow-hidden overflow-x-auto">
+               <table className="w-full text-left text-sm min-w-[500px]">
                  <thead className="bg-white/5 border-b border-white/10 text-white/50">
                    <tr>
                      <th className="p-3 font-medium">Test Title</th>
@@ -668,7 +731,7 @@ function ResourceManagementView({ title, icon: Icon, action, type, isTest = fals
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       
       {/* Header & Controls */}
-      <div className="flex flex-col md:flex-row justify-between items-center gap-4 bg-white/5 p-6 rounded-3xl border border-white/10">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white/5 p-5 md:p-6 rounded-3xl border border-white/10">
         <div className="flex items-center gap-4">
           <div className="p-3 bg-orange-500/20 text-orange-500 rounded-xl shadow-[0_0_15px_rgba(249,115,22,0.3)]">
             <Icon className="w-6 h-6" />
@@ -768,18 +831,19 @@ function ResourceManagementView({ title, icon: Icon, action, type, isTest = fals
       {/* UPLOAD MODAL */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-[#111623] border border-white/10 rounded-3xl w-full max-w-md shadow-2xl overflow-hidden animate-in zoom-in-95 font-body">
+          <div className="bg-[#111623] border border-white/10 rounded-3xl w-full max-w-md shadow-2xl overflow-hidden animate-in zoom-in-95 font-body mx-4">
             <div className="p-5 border-b border-white/5 flex justify-between items-center bg-[#151a28]">
-              <h3 className="text-lg font-bold text-white">{action}</h3>
-              <button onClick={() => setIsModalOpen(false)} className="text-white/40 hover:text-white transition-colors"><X className="w-5 h-5" /></button>
+              <h3 className="text-lg font-bold text-white truncate pr-4">{action}</h3>
+              <button onClick={() => setIsModalOpen(false)} className="text-white/40 hover:text-white transition-colors flex-shrink-0"><X className="w-5 h-5" /></button>
             </div>
             
-            <form onSubmit={handleUpload} className="p-6 space-y-5 bg-[#111623]">
+            <form onSubmit={handleUpload} className="p-5 sm:p-6 space-y-4 bg-[#111623]">
               <div>
                 <label className="text-[11px] font-bold text-white/40 uppercase tracking-wider block mb-1.5">Title</label>
                 <input required type="text" value={formTitle} onChange={e => setFormTitle(e.target.value)} className="w-full bg-[#0a0d14] border border-white/10 focus:border-orange-500 rounded-xl py-3 px-4 text-sm text-white outline-none transition-colors shadow-inner" placeholder="e.g. Thermodynamics Part 1" />
               </div>
-              <div className="flex gap-4">
+              
+              <div className="flex flex-col sm:flex-row gap-4">
                 <div className="flex-1">
                   <label className="text-[11px] font-bold text-white/40 uppercase tracking-wider block mb-1.5">Subject</label>
                   <input required type="text" value={formSubject} onChange={e => setFormSubject(e.target.value)} className="w-full bg-[#0a0d14] border border-white/10 focus:border-orange-500 rounded-xl py-3 px-4 text-sm text-white outline-none transition-colors shadow-inner" />
@@ -793,10 +857,11 @@ function ResourceManagementView({ title, icon: Icon, action, type, isTest = fals
               <div className="pt-1">
                 <label className="text-[11px] font-bold text-white/40 uppercase tracking-wider block mb-1.5">Upload PDF File</label>
                 <label className="mt-1 flex flex-col items-center justify-center w-full h-32 border border-dashed border-white/20 rounded-xl cursor-pointer bg-[#0a0d14]/80 hover:bg-[#0a0d14] hover:border-orange-500/50 transition-all group shadow-inner">
-                  <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                  <div className="flex flex-col items-center justify-center pt-5 pb-6 text-center px-4">
                     <FileUp className="w-6 h-6 text-white/40 group-hover:text-orange-500 mb-3 transition-colors" />
                     <p className="mb-1 text-sm text-white/50 group-hover:text-white/80 transition-colors">
-                      <span className="font-bold text-orange-500">Click to upload</span> or drag and drop
+                      <span className="font-bold text-orange-500">Click to upload</span>
+                      <span className="hidden sm:inline"> or drag and drop</span>
                     </p>
                     <p className="text-xs text-white/30 font-medium">PDF (MAX. 50MB)</p>
                   </div>
@@ -809,7 +874,7 @@ function ResourceManagementView({ title, icon: Icon, action, type, isTest = fals
                   />
                 </label>
                 {pdfFile && (
-                  <p className="text-xs text-green-400 font-bold mt-2 ml-1">Selected: {pdfFile.name}</p>
+                  <p className="text-xs text-green-400 font-bold mt-2 ml-1 truncate max-w-full">Selected: {pdfFile.name}</p>
                 )}
               </div>
 

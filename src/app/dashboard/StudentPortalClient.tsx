@@ -119,7 +119,7 @@ export default function StudentPortalClient({ user, profile }: { user: any, prof
       <main className="flex-1 flex flex-col h-full overflow-y-auto z-10 scrollbar-hide relative">
         
         {/* Top Header */}
-        <header className="px-8 py-6 flex items-center justify-between sticky top-0 bg-slate-950/80 backdrop-blur-md z-30 border-b border-white/5">
+        <header className="px-4 py-4 md:px-8 md:py-6 flex items-center justify-between sticky top-0 bg-slate-950/80 backdrop-blur-md z-30 border-b border-white/5">
           <div className="flex items-center gap-4">
             <button 
               className="md:hidden p-2 -ml-2 text-white/50 hover:text-white transition-colors"
@@ -171,7 +171,7 @@ export default function StudentPortalClient({ user, profile }: { user: any, prof
           </div>
         </header>
 
-        <div className="p-8 pb-24 md:pb-8 max-w-6xl mx-auto w-full">
+        <div className="p-4 md:p-8 pb-24 md:pb-8 max-w-6xl mx-auto w-full">
           {activeTab === "dashboard" && <DashboardView displayName={displayName} setActiveTab={setActiveTab} user={user} />}
           {activeTab === "note" && <ResourceView title="My Notes" type="note" profile={profile} icon={FileText} color="text-blue-400" />}
           {activeTab === "dpp" && <ResourceView title="Daily Practice Problems" type="dpp" profile={profile} icon={ClipboardList} color="text-cyan-400" />}
@@ -263,7 +263,7 @@ function ResourceView({ title, type, profile, icon: Icon, color }: any) {
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white/5 p-6 rounded-3xl border border-white/10 mb-8">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white/5 p-5 md:p-6 rounded-3xl border border-white/10 mb-8">
         <div className="flex items-center gap-4">
           <div className={`p-3 bg-white/5 rounded-xl ${color}`}>
             <Icon className="w-8 h-8" />
@@ -285,7 +285,7 @@ function ResourceView({ title, type, profile, icon: Icon, color }: any) {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {resources.map((res) => (
-            <div key={res.id} className="bg-white/5 border border-white/10 rounded-2xl p-6 hover:border-cyan-500/30 transition-all group relative flex flex-col justify-between">
+            <div key={res.id} className="bg-white/5 border border-white/10 rounded-2xl p-5 md:p-6 hover:border-cyan-500/30 transition-all group relative flex flex-col justify-between">
               <div>
                 <span className="px-2.5 py-1 rounded-md bg-white/10 text-white/70 text-[10px] font-bold uppercase tracking-wider mb-4 inline-block">
                   {res.isMerged ? 'DPP Module' : (res.duration !== undefined ? `${res.exam_type} • ${res.duration} Mins` : `${res.subject} • ${res.topic}`)}
@@ -380,11 +380,11 @@ function DashboardView({ displayName, setActiveTab, user }: { displayName: strin
     <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
       
       {/* Welcome Hero */}
-      <div className="relative p-8 rounded-3xl bg-gradient-to-br from-cyan-950/40 to-blue-900/20 border border-cyan-500/20 overflow-hidden">
+      <div className="relative p-6 md:p-8 rounded-3xl bg-gradient-to-br from-cyan-950/40 to-blue-900/20 border border-cyan-500/20 overflow-hidden">
         <div className="absolute -right-20 -top-20 w-64 h-64 bg-cyan-500/10 rounded-full blur-[50px] pointer-events-none" />
         <div className="relative z-10">
           <p className="text-cyan-400 font-bold tracking-widest text-xs uppercase mb-2">Current Status: Optimal</p>
-          <h2 className="text-4xl font-bold text-white mb-2 tracking-tight">Welcome back, {displayName}.</h2>
+          <h2 className="text-2xl md:text-4xl font-bold text-white mb-2 tracking-tight">Welcome back, {displayName}.</h2>
           <p className="text-white/60 max-w-md">Your quantum physics trajectory is looking excellent. You have 3 tasks pending today.</p>
         </div>
       </div>
@@ -435,7 +435,7 @@ function DashboardView({ displayName, setActiveTab, user }: { displayName: strin
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             
-            <div className="bg-white/5 border border-white/10 rounded-3xl p-6 hover:border-green-500/30 transition-all">
+            <div className="bg-white/5 border border-white/10 rounded-3xl p-5 md:p-6 hover:border-green-500/30 transition-all">
               <h4 className="text-green-400 font-bold mb-4 flex items-center gap-2">Strengths (S)</h4>
               {swot.strengths.length > 0 ? (
                 <ul className="space-y-2 text-sm text-white/70">
@@ -444,7 +444,7 @@ function DashboardView({ displayName, setActiveTab, user }: { displayName: strin
               ) : <p className="text-sm text-white/40">Keep practicing to build your strengths.</p>}
             </div>
 
-            <div className="bg-white/5 border border-white/10 rounded-3xl p-6 hover:border-red-500/30 transition-all">
+            <div className="bg-white/5 border border-white/10 rounded-3xl p-5 md:p-6 hover:border-red-500/30 transition-all">
               <h4 className="text-red-400 font-bold mb-4 flex items-center gap-2">Weaknesses (W)</h4>
               {swot.weaknesses.length > 0 ? (
                 <ul className="space-y-2 text-sm text-white/70">
@@ -453,14 +453,14 @@ function DashboardView({ displayName, setActiveTab, user }: { displayName: strin
               ) : <p className="text-sm text-white/40">No major weaknesses detected yet.</p>}
             </div>
 
-            <div className="bg-white/5 border border-white/10 rounded-3xl p-6 hover:border-blue-500/30 transition-all">
+            <div className="bg-white/5 border border-white/10 rounded-3xl p-5 md:p-6 hover:border-blue-500/30 transition-all">
               <h4 className="text-blue-400 font-bold mb-4 flex items-center gap-2">Opportunities (O)</h4>
               <ul className="space-y-2 text-sm text-white/70">
                 {swot.opportunities.map((o: string, i: number) => <li key={i} className="flex items-start gap-2"><span className="text-blue-500">•</span> {o}</li>)}
               </ul>
             </div>
 
-            <div className="bg-white/5 border border-white/10 rounded-3xl p-6 hover:border-orange-500/30 transition-all">
+            <div className="bg-white/5 border border-white/10 rounded-3xl p-5 md:p-6 hover:border-orange-500/30 transition-all">
               <h4 className="text-orange-400 font-bold mb-4 flex items-center gap-2">Threats (T)</h4>
               <ul className="space-y-2 text-sm text-white/70">
                 {swot.threats.map((t: string, i: number) => <li key={i} className="flex items-start gap-2"><span className="text-orange-500">•</span> {t}</li>)}
@@ -479,16 +479,16 @@ function ActionCard({ title, desc, icon: Icon, color, bg, border, onClick }: any
   return (
     <div 
       onClick={onClick}
-      className={`group relative p-6 rounded-3xl bg-white/5 border ${border} hover:bg-white/10 transition-all duration-300 hover:scale-105 hover:shadow-[0_10px_30px_-10px_rgba(34,211,238,0.2)] cursor-pointer overflow-hidden flex flex-col items-start`}
+      className={`group relative p-5 md:p-6 rounded-3xl bg-white/5 border ${border} hover:bg-white/10 transition-all duration-300 hover:scale-105 hover:shadow-[0_10px_30px_-10px_rgba(34,211,238,0.2)] cursor-pointer overflow-hidden flex flex-col items-start`}
     >
-      <div className={`p-4 rounded-2xl ${bg} ${color} mb-6 transition-transform duration-500 group-hover:scale-110 group-hover:animate-pulse`}>
-        <Icon className="w-8 h-8" />
+      <div className={`p-3 md:p-4 rounded-2xl ${bg} ${color} mb-4 md:mb-6 transition-transform duration-500 group-hover:scale-110 group-hover:animate-pulse`}>
+        <Icon className="w-6 h-6 md:w-8 md:h-8" />
       </div>
-      <h4 className="text-xl font-bold text-white mb-1 group-hover:text-cyan-300 transition-colors">{title}</h4>
-      <p className="text-white/50 text-sm font-medium">{desc}</p>
+      <h4 className="text-lg md:text-xl font-bold text-white mb-1 group-hover:text-cyan-300 transition-colors">{title}</h4>
+      <p className="text-white/50 text-xs md:text-sm font-medium">{desc}</p>
       
-      <div className="absolute bottom-6 right-6 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300">
-        <ArrowRight className={`w-6 h-6 ${color}`} />
+      <div className="absolute bottom-5 right-5 md:bottom-6 md:right-6 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300">
+        <ArrowRight className={`w-5 h-5 md:w-6 md:h-6 ${color}`} />
       </div>
     </div>
   );
@@ -564,7 +564,7 @@ function ProfileView({ email, userId, profile, avatarUrl, handleLogout, isProfil
       </div>
 
       {/* Basic Details Card */}
-      <div className="p-8 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-xl space-y-5">
+      <div className="p-5 md:p-8 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-xl space-y-5">
         <h3 className="text-lg font-bold text-white border-b border-white/10 pb-3 mb-5">Profile Details</h3>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
