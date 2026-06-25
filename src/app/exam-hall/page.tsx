@@ -32,7 +32,17 @@ function SecureExamHallContent() {
   // Post Exam State
   const [testCompleted, setTestCompleted] = useState(false);
   const [showSolutions, setShowSolutions] = useState(false);
-  const [scoreResult, setScoreResult] = useState({ score: 0, total: 0, correct: 0, incorrect: 0, attempted: 0 });
+  const [scoreResult, setScoreResult] = useState<any>({
+    score: 0,
+    total: 0,
+    correct: 0,
+    incorrect: 0,
+    attempted: 0,
+    rank: 1,
+    percentile: "100.0",
+    totalStudents: 1,
+    subjectStats: {}
+  });
 
   // Data State
   const [testDetails, setTestDetails] = useState<any>(null);
@@ -71,12 +81,26 @@ function SecureExamHallContent() {
         // Fetch Questions with Options
         const { data: qData, error: qError } = await supabase
           .from('questions')
-          .select(`id, text, image_url, options(id, text, is_correct)`)
+          .select(`id, text, image_url, subject, explanation, marks, negative_marks, question_number, options(id, text, is_correct, option_letter)`)
           .eq('test_id', testData.id)
-          .order('created_at', { ascending: true });
+          .order('question_number', { ascending: true });
 
         if (qError) throw qError;
-        setQuestions(qData || []);
+        
+        // Sort options inside each question by option_letter (e.g. A, B, C, D)
+        const formattedQuestions = (qData || []).map((q: any) => {
+          const sortedOptions = [...(q.options || [])].sort((a: any, b: any) => {
+            const letterA = a.option_letter || "";
+            const letterB = b.option_letter || "";
+            return letterA.localeCompare(letterB);
+          });
+          return {
+            ...q,
+            options: sortedOptions
+          };
+        });
+
+        setQuestions(formattedQuestions);
         
         // Determine User Role and Profile Info for Results
         const { data: { user } } = await supabase.auth.getUser();
@@ -359,6 +383,48 @@ function SecureExamHallContent() {
     }
   };
 
+  const fetchRankAndPercentile = async (testId: string, currentScore: number, currentUserId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('test_results')
+        .select('user_id, score')
+        .eq('test_id', testId);
+
+      if (error) throw error;
+
+      // Group by user_id and take their max score (so each student is counted once)
+      const userBestScores: Record<string, number> = {};
+      data?.forEach((r: any) => {
+        if (userBestScores[r.user_id] === undefined || r.score > userBestScores[r.user_id]) {
+          userBestScores[r.user_id] = r.score;
+        }
+      });
+
+      // Ensure current user is in userBestScores
+      if (userBestScores[currentUserId] === undefined || currentScore > userBestScores[currentUserId]) {
+        userBestScores[currentUserId] = currentScore;
+      }
+
+      const scores = Object.values(userBestScores) as number[];
+      // Sort scores in descending order
+      scores.sort((a, b) => b - a);
+
+      const totalStudents = scores.length;
+      
+      // Calculate rank (1-based index of currentScore)
+      const rank = scores.indexOf(currentScore) + 1;
+
+      // Calculate percentile: (number of students with score <= currentScore) / totalStudents * 100
+      const scoresLessThanOrEqual = scores.filter(s => s <= currentScore).length;
+      const percentile = totalStudents > 0 ? ((scoresLessThanOrEqual / totalStudents) * 100).toFixed(1) : "100.0";
+
+      return { rank, totalStudents, percentile };
+    } catch (err) {
+      console.error("Error fetching rank and percentile:", err);
+      return null;
+    }
+  };
+
   const finalSubmitToDB = async (isViolationSubmit = false) => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
@@ -367,18 +433,46 @@ function SecureExamHallContent() {
       let score = 0;
       let correctCount = 0;
       let incorrectCount = 0;
+      
+      // Compute subject-wise scores
+      const subjectStats: Record<string, { score: number; correct: number; incorrect: number; total: number; attempted: number }> = {};
+      
+      // Initialize subject stats for all questions
+      questions.forEach(q => {
+        const sub = q.subject || "Physics";
+        if (!subjectStats[sub]) {
+          subjectStats[sub] = { score: 0, correct: 0, incorrect: 0, total: 0, attempted: 0 };
+        }
+        subjectStats[sub].total++;
+      });
 
       const recordsToInsert = Object.entries(responses).map(([qId, optId]) => {
         const q = questions.find(x => x.id === qId);
         const opt = q?.options.find((o: any) => o.id === optId);
         const isCorrect = opt?.is_correct || false;
         
+        const qMarks = q?.marks !== undefined && q?.marks !== null ? q.marks : 4;
+        const qNeg = q?.negative_marks !== undefined && q?.negative_marks !== null ? q.negative_marks : 1;
+        const sub = q?.subject || "Physics";
+
+        if (subjectStats[sub]) {
+          subjectStats[sub].attempted++;
+        }
+
         if (isCorrect) {
-          score += 4;
+          score += qMarks;
           correctCount++;
+          if (subjectStats[sub]) {
+            subjectStats[sub].score += qMarks;
+            subjectStats[sub].correct++;
+          }
         } else {
-          score -= 1;
+          score -= qNeg;
           incorrectCount++;
+          if (subjectStats[sub]) {
+            subjectStats[sub].score -= qNeg;
+            subjectStats[sub].incorrect++;
+          }
         }
 
         return {
@@ -388,14 +482,6 @@ function SecureExamHallContent() {
           selected_option_id: optId,
           is_correct: isCorrect
         };
-      });
-
-      setScoreResult({
-        score,
-        total: questions.length,
-        attempted: recordsToInsert.length,
-        correct: correctCount,
-        incorrect: incorrectCount
       });
 
       if (!isAdmin) {
@@ -418,6 +504,21 @@ function SecureExamHallContent() {
         
         await createIntegrityReport(violationCount, reportStatus);
       }
+
+      // Fetch rank and percentile stats
+      const rankInfo = await fetchRankAndPercentile(testDetails.id, score, user.id);
+
+      setScoreResult({
+        score,
+        total: questions.length,
+        attempted: recordsToInsert.length,
+        correct: correctCount,
+        incorrect: incorrectCount,
+        rank: rankInfo?.rank || 1,
+        percentile: rankInfo?.percentile || "100.0",
+        totalStudents: rankInfo?.totalStudents || 1,
+        subjectStats
+      });
 
       if (recordsToInsert.length > 0 && !isAdmin) {
         await supabase.from('user_responses').insert(recordsToInsert);
@@ -675,15 +776,15 @@ function SecureExamHallContent() {
 
   if (testCompleted && !showSolutions) {
     const skipped = scoreResult.total - scoreResult.attempted;
-    const maxScore = scoreResult.total * 4;
+    const maxScore = questions.reduce((sum, q) => sum + (q.marks !== undefined && q.marks !== null ? q.marks : 4), 0);
     const percentage = maxScore > 0 ? ((scoreResult.score / maxScore) * 100).toFixed(1) : "0.0";
     
     return (
       <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-4 md:p-6 text-white font-body">
-        <div className="max-w-2xl w-full bg-slate-900 border border-white/10 rounded-3xl p-6 md:p-8 shadow-2xl relative overflow-hidden text-left">
+        <div className="max-w-2xl w-full bg-slate-900 border border-white/10 rounded-3xl p-6 md:p-8 shadow-2xl relative overflow-hidden text-left space-y-6">
            <div className="absolute top-[-20%] right-[-10%] w-64 h-64 bg-green-500/10 rounded-full blur-[80px] pointer-events-none" />
            
-           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 mb-6 border-b border-white/10 pb-6 text-center sm:text-left">
+           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 mb-2 border-b border-white/10 pb-6 text-center sm:text-left">
              <div className="w-14 h-14 md:w-16 md:h-16 bg-green-500/20 border-2 border-green-500 rounded-full flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(34,197,94,0.2)]">
                <CheckCircle2 className="w-7 h-7 md:w-8 md:h-8 text-green-400" />
              </div>
@@ -693,7 +794,7 @@ function SecureExamHallContent() {
              </div>
            </div>
            
-           <div className="space-y-4 mb-8 text-sm">
+           <div className="space-y-4 text-sm">
              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                <div className="bg-slate-950 p-4 rounded-xl border border-white/5">
                  <p className="text-white/40 text-[10px] md:text-xs font-bold uppercase mb-1">Student Name</p>
@@ -705,39 +806,91 @@ function SecureExamHallContent() {
                </div>
              </div>
 
+             {/* Rank and Percentile Block */}
+             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+               <div className="bg-gradient-to-tr from-cyan-500/10 to-blue-600/10 p-4 rounded-xl border border-cyan-500/20 flex flex-col items-center justify-center text-center">
+                 <p className="text-cyan-400 text-[10px] md:text-xs font-bold uppercase mb-1">Your Rank</p>
+                 <p className="text-xl md:text-2xl font-black text-white">#{scoreResult.rank} <span className="text-xs text-white/40">out of {scoreResult.totalStudents}</span></p>
+               </div>
+               <div className="bg-gradient-to-tr from-purple-500/10 to-pink-600/10 p-4 rounded-xl border border-purple-500/20 flex flex-col items-center justify-center text-center">
+                 <p className="text-purple-400 text-[10px] md:text-xs font-bold uppercase mb-1">Percentile Score</p>
+                 <p className="text-xl md:text-2xl font-black text-white">{scoreResult.percentile}%</p>
+               </div>
+             </div>
+
              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4">
                <div className="bg-white/5 p-4 rounded-xl border border-white/10 flex flex-col items-center justify-center text-center">
                  <p className="text-white/50 text-[10px] md:text-xs font-bold uppercase mb-1">Attempted</p>
-                 <p className="text-xl md:text-2xl font-bold text-white">{scoreResult.attempted} <span className="text-xs md:text-sm text-white/30">/ {scoreResult.total}</span></p>
+                 <p className="text-lg md:text-xl font-bold text-white">{scoreResult.attempted} <span className="text-xs text-white/30">/ {scoreResult.total}</span></p>
                </div>
                <div className="bg-green-500/5 p-4 rounded-xl border border-green-500/20 flex flex-col items-center justify-center text-center">
                  <p className="text-green-500/50 text-[10px] md:text-xs font-bold uppercase mb-1">Correct</p>
-                 <p className="text-xl md:text-2xl font-bold text-green-400">{scoreResult.correct}</p>
+                 <p className="text-lg md:text-xl font-bold text-green-400">{scoreResult.correct}</p>
                </div>
                <div className="bg-red-500/5 p-4 rounded-xl border border-red-500/20 flex flex-col items-center justify-center text-center">
                  <p className="text-red-500/50 text-[10px] md:text-xs font-bold uppercase mb-1">Wrong</p>
-                 <p className="text-xl md:text-2xl font-bold text-red-400">{scoreResult.incorrect}</p>
+                 <p className="text-lg md:text-xl font-bold text-red-400">{scoreResult.incorrect}</p>
                </div>
                <div className="bg-white/5 p-4 rounded-xl border border-white/10 flex flex-col items-center justify-center text-center">
                  <p className="text-white/50 text-[10px] md:text-xs font-bold uppercase mb-1">Skipped</p>
-                 <p className="text-xl md:text-2xl font-bold text-white/50">{skipped}</p>
+                 <p className="text-lg md:text-xl font-bold text-white/50">{skipped}</p>
                </div>
              </div>
 
              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4">
                <div className="bg-orange-500/5 p-4 rounded-xl border border-orange-500/20 flex flex-col items-center justify-center text-center">
                  <p className="text-orange-500/50 text-[10px] md:text-xs font-bold uppercase mb-1">Final Score</p>
-                 <p className="text-xl md:text-2xl font-bold text-orange-400">{scoreResult.score} <span className="text-xs md:text-sm text-orange-400/50">/ {maxScore}</span></p>
+                 <p className="text-lg md:text-xl font-bold text-orange-400">{scoreResult.score} <span className="text-xs text-orange-400/50">/ {maxScore}</span></p>
                </div>
                <div className="bg-cyan-500/5 p-4 rounded-xl border border-cyan-500/20 flex flex-col items-center justify-center text-center">
                  <p className="text-cyan-500/50 text-[10px] md:text-xs font-bold uppercase mb-1">Percentage</p>
-                 <p className="text-xl md:text-2xl font-bold text-cyan-400">{percentage}%</p>
+                 <p className="text-lg md:text-xl font-bold text-cyan-400">{percentage}%</p>
                </div>
                <div className="bg-slate-950 p-4 rounded-xl border border-white/5 flex flex-col items-center justify-center text-center">
                  <p className="text-white/40 text-[10px] md:text-xs font-bold uppercase mb-1">Date Attempted</p>
-                 <p className="text-base md:text-lg font-bold text-white/80">{new Date().toLocaleDateString()}</p>
+                 <p className="text-sm md:text-base font-bold text-white/85">{new Date().toLocaleDateString()}</p>
                </div>
              </div>
+
+             {/* Subject Wise breakdown visualizer */}
+             {scoreResult.subjectStats && Object.keys(scoreResult.subjectStats).length > 0 && (
+               <div className="space-y-3 pt-4 border-t border-white/10">
+                 <p className="text-white/40 text-[10px] md:text-xs font-bold uppercase tracking-wider mb-2">Subject-wise Breakdown</p>
+                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                   {Object.entries(scoreResult.subjectStats).map(([sub, stat]: any) => {
+                     const subColors: Record<string, string> = {
+                       Physics: "from-blue-500/10 to-cyan-500/5 border-blue-500/25 text-blue-400",
+                       Chemistry: "from-purple-500/10 to-indigo-500/5 border-purple-500/25 text-purple-400",
+                       Botany: "from-green-500/10 to-emerald-500/5 border-green-500/25 text-green-400",
+                       Zoology: "from-orange-500/10 to-amber-500/5 border-orange-500/25 text-orange-400"
+                     };
+                     const col = subColors[sub] || "from-slate-500/10 to-slate-500/5 border-slate-500/25 text-slate-400";
+                     return (
+                       <div key={sub} className={`bg-gradient-to-br ${col} p-3 rounded-xl border flex flex-col justify-between`}>
+                         <div className="flex justify-between items-center mb-1">
+                           <span className="font-bold text-xs text-white">{sub}</span>
+                           <span className="text-xs font-mono font-bold text-white/80">{stat.score} Marks</span>
+                         </div>
+                         <div className="grid grid-cols-3 gap-1 text-[9px] text-white/50 text-center font-mono">
+                           <div>
+                             <span className="block text-[8px] uppercase font-bold text-white/30">Correct</span>
+                             <span className="text-green-400 font-bold">{stat.correct}</span>
+                           </div>
+                           <div>
+                             <span className="block text-[8px] uppercase font-bold text-white/30">Wrong</span>
+                             <span className="text-red-400 font-bold">{stat.incorrect}</span>
+                           </div>
+                           <div>
+                             <span className="block text-[8px] uppercase font-bold text-white/30">Accuracy</span>
+                             <span className="text-white font-bold">{stat.attempted > 0 ? ((stat.correct / stat.attempted) * 100).toFixed(0) : "0"}%</span>
+                           </div>
+                         </div>
+                       </div>
+                     );
+                   })}
+                 </div>
+               </div>
+             )}
            </div>
 
            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 border-t border-white/10 pt-6">
@@ -816,12 +969,22 @@ function SecureExamHallContent() {
 
                   {/* Question Content */}
                   <div className="prose prose-invert max-w-none mb-8 md:mb-12">
+                    <div className="flex items-center gap-2 mb-3">
+                      {currentQ.subject && (
+                        <span className="px-2.5 py-0.5 rounded-md border text-xs font-bold bg-white/5 border-white/10 text-cyan-400">
+                          {currentQ.subject}
+                        </span>
+                      )}
+                      <span className="text-xs text-white/40 font-mono">
+                        +{currentQ.marks !== undefined ? currentQ.marks : 4} / -{currentQ.negative_marks !== undefined ? currentQ.negative_marks : 1} Marks
+                      </span>
+                    </div>
                     {currentQ.image_url && (
                       <div className="mb-6 rounded-xl overflow-hidden border border-white/10 bg-white/5 max-w-2xl">
                         <img src={currentQ.image_url} alt="Question Diagram" className="w-full h-auto object-contain max-h-96" />
                       </div>
                     )}
-                    <p className="text-lg leading-relaxed text-white/90 whitespace-pre-wrap">
+                    <p className="text-lg leading-relaxed text-white/90 whitespace-pre-wrap font-medium">
                       {currentQ.text}
                     </p>
                   </div>
@@ -878,7 +1041,7 @@ function SecureExamHallContent() {
                           </div>
                           <div className="flex-1 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                             <span className={`text-base md:text-lg font-medium ${textColor}`}>
-                              {opt.text}
+                              {opt.option_letter ? `${opt.option_letter}. ` : ""}{opt.text}
                             </span>
                             {suffix}
                           </div>
@@ -886,6 +1049,18 @@ function SecureExamHallContent() {
                       );
                     })}
                   </div>
+
+                  {/* Explanation Section */}
+                  {showSolutions && currentQ.explanation && (
+                    <div className="mt-6 p-5 rounded-2xl bg-white/5 border border-white/10 animate-in fade-in duration-300">
+                      <h4 className="text-xs font-bold uppercase tracking-widest text-cyan-400 mb-2 flex items-center gap-1.5">
+                        <CheckCircle2 className="w-4 h-4 text-cyan-400" /> Explanation & Solution Path
+                      </h4>
+                      <p className="text-sm text-white/70 leading-relaxed whitespace-pre-wrap">
+                        {currentQ.explanation}
+                      </p>
+                    </div>
+                  )}
                 </>
               )}
             </div>

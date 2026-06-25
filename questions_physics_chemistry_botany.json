@@ -1,0 +1,2027 @@
+[
+  {
+    "questionNumber": 1,
+    "subject": "Physics",
+    "questionText": "Statement 1: If you push on a cart being pulled by a horse so that it does not move, the cart pushes you back with an equal and opposite force. Statement 2: The cart does not move because the force described in Statement 1 cancels each other. Which is correct?",
+    "options": {
+      "A": "S1 true, S2 true, S2 is correct explanation",
+      "B": "S1 false, S2 true",
+      "C": "S1 true, S2 false",
+      "D": "S1 true, S2 true, S2 is not correct explanation"
+    },
+    "correctOption": "C",
+    "explanation": "Statement 1 true, Statement 2 false (Action-reaction pairs act on different bodies and never cancel each other)",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 2,
+    "subject": "Physics",
+    "questionText": "Time (T), velocity (C) and angular momentum (h) are chosen as fundamental quantities instead of mass, length and time. In terms of these, the dimensions of mass would be:",
+    "options": {
+      "A": "[M] = [T^-1C^-2h]",
+      "B": "[M] = [T^-1C^-2h]",
+      "C": "[M] = [TC^-2h]",
+      "D": "[M] = [TC^-1h]"
+    },
+    "correctOption": "A",
+    "explanation": "[M] = [T^-2h]",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 3,
+    "subject": "Physics",
+    "questionText": "From a building two balls A and B are thrown such that A is thrown upwards and B downwards (both vertically). If v_A and v_B are their respective velocities on reaching the ground, then",
+    "options": {
+      "A": "v_A > v_B",
+      "B": "v_A = v_B",
+      "C": "v_A < v_B",
+      "D": "their velocities depend on their masses."
+    },
+    "correctOption": "B",
+    "explanation": "v_A = v_B (The final velocity depends only on initial speed and height, not the direction of projection)",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 4,
+    "subject": "Physics",
+    "questionText": "A body of mass 5 kg under the action of constant force F = F_x i + F_y j has velocity at t = 0 as v = (6i - 2j) m/s and at t = 10s as v = +6j m/s. The force F is:",
+    "options": {
+      "A": "(-3i + 4j) N",
+      "B": "(-3/5 i + 4/5 j) N",
+      "C": "(3i - 4j) N",
+      "D": "(3/5 i - 4/5 j) N"
+    },
+    "correctOption": "A",
+    "explanation": "(-3i + 4j) N",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 5,
+    "subject": "Physics",
+    "questionText": "The co-ordinates of a moving particle at any time t are given by x = at^2 and y = bt^2. The speed of the particle at time t is given by:",
+    "options": {
+      "A": "3t√(a^2 + b^2)",
+      "B": "3t√(a^2 + b^2)",
+      "C": "t√(a^2 + b^2)",
+      "D": "√(a^2 + b^2)"
+    },
+    "correctOption": "B",
+    "explanation": "3t^1/2(a^2+B^2)",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 6,
+    "subject": "Physics",
+    "questionText": "A rocket with a lift-off mass 3.5×10^4 kg is blasted upwards with an initial acceleration of 10 m/s^2. Then the initial thrust of the blast is:",
+    "options": {
+      "A": "3.5×10^4 N",
+      "B": "7.0×10^4 N",
+      "C": "14.0×10^4 N",
+      "D": "1.75×10^4 N"
+    },
+    "correctOption": "B",
+    "explanation": "7.0 x 10^4 N",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 7,
+    "subject": "Physics",
+    "questionText": "If A × B = B × A, then the angle between A and B is:",
+    "options": {
+      "A": "π/2",
+      "B": "π/3",
+      "C": "π",
+      "D": "π/4"
+    },
+    "correctOption": "C",
+    "explanation": "π",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 8,
+    "subject": "Physics",
+    "questionText": "A spring is compressed between two blocks of masses m_1 and m_2 placed on a horizontal frictionless surface. When released, they have initial velocities v_1 and v_2 as shown. The blocks travel distances x_1 and x_2 respectively before coming to rest. The ratio x_1/x_2 is",
+    "options": {
+      "A": "m_2/m_1",
+      "B": "m_1/m_2",
+      "C": "√(m_2/m_1)",
+      "D": "√(m_1/m_2)"
+    },
+    "correctOption": "A",
+    "explanation": "m_1/m_2 (Derived from the conservation of momentum)",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 9,
+    "subject": "Physics",
+    "questionText": "If a body moving in circular path maintains constant speed of 10 ms^-1, then which of the following correctly describes the relation between acceleration and radius?",
+    "options": {
+      "A": "Graph showing acceleration (a) inversely proportional to radius (r) (a ∝ 1/r)",
+      "B": "Graph showing acceleration (a) directly proportional to radius (r) (a ∝ r)",
+      "C": "Graph showing acceleration (a) inversely proportional to square of radius (r) (a ∝ 1/r^2)",
+      "D": "Graph showing acceleration (a) constant with radius (r)"
+    },
+    "correctOption": "C",
+    "explanation": "Rectangular hyperbola graph (Since acceleration a = v^2/r, a is inversely proportional to r)",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 10,
+    "subject": "Physics",
+    "questionText": "A car covers the first half of the distance between two places at 40 km/h and the other half at 60 km/h. The average speed of the car is:",
+    "options": {
+      "A": "40 km/h",
+      "B": "45 km/h",
+      "C": "48 km/h",
+      "D": "60 km/h"
+    },
+    "correctOption": "C",
+    "explanation": "48 km/h",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 11,
+    "subject": "Physics",
+    "questionText": "A particle has an initial velocity of 3i + 4j and an acceleration of 0.4i + 0.3j. Its speed after 10 s is:",
+    "options": {
+      "A": "7√2 units",
+      "B": "7 units",
+      "C": "8.5 units",
+      "D": "10 units"
+    },
+    "correctOption": "A",
+    "explanation": "7^1/2 units",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 12,
+    "subject": "Physics",
+    "questionText": "A metal sample carrying a current along X-axis with density J_x is subjected to a magnetic field B_z (along z-axis). The electric field E_y developed along Y-axis is directly proportional to J_x as well as B_z. The constant of proportionality has SI unit:",
+    "options": {
+      "A": "m^3/A",
+      "B": "m^2/A",
+      "C": "A/m",
+      "D": "m^2/(As)"
+    },
+    "correctOption": "B",
+    "explanation": "m^3/(A-s) or m^3/C",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 13,
+    "subject": "Physics",
+    "questionText": "A marble block of mass 2 kg lying on ice when given a velocity of 6 m/s is stopped by friction in 10 s. Then the coefficient of friction is",
+    "options": {
+      "A": "0.02",
+      "B": "0.03",
+      "C": "0.04",
+      "D": "0.06"
+    },
+    "correctOption": "A",
+    "explanation": "0.06",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 14,
+    "subject": "Physics",
+    "questionText": "A rocket is fired vertically from the earth with an acceleration of 2g, where g is the gravitational acceleration. On an inclined plane inside the rocket, making an angle θ with the horizontal, a point object of mass m is kept. The minimum coefficient of friction μ_min between the mass and the inclined surface such that the mass does not move is :",
+    "options": {
+      "A": "tan2θ",
+      "B": "tanθ",
+      "C": "3 tanθ",
+      "D": "2 tanθ"
+    },
+    "correctOption": "B",
+    "explanation": "tan θ",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 15,
+    "subject": "Physics",
+    "questionText": "The position of a projectile launched from the origin at t = 0 is given by r = (40i + 50j) m at t = 2s. If the projectile was launched at angle θ from the horizontal, then θ is (take g = 10 ms^-2):",
+    "options": {
+      "A": "tan^-1(2/3)",
+      "B": "tan^-1(3/2)",
+      "C": "tan^-1(7/4)",
+      "D": "tan^-1(4/5)"
+    },
+    "correctOption": "C",
+    "explanation": "tan^-1(7/4)",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 16,
+    "subject": "Physics",
+    "questionText": "Three forces start acting simultaneously on a particle moving with velocity v. These forces are represented in magnitude and direction by the three sides of a triangle ABC. The particle will now move with velocity",
+    "options": {
+      "A": "less than v",
+      "B": "greater than v",
+      "C": "|v| in the direction of the largest force BC",
+      "D": "v, remaining unchanged"
+    },
+    "correctOption": "C",
+    "explanation": "Velocity remains constant/unchanged (Resultant force is zero)",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 17,
+    "subject": "Physics",
+    "questionText": "The initial speed of a bullet fired from a rifle is 630 m/s. The rifle is fired at the centre of a target 700 m away at the same level as the target. How far above the centre of the target must it be aimed?",
+    "options": {
+      "A": "1.0 m",
+      "B": "4.2 m",
+      "C": "6.1 m",
+      "D": "9.8 m"
+    },
+    "correctOption": "A",
+    "explanation": "6.0 m",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 18,
+    "subject": "Physics",
+    "questionText": "A large number (n) of identical beads of mass m and radius r are strung on a thin smooth rigid horizontal rod of length L (L >> r) and at rest at random positions. If one of the beads is given speed v, the average force experienced by each support after a long time is",
+    "options": {
+      "A": "mv^2 / (2(L-nr))",
+      "B": "mv^2 / (L-nr)",
+      "C": "mv^2 / (L-nr)",
+      "D": "0"
+    },
+    "correctOption": "B",
+    "explanation": "n^2mv^2/(2L)",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 19,
+    "subject": "Physics",
+    "questionText": "Given in the figure are two blocks A and B of weight 20 N and 100 N, respectively. These are being pressed against a wall by a force F as shown. If the coefficient of friction between the blocks is 0.1 and between block B and the wall is 0.15, the frictional force applied by the wall on block B is",
+    "options": {
+      "A": "120 N",
+      "B": "150 N",
+      "C": "100 N",
+      "D": "80 N"
+    },
+    "correctOption": "B",
+    "explanation": "120 N (Friction balances the total weight of both blocks)",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 20,
+    "subject": "Physics",
+    "questionText": "If a body loses half of its velocity on penetrating 3 cm in a wooden block, then how much will it penetrate more before coming to rest?",
+    "options": {
+      "A": "1 cm",
+      "B": "2 cm",
+      "C": "3 cm",
+      "D": "4 cm"
+    },
+    "correctOption": "D",
+    "explanation": "1 cm",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 21,
+    "subject": "Physics",
+    "questionText": "A particle of mass 0.3 kg subject to a force F = -kx with k = 15 N/m. What will be its initial acceleration if it is released from a point 20 cm away from the origin?",
+    "options": {
+      "A": "15 m/s^2",
+      "B": "3 m/s^2",
+      "C": "10 m/s^2",
+      "D": "5 m/s^2"
+    },
+    "correctOption": "C",
+    "explanation": "10 m/s^2",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 22,
+    "subject": "Physics",
+    "questionText": "A projectile can have the same range R for two angles of projection. If T_1 and T_2 be the times of flight in the two cases, then the product of the two times of flight is directly proportional to:",
+    "options": {
+      "A": "R",
+      "B": "1/R",
+      "C": "1/R^2",
+      "D": "R^2"
+    },
+    "correctOption": "A",
+    "explanation": "T_1T_2 ∝ R",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 23,
+    "subject": "Physics",
+    "questionText": "The relation between time t and distance x is t = ax^2 + βx, where a and β are constants. The acceleration is:",
+    "options": {
+      "A": "2aν^3",
+      "B": "-2aβν^2",
+      "C": "2aν^2",
+      "D": "-2aν^3"
+    },
+    "correctOption": "B",
+    "explanation": "-2αv^2",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 24,
+    "subject": "Physics",
+    "questionText": "A particle of mass m is acted upon by a force F given by the empirical law F = v(t). If this law is to be tested experimentally by observing the motion starting from rest, the best way is to plot:",
+    "options": {
+      "A": "log v(t) against 1/t",
+      "B": "v(t) against t^2",
+      "C": "log v(t) against 1/t^2",
+      "D": "log v(t) against t"
+    },
+    "correctOption": "A",
+    "explanation": "In(F/v) vs In t",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 25,
+    "subject": "Physics",
+    "questionText": "The velocity of a particle is v = v_0 + gt + ft^2. If its position is x = 0 at t = 0, then its displacement after unit time (t = 1) is:",
+    "options": {
+      "A": "v_0 + g/2 + f",
+      "B": "v_0 + 2g + 3f",
+      "C": "v_0 + g/2 + f/3",
+      "D": "v_0 + g + f"
+    },
+    "correctOption": "D",
+    "explanation": "v_0 + g/2 + f/3",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 26,
+    "subject": "Physics",
+    "questionText": "The minimum velocity (in ms^-1) with which a car driver must traverse a flat curve of radius 150 m and coefficient of friction 0.6 to avoid skidding is",
+    "options": {
+      "A": "60",
+      "B": "30",
+      "C": "15",
+      "D": "25"
+    },
+    "correctOption": "D",
+    "explanation": "30 m/s",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 27,
+    "subject": "Physics",
+    "questionText": "Two fixed frictionless inclined planes making an angle 30° and 60° with the vertical are shown in the figure. Two blocks A and B are placed on the two planes. What is the relative vertical acceleration of A with respect to B?",
+    "options": {
+      "A": "4.9 ms^-2 in horizontal direction",
+      "B": "9.8 ms^-2 in vertical direction",
+      "C": "Zero",
+      "D": "4.9 ms^-2 in vertical direction"
+    },
+    "correctOption": "C",
+    "explanation": "g/2 (or 4.9 m/s^2)",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 28,
+    "subject": "Physics",
+    "questionText": "A spring balance is attached to the ceiling of a lift. A man hangs his bag on the spring and the spring reads 49 N when the lift is stationary. If the lift moves downward with an acceleration of 5 m/s^2, the reading of the spring balance will be:",
+    "options": {
+      "A": "24 N",
+      "B": "74 N",
+      "C": "15 N",
+      "D": "49 N"
+    },
+    "correctOption": "A",
+    "explanation": "24 N",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 29,
+    "subject": "Physics",
+    "questionText": "Two masses m_1 = 5 kg and m_2 = 4.8 kg tied to a string are hanging over a light frictionless pulley. What is the acceleration of the masses when left free to move? (g = 9.8 m/s^2)",
+    "options": {
+      "A": "5 m/s^2",
+      "B": "9.8 m/s^2",
+      "C": "0.2 m/s^2",
+      "D": "4.8 m/s^2"
+    },
+    "correctOption": "C",
+    "explanation": "0.2 m/s^2",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 30,
+    "subject": "Physics",
+    "questionText": "A block of mass m is placed on a surface with a vertical cross section given by y = x^3 / 6. If the coefficient of friction is 0.5, the maximum height above the ground at which the block can be placed without slipping is:",
+    "options": {
+      "A": "1/6 m",
+      "B": "1/3 m",
+      "C": "1/2 m",
+      "D": "1/2 m"
+    },
+    "correctOption": "A",
+    "explanation": "1/16 m",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 31,
+    "subject": "Physics",
+    "questionText": "A block is kept on a frictionless inclined surface with angle of inclination α. The incline is given an acceleration a to keep the block stationary. Then a equals",
+    "options": {
+      "A": "g cosec α",
+      "B": "g/tan α",
+      "C": "g tan α",
+      "D": "g"
+    },
+    "correctOption": "C",
+    "explanation": "g tan α",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 32,
+    "subject": "Physics",
+    "questionText": "If the time period t of the oscillation of a drop of liquid of density d, radius r, vibrating under surface tension s is given by t = √r^(2b) s^c d^a / 2. It is observed that the time period is directly proportional to √(r^3 / s). The value of b should therefore be:",
+    "options": {
+      "A": "3/4",
+      "B": "√3",
+      "C": "3/2",
+      "D": "2/3"
+    },
+    "correctOption": "A",
+    "explanation": "0",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 33,
+    "subject": "Physics",
+    "questionText": "A car is standing 200 m behind a bus, which is also at rest. The two start moving at the same instant but with different forward accelerations. The bus has acceleration 2 m/s^2 and the car has acceleration 4 m/s^2. The car will catch up with the bus after a time of",
+    "options": {
+      "A": "√110s",
+      "B": "√120s",
+      "C": "10√2s",
+      "D": "15 s"
+    },
+    "correctOption": "D",
+    "explanation": "20 s (Car catching up to the bus)",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 34,
+    "subject": "Physics",
+    "questionText": "A particle is moving eastwards with a velocity of 5 ms^-1. In 10 seconds the velocity changes to 5 ms^-1 northwards. The average acceleration in this time is:",
+    "options": {
+      "A": "(1/√2) ms^-2 towards north",
+      "B": "(1/√2) ms^-2 towards north-east",
+      "C": "(1/√2) ms^-2 towards north-west",
+      "D": "zero"
+    },
+    "correctOption": "B",
+    "explanation": "1/√2 m/s^2 towards North-West",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 35,
+    "subject": "Physics",
+    "questionText": "A block of mass M is pulled along a horizontal frictionless surface by a rope of mass m. If a force P is applied to the free end of the rope, the force exerted by the rope on the block is:",
+    "options": {
+      "A": "PM/(M+m)",
+      "B": "Pm/M",
+      "C": "P",
+      "D": "PM/(M+m)"
+    },
+    "correctOption": "D",
+    "explanation": "PM / (M + m)",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 36,
+    "subject": "Physics",
+    "questionText": "Two forces are such that the sum of their magnitudes is 18N and their resultant is 12 N which is perpendicular to the smaller force. Then the magnitudes of the forces are",
+    "options": {
+      "A": "12N, 6N",
+      "B": "13N, 5N",
+      "C": "10N, 8N",
+      "D": "16N, 2N"
+    },
+    "correctOption": "C",
+    "explanation": "5 N and 13 N",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 37,
+    "subject": "Physics",
+    "questionText": "A vector A is rotated by a small angle Δθ radian (Δθ << 1) to get a new vector B. In that case |B - A| is:",
+    "options": {
+      "A": "|A|Δθ",
+      "B": "|B|Δθ - |A|",
+      "C": "|A|(1 - Δθ^2/2)",
+      "D": "0"
+    },
+    "correctOption": "D",
+    "explanation": "A Δθ",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 38,
+    "subject": "Physics",
+    "questionText": "A particle is moving with velocity v = k(yi + xj), where k is a constant. The general equation for its path is:",
+    "options": {
+      "A": "y = x^2 + constant",
+      "B": "y^2 = x + constant",
+      "C": "xy = constant",
+      "D": "y^2 = x^2 + constant"
+    },
+    "correctOption": "C",
+    "explanation": "x^2 - ky^2 = constant",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 39,
+    "subject": "Physics",
+    "questionText": "A projectile is given an initial velocity of (i + 2j) m/s, where i is along the ground and j is along the vertical. If g = 10 ms^-2, the equation of its trajectory is:",
+    "options": {
+      "A": "y = x - 5x^2",
+      "B": "y = 2x - 5x^2",
+      "C": "4y = 2x - 5x^2",
+      "D": "4y = 2x - 25x^2"
+    },
+    "correctOption": "D",
+    "explanation": "y = 2x - 5x^2",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 40,
+    "subject": "Physics",
+    "questionText": "A block of mass m is connected to another block of mass M by a spring (massless) of spring constant k. The blocks are kept on a smooth horizontal plane. Initially the blocks are at rest and the spring is unstretched. Then a constant force F starts acting on block M. Find the force of the block of mass m:",
+    "options": {
+      "A": "mF/(m+M)",
+      "B": "mF/M",
+      "C": "(M+m)F/m",
+      "D": "mF/(M+M)"
+    },
+    "correctOption": "A",
+    "explanation": "mF / (M + m)",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 41,
+    "subject": "Physics",
+    "questionText": "A ball of mass 0.2 kg is thrown vertically upwards by applying a force by hand. If the hand moves 0.2 m while applying the force and the ball goes up 2 m higher, find the magnitude of the force. (Consider g = 10 m/s^2)",
+    "options": {
+      "A": "4 N",
+      "B": "16 N",
+      "C": "20 N",
+      "D": "22 N"
+    },
+    "correctOption": "B",
+    "explanation": "22 N",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 42,
+    "subject": "Physics",
+    "questionText": "If electronic charge e, electron mass m, speed of light in vacuum c and Planck's constant h are taken as fundamental quantities, the permeability of vacuum μ₀ can be expressed in units of:",
+    "options": {
+      "A": "(h/me^2)",
+      "B": "(hc/me^2)",
+      "C": "(h/ce^2)",
+      "D": "(mc^2/he^2)"
+    },
+    "correctOption": "A",
+    "explanation": "h / (e^2c)",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 43,
+    "subject": "Physics",
+    "questionText": "A, B, C and D are four different physical quantities having different dimensions. None of them is dimensionless. The combination AD = C ln(BD) holds true. Then which of the combination is not a meaningful quantity?",
+    "options": {
+      "A": "C/BD - C",
+      "B": "A^2 - B^2 C^2",
+      "C": "A/B - C",
+      "D": "A-C/D"
+    },
+    "correctOption": "A",
+    "explanation": "(A - C) (Since A and C have different dimensions, they cannot be subtracted)",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 44,
+    "subject": "Physics",
+    "questionText": "A light spring balance hangs from the hook of another light spring balance and a block of mass M kg hangs from the former one. Then the true statement about the scale readings is:",
+    "options": {
+      "A": "both the scales read M kg each",
+      "B": "the scale of the lower reads M kg and upper one zero",
+      "C": "the reading of the two scales can be anything but the sum of the reading will be M kg",
+      "D": "both the scales read M/2 kg each"
+    },
+    "correctOption": "A",
+    "explanation": "Both scales read M kg each",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 45,
+    "subject": "Physics",
+    "questionText": "A car, starting from rest, accelerates at the rate f through a distance S, then continues at constant speed for time t and then decelerates at the rate f/2 to come to rest. If the total distance traversed is 15 S, then:",
+    "options": {
+      "A": "S = (1/6)ft^2",
+      "B": "S = ft",
+      "C": "S = (1/4)ft^2",
+      "D": "S = (1/72)ft^2"
+    },
+    "correctOption": "D",
+    "explanation": "S = (1/72)t^2",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 46,
+    "subject": "Chemistry",
+    "questionText": "The amount of sugar (C₁₂H₂₂O₁₁) required to prepare 2 L of its 0.1 M aqueous solution is:",
+    "options": {
+      "A": "136.8 g",
+      "B": "17.1 g",
+      "C": "68.4 g",
+      "D": "34.2 g"
+    },
+    "correctOption": "C",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 47,
+    "subject": "Chemistry",
+    "questionText": "Calculate the molarity of water if its density is 1000 kg/m³.",
+    "options": {
+      "A": "18.0",
+      "B": "37.0",
+      "C": "55.5",
+      "D": "100.0"
+    },
+    "correctOption": "C",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 48,
+    "subject": "Chemistry",
+    "questionText": "The largest number of molecules is in:",
+    "options": {
+      "A": "36 g of water",
+      "B": "28 g of carbon monoxide",
+      "C": "46 g of ethyl alcohol",
+      "D": "54 g of nitrogen pentoxide"
+    },
+    "correctOption": "A",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 49,
+    "subject": "Chemistry",
+    "questionText": "The composition of a sample of Wurtzite is Fe₀.₉₃O₁.₀₀. What percentage of the iron is present in the form of Fe(III)?",
+    "options": {
+      "A": "7.5%",
+      "B": "15%",
+      "C": "25%",
+      "D": "30%"
+    },
+    "correctOption": "B",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 50,
+    "subject": "Chemistry",
+    "questionText": "A sample of a hydrate of barium chloride weighing 61 g was heated until all the water of hydration is removed. The dried sample weighed 52 g. The formula of the hydrated salt is: (atomic mass, Ba=137 amu, Cl=35.5 amu)",
+    "options": {
+      "A": "BaCl₂·4H₂O",
+      "B": "BaCl₂·3H₂O",
+      "C": "BaCl₂·H₂O",
+      "D": "BaCl₂·2H₂O"
+    },
+    "correctOption": "D",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 51,
+    "subject": "Chemistry",
+    "questionText": "The average molar mass of chlorine is 35.5 g mol⁻¹. The ratio of ³⁷Cl to ³⁵Cl in naturally occurring chlorine is close to:",
+    "options": {
+      "A": "4 : 1",
+      "B": "3 : 1",
+      "C": "2 : 1",
+      "D": "1 : 1"
+    },
+    "correctOption": "B",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 52,
+    "subject": "Chemistry",
+    "questionText": "A 10 mg effervescent tablet containing sodium bicarbonate and oxalic acid releases 0.25 mL of CO₂ at T = 298.15K and P = 1 bar. If molar volume of CO₂ is 25.0 L under such conditions, what is the percentage of sodium bicarbonate in each tablet? [Molar mass of NaHCO₃ = 84 g mol⁻¹]",
+    "options": {
+      "A": "0.84",
+      "B": "33.6",
+      "C": "16.8",
+      "D": "8.4"
+    },
+    "correctOption": "C",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 53,
+    "subject": "Chemistry",
+    "questionText": "A compound was found to contain nitrogen and oxygen in the ratio of 28 g and 80 g respectively. The formula of the compound is:",
+    "options": {
+      "A": "NO",
+      "B": "N₂O₃",
+      "C": "N₂O₅",
+      "D": "N₂O₄"
+    },
+    "correctOption": "C",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 54,
+    "subject": "Chemistry",
+    "questionText": "An aqueous solution of 6.3 g oxalic acid dihydrate is made up to 250 mL. The volume of 0.1 N NaOH required to neutralize 10 mL of this solution is:",
+    "options": {
+      "A": "40 mL",
+      "B": "20 mL",
+      "C": "10 mL",
+      "D": "4 mL"
+    },
+    "correctOption": "D",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 55,
+    "subject": "Chemistry",
+    "questionText": "The modern atomic mass unit is based on:",
+    "options": {
+      "A": "¹H = 1 amu (exactly)",
+      "B": "¹⁶O = 16 amu (exactly)",
+      "C": "¹²C = 12 amu (exactly)",
+      "D": "Average mass of all elements"
+    },
+    "correctOption": "C",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 56,
+    "subject": "Chemistry",
+    "questionText": "A gaseous mixture contains oxygen and nitrogen in the ratio of 1:4 by weight. Therefore, the ratio of their number of molecules is:",
+    "options": {
+      "A": "1:4",
+      "B": "1:8",
+      "C": "7:32",
+      "D": "3:16"
+    },
+    "correctOption": "C",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 57,
+    "subject": "Chemistry",
+    "questionText": "The ratio of the mass percentages of 'C & H' and 'C & O' of a saturated acyclic organic compound 'X' are 4:1 and 3:4 respectively. Then, the moles of oxygen gas required for complete combustion of two moles of organic compound 'X' is:",
+    "options": {
+      "A": "6.00",
+      "B": "8.75",
+      "C": "11.50",
+      "D": "4.25"
+    },
+    "correctOption": "B",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 58,
+    "subject": "Chemistry",
+    "questionText": "How many moles of electron weigh one kilogram?",
+    "options": {
+      "A": "1/206",
+      "B": "(1/9.108)×10²⁴",
+      "C": "(6.023/9.108)×10²⁴",
+      "D": "(1/(9.108×6.023)) × 10²⁴"
+    },
+    "correctOption": "C",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 59,
+    "subject": "Chemistry",
+    "questionText": "A sample of NaClO₃ is converted by heat to NaCl with a loss of 0.16 g of oxygen. The residue is dissolved in water and precipitated as AgCl. The mass of AgCl (in g) obtained will be: (Given: Molar mass of AgCl = 143.5 g mol⁻¹)",
+    "options": {
+      "A": "0.35",
+      "B": "0.54",
+      "C": "0.41",
+      "D": "0.48"
+    },
+    "correctOption": "B",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 60,
+    "subject": "Chemistry",
+    "questionText": "The total number of electrons present in 18 mL of water is:",
+    "options": {
+      "A": "6.02 × 10²³",
+      "B": "6.02 × 10²⁴",
+      "C": "3.01 × 10²⁴",
+      "D": "1.20 × 10²⁵"
+    },
+    "correctOption": "B",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 61,
+    "subject": "Chemistry",
+    "questionText": "2.76 g of silver carbonate on being strongly heated yields a residue weighing:",
+    "options": {
+      "A": "2.16 g",
+      "B": "2.48 g",
+      "C": "2.32 g",
+      "D": "2.64g"
+    },
+    "correctOption": "A",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 62,
+    "subject": "Chemistry",
+    "questionText": "8 g of NaOH is dissolved in 18 g of H₂O. Mole fraction of NaOH in solution and molality (in mol kg⁻¹) of the solution respectively are:",
+    "options": {
+      "A": "0.2, 22.20",
+      "B": "0.2, 11.11",
+      "C": "0.167, 11.11",
+      "D": "0.167, 22.20"
+    },
+    "correctOption": "C",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 63,
+    "subject": "Chemistry",
+    "questionText": "If two compounds have the same empirical formula but different molecular formulae, they must have:",
+    "options": {
+      "A": "different percentage composition",
+      "B": "different molecular weight",
+      "C": "same viscosity",
+      "D": "same vapour density"
+    },
+    "correctOption": "B",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 64,
+    "subject": "Chemistry",
+    "questionText": "Amongst the following statements, which was not proposed by Dalton:",
+    "options": {
+      "A": "Chemical reactions involve reorganization of atoms; these are neither created nor destroyed",
+      "B": "All atoms of a given element have identical properties including identical mass; atoms of different elements differ in mass",
+      "C": "When gases combine or reproduce in a chemical reaction they do so in a simple ratio by volume provided all gases are at the same T & P",
+      "D": "Matter consists of indivisible atoms"
+    },
+    "correctOption": "C",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 65,
+    "subject": "Chemistry",
+    "questionText": "A molal solution is one that contains one mole of a solute in:",
+    "options": {
+      "A": "1000 g of the solvent",
+      "B": "one litre of the solvent",
+      "C": "one litre of the solution",
+      "D": "22.4 litres of the solution"
+    },
+    "correctOption": "A",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 66,
+    "subject": "Chemistry",
+    "questionText": "Dissolving 120 g of a compound of (mol. wt. 60) in 1000 g of water gave a solution of density 1.12 g/mL. The molarity of the solution is:",
+    "options": {
+      "A": "1.00M",
+      "B": "2.00M",
+      "C": "2.50M",
+      "D": "4.00M"
+    },
+    "correctOption": "B",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 67,
+    "subject": "Chemistry",
+    "questionText": "22.1 gram of a carbonate (M₂CO₃) on treatment with excess HCl produces 0.01186 mole of CO₂. The molar mass of M₂CO₃ in g mol⁻¹ is:",
+    "options": {
+      "A": "1186",
+      "B": "84.3",
+      "C": "118.6",
+      "D": "11.86"
+    },
+    "correctOption": "B",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 68,
+    "subject": "Chemistry",
+    "questionText": "The mole fraction of glucose (C₆H₁₂O₆) in an aqueous binary solution is 0.1. The mass percentage of water in it, to the nearest integer, is:",
+    "options": {
+      "A": "35%",
+      "B": "47%",
+      "C": "62%",
+      "D": "90%"
+    },
+    "correctOption": "B",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 69,
+    "subject": "Chemistry",
+    "questionText": "What quantity (in mL) of a 45% acid solution of a mono-protic strong acid must be mixed with a 20% solution of the same acid to produce 800 mL of a 29.875% acid solution?",
+    "options": {
+      "A": "320",
+      "B": "325",
+      "C": "316",
+      "D": "330"
+    },
+    "correctOption": "A",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 70,
+    "subject": "Chemistry",
+    "questionText": "If 0.50 mole of BaCl₂ is mixed with 0.20 mol of Na₃PO₄, the maximum number of moles of Ba₃(PO₄)₂ that can be formed is:",
+    "options": {
+      "A": "0.70",
+      "B": "0.50",
+      "C": "0.20",
+      "D": "0.10"
+    },
+    "correctOption": "D",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 71,
+    "subject": "Chemistry",
+    "questionText": "Choose the incorrect formula out of the four compounds for an element X below:",
+    "options": {
+      "A": "X₂O₃",
+      "B": "X₂Cl₂",
+      "C": "X₂(SO₄)₃",
+      "D": "XPO₄"
+    },
+    "correctOption": "A",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 72,
+    "subject": "Chemistry",
+    "questionText": "The amount of arsenic pentasulphide that can be obtained when 35.5 g arsenic acid is treated with excess H₂S in the presence of conc. HCl (assuming 100% conversion) is:",
+    "options": {
+      "A": "0.25 mol",
+      "B": "0.50 mol",
+      "C": "0.333 mol",
+      "D": "0.125mol"
+    },
+    "correctOption": "C",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 73,
+    "subject": "Chemistry",
+    "questionText": "The ammonia (NH₃) released on quantitative reaction of 0.6 g urea (NH₂CONH₂) with sodium hydroxide (NaOH) can be neutralized by:",
+    "options": {
+      "A": "200 mL of 0.4 N HCl",
+      "B": "200 mL of 0.2 N HCl",
+      "C": "100 mL of 0.2 N HCl",
+      "D": "100 mL of 0.1 N HCl"
+    },
+    "correctOption": "A",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 74,
+    "subject": "Chemistry",
+    "questionText": "In which mode of expression, the concentration of a solution remains independent of temperature?",
+    "options": {
+      "A": "Molarity",
+      "B": "Normality",
+      "C": "Formality",
+      "D": "Molality"
+    },
+    "correctOption": "D",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 75,
+    "subject": "Chemistry",
+    "questionText": "The most abundant elements by mass in the body of a healthy human adult are Oxygen (61.4%), Carbon (22.9%), Hydrogen (10.0%), and Nitrogen (2.6%). The weight which a 75 kg person would gain if all ¹H atoms are replaced by ²H atoms is:",
+    "options": {
+      "A": "15 kg",
+      "B": "37.5 kg",
+      "C": "7.5 kg",
+      "D": "10 kg"
+    },
+    "correctOption": "C",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 76,
+    "subject": "Chemistry",
+    "questionText": "31.5 L of an alkane requires 25 L of oxygen for its complete combustion. If all volumes are measured at constant temperature and pressure, the alkane is:",
+    "options": {
+      "A": "TRUNCATED",
+      "B": "TRUNCATED",
+      "C": "TRUNCATED",
+      "D": "TRUNCATED"
+    },
+    "correctOption": "B",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 77,
+    "subject": "Chemistry",
+    "questionText": "An unknown chlorohydrocarbon has 3.55% of chlorine. If each molecule of the hydrocarbon has one chlorine atom only, the number of chlorine atoms present in 1g of chlorohydrocarbon is (Atomic wt. of Cl = 35.5u; Avogadro constant = 6.023x10^23 mol^-1):",
+    "options": {
+      "A": "6.023x10^20",
+      "B": "6.023x10^21",
+      "C": "6.023x10^22",
+      "D": "6.023x10^19"
+    },
+    "correctOption": "D",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 78,
+    "subject": "Chemistry",
+    "questionText": "At 300 K and 1 atm, 15 mL of a gaseous hydrocarbon requires 375 mL air containing 20% O2 by volume for complete combustion. After combustion the gases occupy 330 mL. Assuming that the water formed is in liquid form and the volumes were measured at the same temperature and pressure, the formula of the hydrocarbon is:",
+    "options": {
+      "A": "C2H6",
+      "B": "C3H10",
+      "C": "C3H8",
+      "D": "C2H6"
+    },
+    "correctOption": "D",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 79,
+    "subject": "Chemistry",
+    "questionText": "Which has maximum number of atoms?",
+    "options": {
+      "A": "24g of C (12)",
+      "B": "56g of Fe (56)",
+      "C": "27g of Al (27)",
+      "D": "108g of Ag (108)"
+    },
+    "correctOption": "A",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 80,
+    "subject": "Chemistry",
+    "questionText": "A solution of two components containing n1 moles of the 1st component and n2 moles of the 2nd component is prepared. M1 and M2 are the molecular weights of component 1 and 2 respectively. If d is the density of the solution in g mL^-1, C2 is the molarity and x2 is the mole fraction of the 2nd component, then C2 can be expressed as:",
+    "options": {
+      "A": "C2 = (1000x2d) / (x1M1 + x2M2)",
+      "B": "C2 = (dx2) / (M1 + x2(M2 - M1))",
+      "C": "C2 = (1000dx2) / (x1M1 + x2M2)",
+      "D": "C2 = (dx2) / (x1M1 + x2(M2 - M1))"
+    },
+    "correctOption": "C",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 81,
+    "subject": "Chemistry",
+    "questionText": "A gaseous hydrocarbon gives upon combustion 0.72 g of water and 3.08 g of CO2. The empirical formula of the hydrocarbon is:",
+    "options": {
+      "A": "C2H4",
+      "B": "C2H6",
+      "C": "C3H4",
+      "D": "C3H6"
+    },
+    "correctOption": "A",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 82,
+    "subject": "Chemistry",
+    "questionText": "6.023x10^22 molecules are present in 10 g of a substance 'x'. The molarity of a solution containing 5 g of substance 'x' in 2 L solution is _________ x10^-4.",
+    "options": {
+      "A": "10",
+      "B": "25",
+      "C": "50",
+      "D": "100"
+    },
+    "correctOption": "B",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 83,
+    "subject": "Chemistry",
+    "questionText": "10 mL of 2(M) NaOH solution is added to 200 mL of 0.5 (M) of NaOH solution. What is the final concentration?",
+    "options": {
+      "A": "0.57 (M)",
+      "B": "5.7 (M)",
+      "C": "11.4 (M)",
+      "D": "1.14 (M)"
+    },
+    "correctOption": "A",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 84,
+    "subject": "Chemistry",
+    "questionText": "The molarity of HNO3 in a sample which has density 1.4 g/mL and mass percentage of 63% is: (Molecular Weight of HNO3 = 63)",
+    "options": {
+      "A": "10",
+      "B": "12",
+      "C": "14",
+      "D": "16"
+    },
+    "correctOption": "C",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 85,
+    "subject": "Chemistry",
+    "questionText": "If the value of Avogadro number is 6.023x10^23 mol^-1 and the value of Boltzmann constant is 1.380x10^-23 J K^-1, then the number of significant digits in the calculated value of the universal gas constant is:",
+    "options": {
+      "A": "2",
+      "B": "3",
+      "C": "4",
+      "D": "5"
+    },
+    "correctOption": "C",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 86,
+    "subject": "Chemistry",
+    "questionText": "27 g of Al will react completely with how many grams of oxygen?",
+    "options": {
+      "A": "8 g",
+      "B": "16 g",
+      "C": "32 g",
+      "D": "24 g"
+    },
+    "correctOption": "C",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 87,
+    "subject": "Chemistry",
+    "questionText": "For a reaction, N2(g) + 3H2(g) -> 2NH3(g); identify dihydrogen (H2) as a limiting reagent in the following reaction mixtures:",
+    "options": {
+      "A": "56 g of N2 + 10 g of H2",
+      "B": "35 g of N2 + 8 g of H2",
+      "C": "28 g of N2 + 6 g of H2",
+      "D": "14 g of N2 + 4 g of H2"
+    },
+    "correctOption": "D",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 88,
+    "subject": "Chemistry",
+    "questionText": "The weight of 1x10^22 molecules of CuSO4.5H2O is:",
+    "options": {
+      "A": "2.07 g",
+      "B": "4.15 g",
+      "C": "8.30 g",
+      "D": "16.6 g"
+    },
+    "correctOption": "B",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 89,
+    "subject": "Chemistry",
+    "questionText": "The ratio of mass percent of C and H of an organic compound (C2H6O) is 6:1. If one molecule of the above compound contains half as much oxygen as required to burn one molecule of compound CxHy completely to CO2 and H2O, the empirical formula of compound CxHyOz is:",
+    "options": {
+      "A": "C2H4O",
+      "B": "C2H6O",
+      "C": "C3H6O2",
+      "D": "C3H4O2"
+    },
+    "correctOption": "C",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 90,
+    "subject": "Chemistry",
+    "questionText": "The minimum number of moles of O2 required for complete combustion of 1 mole of propane and 2 moles of butane is:",
+    "options": {
+      "A": "11",
+      "B": "13",
+      "C": "18",
+      "D": "23"
+    },
+    "correctOption": "C",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 91,
+    "subject": "Botany",
+    "questionText": "The size of Pleuropneumonia Like Organism (PPLO) is:",
+    "options": {
+      "A": "0.02 µm",
+      "B": "1-2 µm",
+      "C": "10-20 µm",
+      "D": "0.1 µm"
+    },
+    "correctOption": "A",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 92,
+    "subject": "Botany",
+    "questionText": "Which of the following organisms are known as chief producers in the oceans?",
+    "options": {
+      "A": "Cyanobacteria",
+      "B": "Diatoms",
+      "C": "Dinoflagellates",
+      "D": "Euglenoids"
+    },
+    "correctOption": "B",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 93,
+    "subject": "Botany",
+    "questionText": "What is true for photolithotrophs?",
+    "options": {
+      "A": "Obtain energy from radiations and hydrogen from organic compounds",
+      "B": "Obtain energy from radiations and hydrogen from inorganic compounds",
+      "C": "Obtain energy from organic compounds",
+      "D": "Obtain energy from inorganic compounds"
+    },
+    "correctOption": "B",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 94,
+    "subject": "Botany",
+    "questionText": "Select the wrong statement.",
+    "options": {
+      "A": "Pseudopodia are locomotory and feeding structures in protozoans",
+      "B": "Mushrooms belong to Basidiomycetes",
+      "C": "Cell wall is present in members of Fungi and Plantae",
+      "D": "Mitochondria are the powerhouse of the cell in all kingdoms except Monera"
+    },
+    "correctOption": "A",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 95,
+    "subject": "Botany",
+    "questionText": "The cyanobacteria are also referred to as:",
+    "options": {
+      "A": "protists",
+      "B": "golden algae",
+      "C": "slime moulds",
+      "D": "blue-green algae"
+    },
+    "correctOption": "D",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 96,
+    "subject": "Botany",
+    "questionText": "The label of a herbarium sheet does not carry information on:",
+    "options": {
+      "A": "date of collection",
+      "B": "name of collector",
+      "C": "local names",
+      "D": "height of the plant"
+    },
+    "correctOption": "D",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 97,
+    "subject": "Botany",
+    "questionText": "During the formation of bread it becomes porous due to the release of CO₂ by the action of:",
+    "options": {
+      "A": "yeast",
+      "B": "bacteria",
+      "C": "virus",
+      "D": "protozoans"
+    },
+    "correctOption": "A",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 98,
+    "subject": "Botany",
+    "questionText": "Pigment-containing membranous extensions in some cyanobacteria are:",
+    "options": {
+      "A": "heterocysts",
+      "B": "basal bodies",
+      "C": "pneumatophores",
+      "D": "chromatophores"
+    },
+    "correctOption": "D",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 99,
+    "subject": "Botany",
+    "questionText": "Lichens are well known combination of an alga and a fungus where fungus has:",
+    "options": {
+      "A": "a saprophytic relationship with the alga",
+      "B": "an epiphytic relationship with the alga",
+      "C": "a parasitic relationship with the alga",
+      "D": "a symbiotic relationship with the alga"
+    },
+    "correctOption": "D",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 100,
+    "subject": "Botany",
+    "questionText": "Chrysophytes, euglenoids, dinoflagellates and slime moulds are included in the kingdom:",
+    "options": {
+      "A": "Protista",
+      "B": "Fungi",
+      "C": "Animalia",
+      "D": "Monera"
+    },
+    "correctOption": "A",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 101,
+    "subject": "Botany",
+    "questionText": "Which of the following statement is correct?",
+    "options": {
+      "A": "Fusion of two cells is called karyogamy",
+      "B": "Fusion of protoplasm between two motile or non-motile gametes is called plasmogamy",
+      "C": "Organisms that depend on living plants are called saprophytes",
+      "D": "Some of the organisms that can fix atmospheric nitrogen in specialised cells called sheath cells"
+    },
+    "correctOption": "C",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 102,
+    "subject": "Botany",
+    "questionText": "Trichoderma harzianum has proved a useful microorganism for:",
+    "options": {
+      "A": "bioremediation of contaminated soils",
+      "B": "reclamation of wastelands",
+      "C": "gene transfer in higher plants",
+      "D": "biological control of soil-borne plant pathogens"
+    },
+    "correctOption": "D",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 103,
+    "subject": "Botany",
+    "questionText": "Chromosomes in a bacterial cell can be 1-3 in number and:",
+    "options": {
+      "A": "can be circular as well as linear within the same cell",
+      "B": "are always circular",
+      "C": "are always linear",
+      "D": "can be either circular or linear, but never both within the same cell"
+    },
+    "correctOption": "B",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 104,
+    "subject": "Botany",
+    "questionText": "Which of the following is incorrect about cyanobacteria?",
+    "options": {
+      "A": "They are photoautotrophs",
+      "B": "They lack heterocysts",
+      "C": "They form blooms in polluted water bodies",
+      "D": "They have chlorophyll-a similar to green plants"
+    },
+    "correctOption": "B",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 105,
+    "subject": "Botany",
+    "questionText": "Mycorrhiza represents:",
+    "options": {
+      "A": "antagonism",
+      "B": "endemism",
+      "C": "symbiosis",
+      "D": "parasitism"
+    },
+    "correctOption": "C",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 106,
+    "subject": "Botany",
+    "questionText": "Bacterial leaf blight of rice is caused by a species of:",
+    "options": {
+      "A": "Xanthomonas",
+      "B": "Pseudomonas",
+      "C": "Alternaria",
+      "D": "Erwinia"
+    },
+    "correctOption": "A",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 107,
+    "subject": "Botany",
+    "questionText": "Select the wrong statement.",
+    "options": {
+      "A": "The viroids were discovered by DJ Ivanowski",
+      "B": "WM Stanley showed that viruses could be crystallised",
+      "C": "The term 'Contagium vivum fluidum' was coined by MW Beijerinck",
+      "D": "Mosaic disease in tobacco and AIDS in human being are caused by viruses"
+    },
+    "correctOption": "A",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 108,
+    "subject": "Botany",
+    "questionText": "The contrasting characteristics generally present in a pair used for identification of animals in taxonomic key are referred to as:",
+    "options": {
+      "A": "lead",
+      "B": "couplet",
+      "C": "doublet",
+      "D": "alternate"
+    },
+    "correctOption": "B",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 109,
+    "subject": "Botany",
+    "questionText": "What is common about Trypanosoma, Noctiluca, Monocystis and Giardia?",
+    "options": {
+      "A": "These are all unicellular protists",
+      "B": "They have flagella",
+      "C": "They produce spores",
+      "D": "These are all parasites"
+    },
+    "correctOption": "A",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 110,
+    "subject": "Botany",
+    "questionText": "Which of the following would be the pioneer organisms that appear on bare rocks?",
+    "options": {
+      "A": "Liverworts",
+      "B": "Mosses",
+      "C": "Green algae",
+      "D": "Lichens"
+    },
+    "correctOption": "D",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 111,
+    "subject": "Botany",
+    "questionText": "Plasmodium, the malarial parasite, belongs to class:",
+    "options": {
+      "A": "Sarcodina",
+      "B": "Ciliata",
+      "C": "Sporozoa",
+      "D": "Dinophyceae"
+    },
+    "correctOption": "C",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 112,
+    "subject": "Botany",
+    "questionText": "Organisms which obtain energy by the oxidation of reduced inorganic compounds are called:",
+    "options": {
+      "A": "homoautotrophs",
+      "B": "chemoautotrophs",
+      "C": "saprozoic",
+      "D": "coproheterotrophs"
+    },
+    "correctOption": "B",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 113,
+    "subject": "Botany",
+    "questionText": "Archaebacteria differ from eubacteria in:",
+    "options": {
+      "A": "cell membrane structure",
+      "B": "mode of nutrition",
+      "C": "cell shape",
+      "D": "mode of reproduction"
+    },
+    "correctOption": "A",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 114,
+    "subject": "Botany",
+    "questionText": "Select the wrong statement.",
+    "options": {
+      "A": "The walls of diatoms are easily destructible",
+      "B": "'Diatomaceous earth' is formed by the cell walls of diatoms",
+      "C": "Diatoms are chief producers in the oceans",
+      "D": "Diatoms are microscopic and float passively in water"
+    },
+    "correctOption": "A",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 115,
+    "subject": "Botany",
+    "questionText": "African sleeping sickness is due to:",
+    "options": {
+      "A": "Plasmodium vivax transmitted by tse-tse fly",
+      "B": "Trypanosoma lewisi transmitted by bed bug",
+      "C": "Trypanosoma gambiense transmitted by Glossina palpalis",
+      "D": "Entamoeba gingivalis spread by house fly"
+    },
+    "correctOption": "C",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 116,
+    "subject": "Botany",
+    "questionText": "Biological organisation starts with sub-microscopic molecular level, where:",
+    "options": {
+      "A": "sub-microscopic molecular level",
+      "B": "cellular level",
+      "C": "organismic level",
+      "D": "atomic level"
+    },
+    "correctOption": "A",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 117,
+    "subject": "Botany",
+    "questionText": "Study the four statements (I-IV) given below and select the two correct ones out of them:I. Definition of biological species was given by Ernst Mayr.II. Photoperiod does not affect reproduction in plants.III. Binomial nomenclature system was given by RH Whittaker.IV. In unicellular organisms, reproduction is synonymous with growth. The two correct statements are:",
+    "options": {
+      "A": "II and III",
+      "B": "III and IV",
+      "C": "I and IV",
+      "D": "I and II"
+    },
+    "correctOption": "C",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 118,
+    "subject": "Botany",
+    "questionText": "In bacteria, plasmid is:",
+    "options": {
+      "A": "extra-chromosomal material",
+      "B": "main DNA",
+      "C": "non-functional DNA",
+      "D": "repetitive gene"
+    },
+    "correctOption": "A",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 119,
+    "subject": "Botany",
+    "questionText": "One of the major components of cell wall of most fungi is:",
+    "options": {
+      "A": "peptidoglycan",
+      "B": "cellulose",
+      "C": "hemicellulose",
+      "D": "chitin"
+    },
+    "correctOption": "D",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 120,
+    "subject": "Botany",
+    "questionText": "Which among the following are the smallest living cells, known without a definite cell wall, pathogenic to plants as well as animals and can survive without oxygen?",
+    "options": {
+      "A": "Bacillus",
+      "B": "Pseudomonas",
+      "C": "Mycoplasma",
+      "D": "Nostoc"
+    },
+    "correctOption": "C",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 121,
+    "subject": "Botany",
+    "questionText": "Viroids differ from viruses in having:",
+    "options": {
+      "A": "DNA molecules with protein coat",
+      "B": "DNA molecules without protein coat",
+      "C": "RNA molecules with protein coat",
+      "D": "RNA molecules without protein coat"
+    },
+    "correctOption": "D",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 122,
+    "subject": "Botany",
+    "questionText": "Which one is the wrong pairing for the disease and its causal organism?",
+    "options": {
+      "A": "Late blight of potato \\u2014 Alternaria solani",
+      "B": "Black rust of wheat \\u2014 Puccinia graminis",
+      "C": "Loose smut of wheat \\u2014 Ustilago nuda",
+      "D": "Root-knot of vegetables \\u2014 Meloidogyne sp."
+    },
+    "correctOption": "A",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 123,
+    "subject": "Botany",
+    "questionText": "In which group of organisms the cell walls form two thin overlapping shells which fit together?",
+    "options": {
+      "A": "Chrysophytes",
+      "B": "Euglenoids",
+      "C": "Dinoflagellates",
+      "D": "Slime moulds"
+    },
+    "correctOption": "A",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 124,
+    "subject": "Botany",
+    "questionText": "Which one of the following is an example of negative feedback loop in humans?",
+    "options": {
+      "A": "Constriction of skin blood vessels and contraction of skeletal muscles when it is too cold",
+      "B": "Secretion of tears after falling of sand particles into the eye",
+      "C": "Salivation of mouth at the sight of delicious food",
+      "D": "Secretion of sweat glands and constriction of skin blood vessels when it is too hot"
+    },
+    "correctOption": "A",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 125,
+    "subject": "Botany",
+    "questionText": "Nuclear membrane is absent in:",
+    "options": {
+      "A": "Penicillium",
+      "B": "Agaricus",
+      "C": "Volvox",
+      "D": "Nostoc"
+    },
+    "correctOption": "D",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 126,
+    "subject": "Botany",
+    "questionText": "TO Diener discovered a:",
+    "options": {
+      "A": "free infectious RNA",
+      "B": "free infectious DNA",
+      "C": "infectious protein",
+      "D": "bacteriophage"
+    },
+    "correctOption": "A",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 127,
+    "subject": "Botany",
+    "questionText": "What is true about Trypanosoma?",
+    "options": {
+      "A": "Polymorphic",
+      "B": "Monogenetic",
+      "C": "Facultative parasite",
+      "D": "Non-pathogenic"
+    },
+    "correctOption": "A",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 128,
+    "subject": "Botany",
+    "questionText": "In eubacteria, a cellular component that resembles eukaryotic cells is:",
+    "options": {
+      "A": "nucleus",
+      "B": "ribosomes",
+      "C": "cell wall",
+      "D": "plasma membrane"
+    },
+    "correctOption": "B",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 129,
+    "subject": "Botany",
+    "questionText": "Choose the wrong statement.",
+    "options": {
+      "A": "Penicillium is multicellular and produces antibiotics",
+      "B": "Neurospora is used in the study of biochemical genetics",
+      "C": "Morels and truffles are poisonous mushrooms",
+      "D": "Yeast is unicellular and useful in fermentation"
+    },
+    "correctOption": "C",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 130,
+    "subject": "Botany",
+    "questionText": "Organisms called methanogens are most abundant in a",
+    "options": {
+      "A": "cattle yard",
+      "B": "polluted stream",
+      "C": "hot spring",
+      "D": "sulphur rock"
+    },
+    "correctOption": "A",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 131,
+    "subject": "Botany",
+    "questionText": "Methanogens belong to:",
+    "options": {
+      "A": "eubacteria",
+      "B": "archaebacteria",
+      "C": "dinoflagellates",
+      "D": "slime moulds"
+    },
+    "correctOption": "B",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 132,
+    "subject": "Botany",
+    "questionText": "Ciliates differ from all other protozoans in:",
+    "options": {
+      "A": "using pseudopodia for capturing prey",
+      "B": "having a contractile vacuole for removing excess water",
+      "C": "using flagella for locomotion",
+      "D": "having two types of nuclei"
+    },
+    "correctOption": "D",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 133,
+    "subject": "Botany",
+    "questionText": "Virus envelope is known as:",
+    "options": {
+      "A": "capsid",
+      "B": "virion",
+      "C": "nucleoprotein",
+      "D": "core"
+    },
+    "correctOption": "A",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 134,
+    "subject": "Botany",
+    "questionText": "Tobacco mosaic virus is a tubular filament of size:",
+    "options": {
+      "A": "700x30 nm",
+      "B": "300x10 nm",
+      "C": "300x5 nm",
+      "D": "300x18 nm"
+    },
+    "correctOption": "D",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 135,
+    "subject": "Botany",
+    "questionText": "Protists obtain food as:",
+    "options": {
+      "A": "photosynthesizers, symbionts and holotrophs",
+      "B": "photosynthesizers",
+      "C": "chemosynthesizers",
+      "D": "holotrophs"
+    },
+    "correctOption": "A",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  }
+]
