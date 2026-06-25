@@ -24,3 +24,9 @@ body {
     @apply bg-white/5 backdrop-blur-lg border border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.1)];
   }
 }
+
+@media print {
+  body {
+    display: none !important;
+  }
+}

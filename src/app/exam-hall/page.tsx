@@ -501,7 +501,7 @@ function SecureExamHallContent() {
 
   if (showWarningModal) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/90 backdrop-blur-md p-4 font-body animate-in fade-in">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950 p-4 font-body animate-in fade-in">
         <div className="max-w-md w-full bg-slate-900 border-2 border-orange-500 rounded-3xl p-8 relative z-10 shadow-[0_0_50px_rgba(239,68,68,0.3)] flex flex-col items-center text-center">
           <div className="w-20 h-20 bg-orange-500/10 rounded-full flex items-center justify-center mb-6 border border-orange-500/30">
             <AlertTriangle className="w-10 h-10 text-orange-500 animate-bounce" />
