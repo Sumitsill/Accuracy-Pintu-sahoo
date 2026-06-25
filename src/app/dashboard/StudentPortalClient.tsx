@@ -197,13 +197,18 @@ function ResourceView({ title, type, profile, icon: Icon, color }: any) {
       // Determine what batches this student belongs to
       const allowedBatches = ['All Students'];
       if (profile.class === '11') allowedBatches.push('Class 11');
-      if (profile.class === '12') allowedBatches.push('Class 12');
+      if (profile.class === '12' || profile.class === 'Dropper') allowedBatches.push('Class 12');
+      
+      if (profile.aspiration === 'JEE') allowedBatches.push('IIT JEE Batch');
+      if (profile.aspiration === 'NEET') allowedBatches.push('NEET Batch');
+      
       if (profile.batch) allowedBatches.push(profile.batch);
       
       if (type === 'test') {
         const { data } = await supabase
           .from('tests')
           .select('*')
+          .eq('status', 'live')
           .in('target_batch', allowedBatches)
           .order('created_at', { ascending: false });
         // Don't show DPP quizzes in the regular Test Center tab
@@ -213,6 +218,7 @@ function ResourceView({ title, type, profile, icon: Icon, color }: any) {
           .from('tests')
           .select('*')
           .eq('exam_type', 'DPP')
+          .eq('status', 'live')
           .in('target_batch', allowedBatches);
           
         const { data: pdfs } = await supabase
