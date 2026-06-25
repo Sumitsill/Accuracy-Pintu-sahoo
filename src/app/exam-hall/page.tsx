@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback, Suspense } from "react";
 import {
   AlertTriangle, Clock, ChevronRight, CheckCircle2,
   AlertCircle, XCircle, SkipForward, Loader2, Target,
-  LayoutGrid
+  LayoutGrid, ShieldAlert, Lock, Monitor, Check
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -553,39 +553,119 @@ function SecureExamHallContent() {
     const canStart = isAdmin || isLive;
     
     return (
-      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-6 text-white font-body">
-        <div className="max-w-2xl w-full bg-slate-900 border border-white/10 rounded-3xl p-8 shadow-2xl relative overflow-hidden">
-          <div className="absolute top-[-20%] right-[-10%] w-64 h-64 bg-cyan-500/10 rounded-full blur-[80px]" />
+      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-4 md:p-6 text-white font-body relative overflow-hidden">
+        {/* Ambient background glows */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-cyan-500/5 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute top-[20%] right-[-10%] w-[300px] h-[300px] bg-blue-600/10 rounded-full blur-[100px] pointer-events-none" />
+        <div className="absolute bottom-[10%] left-[-10%] w-[300px] h-[300px] bg-indigo-600/10 rounded-full blur-[100px] pointer-events-none" />
+        
+        {/* Core Container */}
+        <div className="max-w-2xl w-full bg-slate-900/60 backdrop-blur-xl border border-white/10 rounded-3xl p-6 md:p-8 shadow-[0_0_50px_rgba(0,242,255,0.1)] relative overflow-hidden z-10 mx-4 animate-in fade-in zoom-in-95 duration-500">
           
-          <div className="relative z-10 flex flex-col items-center text-center">
-            <Target className="w-16 h-16 text-cyan-400 mb-6" />
-            <h1 className="text-3xl font-bold mb-2">{testDetails.title}</h1>
-            <p className="text-white/50 mb-8 uppercase tracking-widest text-sm font-bold">{testDetails.exam_type} • {testDetails.duration} Mins</p>
+          {/* Header Banner - High Tech Lock Indicator */}
+          <div className="flex items-center justify-between bg-cyan-950/30 border border-cyan-500/20 px-4 py-2.5 rounded-2xl mb-8">
+            <div className="flex items-center gap-2 text-xs md:text-sm font-bold text-cyan-400">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
+              </span>
+              SECURE BROWSER LOCK ACTIVE
+            </div>
+            <div className="flex items-center gap-1.5 text-xs text-white/50 bg-slate-900 border border-white/5 px-2.5 py-1 rounded-md font-mono">
+              <Lock className="w-3 h-3 text-cyan-400" /> STRICT_MODE
+            </div>
+          </div>
+
+          <div className="flex flex-col items-center text-center">
+            {/* Exam Badge Icon */}
+            <div className="w-16 h-16 bg-gradient-to-tr from-cyan-400/20 to-blue-600/20 border-2 border-cyan-400/30 rounded-2xl flex items-center justify-center mb-6 shadow-[0_0_20px_rgba(34,211,238,0.2)]">
+              <ShieldAlert className="w-8 h-8 text-cyan-400 animate-pulse" />
+            </div>
             
-            <div className="w-full bg-slate-950 rounded-2xl p-6 text-left mb-8 border border-white/5">
-              <h3 className="text-xl font-bold mb-4 flex items-center gap-2"><AlertCircle className="w-5 h-5 text-orange-400" /> Exam Instructions</h3>
-              <ul className="space-y-3 text-white/70 text-sm">
-                <li className="flex items-start gap-2"><div className="w-1.5 h-1.5 rounded-full bg-cyan-500 mt-1.5 shrink-0" /> <strong>Monitored Environment:</strong> This test is strictly monitored. Leaving the exam window, taking screenshots, or recording the screen is prohibited.</li>
-                <li className="flex items-start gap-2"><div className="w-1.5 h-1.5 rounded-full bg-cyan-500 mt-1.5 shrink-0" /> <strong>Fullscreen Mode:</strong> The exam will run in fullscreen. Exiting fullscreen, switching tabs, or losing window focus counts as a violation.</li>
-                <li className="flex items-start gap-2"><div className="w-1.5 h-1.5 rounded-full bg-cyan-500 mt-1.5 shrink-0" /> <strong>Violation Limits:</strong> The first violation will trigger a warning. The second violation will instantly submit your exam.</li>
-                <li className="flex items-start gap-2"><div className="w-1.5 h-1.5 rounded-full bg-cyan-500 mt-1.5 shrink-0" /> <strong>Action Restrictions:</strong> Copying, pasting, right-clicking, and inspector keys are disabled.</li>
-              </ul>
+            <h1 className="text-2xl md:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white via-cyan-100 to-cyan-400 mb-2 tracking-tight">
+              {testDetails.title}
+            </h1>
+            
+            <div className="flex items-center gap-3 mb-8">
+              <span className="px-3 py-1 rounded-md bg-white/5 border border-white/10 text-white/70 text-xs font-bold uppercase tracking-wider">
+                {testDetails.exam_type}
+              </span>
+              <span className="w-1 h-1 rounded-full bg-white/20" />
+              <span className="flex items-center gap-1.5 text-cyan-400 text-xs font-bold">
+                <Clock className="w-3.5 h-3.5" /> {testDetails.duration} Minutes
+              </span>
+            </div>
+            
+            {/* Rich Instructions Area */}
+            <div className="w-full bg-slate-950/70 border border-white/5 rounded-2xl p-5 md:p-6 text-left mb-8 space-y-6">
+              <div>
+                <h3 className="text-base font-bold text-white mb-3 flex items-center gap-2">
+                  <AlertCircle className="w-4.5 h-4.5 text-orange-400" /> Exam Rules & Guidelines
+                </h3>
+                <ul className="space-y-4 text-white/70 text-xs md:text-sm">
+                  <li className="flex items-start gap-3">
+                    <span className="mt-1 p-0.5 rounded bg-orange-500/10 border border-orange-500/20 shrink-0">
+                      <Monitor className="w-4 h-4 text-orange-400" />
+                    </span>
+                    <span>
+                      <strong>Strict Monitoring:</strong> Switching tabs, minimizing the window, or exiting fullscreen will register as a security violation.
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="mt-1 p-0.5 rounded bg-cyan-500/10 border border-cyan-500/20 shrink-0">
+                      <Lock className="w-4 h-4 text-cyan-400" />
+                    </span>
+                    <span>
+                      <strong>System Lockout:</strong> You are allowed exactly <strong>one warning</strong>. A second visibility or window violation will trigger an immediate auto-submission.
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="mt-1 p-0.5 rounded bg-red-500/10 border border-red-500/20 shrink-0">
+                      <AlertTriangle className="w-4 h-4 text-red-400" />
+                    </span>
+                    <span>
+                      <strong>Shortcut Restrictions:</strong> Screenshot commands, DevTools shortcuts (`F12`), right-clicks, and copy/paste are completely disabled.
+                    </span>
+                  </li>
+                </ul>
+              </div>
+              
+              {/* Security Pre-requisites Checklist */}
+              <div className="pt-4 border-t border-white/5">
+                <h4 className="text-xs font-bold text-white/50 uppercase tracking-widest mb-3">System Checks</h4>
+                <div className="grid grid-cols-2 gap-3 text-xs">
+                  <div className="flex items-center gap-2 text-green-400">
+                    <Check className="w-4 h-4 bg-green-500/10 border border-green-500/20 p-0.5 rounded-full shrink-0" /> Fullscreen Support
+                  </div>
+                  <div className="flex items-center gap-2 text-green-400">
+                    <Check className="w-4 h-4 bg-green-500/10 border border-green-500/20 p-0.5 rounded-full shrink-0" /> Anti-Cheat Hooked
+                  </div>
+                </div>
+              </div>
             </div>
 
             {!isLive && isAdmin && (
-               <p className="text-orange-400 font-bold mb-4 bg-orange-500/10 px-4 py-2 rounded-lg">You are previewing a DRAFT test. Students cannot access it yet.</p>
+               <p className="text-orange-400 font-bold mb-4 bg-orange-500/10 px-4 py-2.5 rounded-xl border border-orange-500/20 text-xs md:text-sm animate-pulse">
+                 ⚠️ Preview Mode: This test is a DRAFT and isn't available to students yet.
+               </p>
              )}
             
+            {/* Start Button */}
             <button 
               onClick={startExam}
               disabled={!canStart}
-              className="w-full py-4 rounded-xl bg-cyan-500 text-slate-950 font-bold text-lg hover:bg-cyan-400 transition-all shadow-[0_0_20px_rgba(34,211,238,0.4)] disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="w-full py-4 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 text-slate-950 font-extrabold text-lg hover:opacity-95 transition-all shadow-[0_0_30px_rgba(0,242,255,0.35)] hover:shadow-[0_0_40px_rgba(0,242,255,0.5)] disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed flex items-center justify-center gap-2 group hover:-translate-y-0.5 transform duration-300"
             >
-              {canStart ? (isAdmin ? "Preview Exam" : "I Understand, Begin Exam") : "Test is not live yet"}
+              {canStart ? (
+                <>
+                  {isAdmin ? "Preview Exam" : "I Understand, Begin Exam"}
+                  <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </>
+              ) : "Test is not live yet"}
             </button>
             
-            <Link href="/dashboard" className="mt-4 text-white/50 hover:text-white text-sm transition-colors">
-              Return to Dashboard
+            <Link href="/dashboard" className="mt-5 text-white/45 hover:text-white/80 text-xs font-semibold tracking-wide transition-colors flex items-center gap-1">
+              Cancel & Return to Dashboard
             </Link>
           </div>
         </div>
