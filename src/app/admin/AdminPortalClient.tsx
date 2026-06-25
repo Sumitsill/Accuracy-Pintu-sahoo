@@ -4,7 +4,8 @@ import React, { useState, useEffect } from "react";
 import { 
   LayoutDashboard, Users, BookOpen, PenTool, Target, 
   Bell, Zap, LogOut, ChevronDown, Menu,
-  Search, Eye, Send, Upload, Plus, MoreVertical, X, Loader2, FileUp, Trash2
+  Search, Eye, Send, Upload, Plus, MoreVertical, X, Loader2, FileUp, Trash2,
+  ShieldAlert, AlertTriangle, CheckCircle
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
@@ -295,80 +296,134 @@ function StudentManagementView() {
   const [selectedStudent, setSelectedStudent] = useState<any>(null);
   const [selectedBatch, setSelectedBatch] = useState("All Batches");
 
+  // Dynamic Question-by-Question Response Review State
+  const [expandedTestId, setExpandedTestId] = useState<string | null>(null);
+  const [expandedTestQuestions, setExpandedTestQuestions] = useState<any[]>([]);
+  const [loadingReview, setLoadingReview] = useState(false);
+
+  const handleToggleReview = async (studentId: string, testId: string) => {
+    if (expandedTestId === testId) {
+      setExpandedTestId(null);
+      setExpandedTestQuestions([]);
+      return;
+    }
+    
+    setExpandedTestId(testId);
+    setLoadingReview(true);
+    setExpandedTestQuestions([]);
+    
+    try {
+      // 1. Fetch questions and options for this test
+      const { data: questionsData, error: qError } = await supabase
+        .from('questions')
+        .select('id, text, options(id, text, is_correct)')
+        .eq('test_id', testId)
+        .order('created_at', { ascending: true });
+        
+      if (qError) throw qError;
+      
+      // 2. Fetch student user responses for this test
+      const { data: responsesData, error: rError } = await supabase
+        .from('user_responses')
+        .select('question_id, selected_option_id, is_correct')
+        .eq('user_id', studentId)
+        .eq('test_id', testId);
+        
+      if (rError) throw rError;
+      
+      // 3. Map responses to questions
+      const mappedQuestions = (questionsData || []).map((q: any) => {
+        const userResp = (responsesData || []).find((r: any) => r.question_id === q.id);
+        return {
+          id: q.id,
+          text: q.text,
+          options: q.options || [],
+          selectedOptionId: userResp?.selected_option_id || null,
+          isCorrect: userResp?.is_correct || false,
+          hasResponded: !!userResp
+        };
+      });
+      
+      setExpandedTestQuestions(mappedQuestions);
+    } catch (err) {
+      console.error("Failed to load test responses review:", err);
+    } finally {
+      setLoadingReview(false);
+    }
+  };
+
   useEffect(() => {
     const fetchStudentsAndSwot = async () => {
       setLoading(true);
-      
-      // Fetch ALL test results first to guarantee we catch active test-takers
-      const { data: resultsData } = await supabase.from('test_results').select('*');
-      
-      if (resultsData && resultsData.length > 0) {
-        // Extract unique student IDs from test results
-        const uniqueUserIds = Array.from(new Set(resultsData.map(r => r.user_id)));
-        
-        // Attempt to fetch profile info for these users
-        const { data: profilesData } = await supabase.from('profiles').select('*').in('id', uniqueUserIds);
-        
-        const studentsWithSwot = uniqueUserIds.map(userId => {
-           const studentResults = resultsData.filter(r => r.user_id === userId);
-           const profile = profilesData?.find(p => p.id === userId) || {};
-           
-           let strengths: string[] = [];
-           let weaknesses: string[] = [];
-           let opportunities: string[] = ["Attempt more Mock Tests", "Review incorrect questions in detail"];
-           let threats: string[] = ["Time management on lengthy exams", "Negative marking penalties"];
-           
-           studentResults.forEach((result: any) => {
-             const accuracy = result.total_questions > 0 ? (result.correct_count / result.total_questions) * 100 : 0;
-             if (accuracy >= 70) strengths.push(result.title || result.exam_type);
-             else if (accuracy <= 40) weaknesses.push(result.title || result.exam_type);
-             else opportunities.push(`Improve speed in ${result.title || result.exam_type}`);
-           });
-
-           return {
-             id: userId,
-             email: profile.email || `No Email Provided`,
-             full_name: profile.full_name || null,
-             class: profile.class || 'N/A',
-             board: profile.board || 'N/A',
-             aspiration: profile.aspiration || profile.board || 'Not Set',
-             batch: profile.batch || 'Unassigned',
-             total_tests: studentResults.length,
-             test_history: studentResults,
-             full_swot: {
-               strengths: Array.from(new Set(strengths)).slice(0, 3),
-               weaknesses: Array.from(new Set(weaknesses)).slice(0, 3),
-               opportunities: Array.from(new Set(opportunities)).slice(0, 3),
-               threats: threats.slice(0, 2)
-             },
-             strengths: Array.from(new Set(strengths)).slice(0, 2),
-             weaknesses: Array.from(new Set(weaknesses)).slice(0, 2)
-           };
-        });
-        setStudents(studentsWithSwot);
-      } else {
-        // Fallback: no tests taken yet, fetch all students
+      try {
+        // 1. Fetch all student profiles
         const { data: profilesData } = await supabase.from('profiles').select('*').eq('role', 'student');
+        
         if (profilesData && profilesData.length > 0) {
-          setStudents(profilesData.map(p => ({
-             id: p.id,
-             email: p.email || `No Email Provided`,
-             full_name: p.full_name || null,
-             class: p.class || 'N/A',
-             board: p.board || 'N/A',
-             aspiration: p.aspiration || p.board || 'Not Set',
-             batch: p.batch || 'Unassigned',
-             total_tests: 0,
-             test_history: [],
-             full_swot: { strengths: [], weaknesses: [], opportunities: [], threats: [] },
-             strengths: [],
-             weaknesses: []
-          })));
+          const studentIds = profilesData.map(p => p.id);
+          
+          // 2. Fetch all test results, integrity reports, and violations for these students in parallel
+          const [resultsRes, integrityRes, violationsRes] = await Promise.all([
+            supabase.from('test_results').select('*').in('user_id', studentIds),
+            supabase.from('exam_integrity_reports').select('*').in('user_id', studentIds),
+            supabase.from('exam_violations').select('*').in('user_id', studentIds)
+          ]);
+          
+          const resultsData = resultsRes.data || [];
+          const integrityData = integrityRes.data || [];
+          const violationsData = violationsRes.data || [];
+          
+          const studentsWithDetails = profilesData.map(profile => {
+             const studentResults = resultsData.filter(r => r.user_id === profile.id);
+             const studentIntegrity = integrityData.filter(r => r.user_id === profile.id);
+             const studentViolations = violationsData.filter(r => r.user_id === profile.id);
+             
+             let strengths: string[] = [];
+             let weaknesses: string[] = [];
+             let opportunities: string[] = ["Attempt more Mock Tests", "Review incorrect questions in detail"];
+             let threats: string[] = ["Time management on lengthy exams", "Negative marking penalties"];
+             
+             studentResults.forEach((result: any) => {
+               const accuracy = result.total_questions > 0 ? (result.correct_count / result.total_questions) * 100 : 0;
+               if (accuracy >= 70) strengths.push(result.title || result.exam_type);
+               else if (accuracy <= 40) weaknesses.push(result.title || result.exam_type);
+               else opportunities.push(`Improve speed in ${result.title || result.exam_type}`);
+             });
+
+             return {
+               id: profile.id,
+               email: profile.email || `No Email Provided`,
+               full_name: profile.full_name || null,
+               class: profile.class || 'N/A',
+               board: profile.board || 'N/A',
+               aspiration: profile.aspiration || profile.board || 'Not Set',
+               batch: profile.batch || 'Unassigned',
+               school_name: profile.school_name || 'Not Provided',
+               phone: profile.phone || 'Not Provided',
+               total_tests: studentResults.length,
+               test_history: studentResults,
+               integrity_reports: studentIntegrity,
+               violations: studentViolations,
+               full_swot: {
+                 strengths: Array.from(new Set(strengths)).slice(0, 3),
+                 weaknesses: Array.from(new Set(weaknesses)).slice(0, 3),
+                 opportunities: Array.from(new Set(opportunities)).slice(0, 3),
+                 threats: threats.slice(0, 2)
+               },
+               strengths: Array.from(new Set(strengths)).slice(0, 2),
+               weaknesses: Array.from(new Set(weaknesses)).slice(0, 2)
+             };
+          });
+          
+          setStudents(studentsWithDetails);
         } else {
           setStudents([]);
         }
+      } catch (err) {
+        console.error("Error fetching student details:", err);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
     fetchStudentsAndSwot();
   }, []);
@@ -505,14 +560,14 @@ function StudentManagementView() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
           <div className="bg-slate-900 border border-white/10 rounded-3xl w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl relative animate-in zoom-in-95 p-5 md:p-8">
             <button 
-              onClick={() => setSelectedStudent(null)}
+              onClick={() => { setSelectedStudent(null); setExpandedTestId(null); setExpandedTestQuestions([]); }}
               className="absolute top-4 right-4 md:top-6 md:right-6 p-2 rounded-full hover:bg-white/10 text-white/50 hover:text-white transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
             
             <h2 className="text-2xl font-bold text-white mb-1">Student Report Card</h2>
-            <div className="flex flex-col gap-1 mb-6">
+            <div className="flex flex-col gap-1 mb-4">
               <p className="text-cyan-400 font-medium text-lg">{selectedStudent.full_name || selectedStudent.email}</p>
               <div className="flex items-center flex-wrap gap-2 text-xs md:text-sm text-white/50 mt-1">
                 <span className="font-mono bg-white/5 px-2 py-0.5 rounded break-all">ID: {selectedStudent.id}</span>
@@ -522,6 +577,26 @@ function StudentManagementView() {
                 <span className="text-orange-400 font-bold bg-orange-500/10 px-2 py-0.5 rounded">{selectedStudent.aspiration}</span>
                 <span className="hidden sm:inline">•</span>
                 <span className="text-green-400 font-medium bg-green-500/10 px-2 py-0.5 rounded">{selectedStudent.batch}</span>
+              </div>
+            </div>
+
+            {/* Student Personal details Section */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 p-4 rounded-2xl bg-white/5 border border-white/10 mb-8 text-xs sm:text-sm">
+              <div>
+                <span className="text-white/40 block mb-0.5">Email Address</span>
+                <span className="text-white font-semibold truncate block animate-pulse-none" title={selectedStudent.email}>{selectedStudent.email}</span>
+              </div>
+              <div>
+                <span className="text-white/40 block mb-0.5">Phone Number</span>
+                <span className="text-white font-semibold">{selectedStudent.phone || "Not Provided"}</span>
+              </div>
+              <div>
+                <span className="text-white/40 block mb-0.5">Educational Board</span>
+                <span className="text-white font-semibold">{selectedStudent.board || "Not Provided"}</span>
+              </div>
+              <div>
+                <span className="text-white/40 block mb-0.5">School / College</span>
+                <span className="text-white font-semibold truncate block" title={selectedStudent.school_name}>{selectedStudent.school_name || "Not Provided"}</span>
               </div>
             </div>
 
@@ -555,6 +630,88 @@ function StudentManagementView() {
               </div>
             </div>
 
+            {/* Exam Security & Integrity Section */}
+            <h3 className="text-lg font-bold mb-4 text-white/90 flex items-center gap-2">
+              <ShieldAlert className="w-5 h-5 text-red-500" /> Exam Security & Integrity Analysis
+            </h3>
+            
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-5 mb-8 space-y-4">
+              {(!selectedStudent.violations || selectedStudent.violations.length === 0) && (!selectedStudent.integrity_reports || selectedStudent.integrity_reports.length === 0) ? (
+                <div className="flex items-center gap-3 text-green-400 text-sm">
+                  <CheckCircle className="w-5 h-5 shrink-0" />
+                  <span>No security violations detected. Candidate has maintained full browser compliance.</span>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {/* Integrity report summary */}
+                  {selectedStudent.integrity_reports && selectedStudent.integrity_reports.length > 0 && (
+                    <div className="grid grid-cols-1 gap-3">
+                      {selectedStudent.integrity_reports.map((rep: any) => (
+                        <div key={rep.id} className="p-3 bg-slate-950/60 rounded-xl border border-white/5 text-xs md:text-sm">
+                          <div className="flex justify-between items-center mb-1">
+                            <span className="font-semibold text-white/60">Session Security Report</span>
+                            <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
+                              rep.status === 'normal' 
+                                ? 'bg-green-500/20 text-green-400' 
+                                : rep.status === 'warned'
+                                  ? 'bg-orange-500/20 text-orange-400'
+                                  : 'bg-red-500/20 text-red-400'
+                            }`}>
+                              Status: {rep.status.replace(/_/g, ' ')}
+                            </span>
+                          </div>
+                          <p className="text-white/80 leading-relaxed">{rep.violation_summary}</p>
+                          {rep.device_info && (
+                            <div className="text-[10px] text-white/40 mt-1 font-mono">
+                              Device: {rep.device_info.platform || "Unknown"} | {rep.device_info.screenWidth}x{rep.device_info.screenHeight}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Violations detail list */}
+                  {selectedStudent.violations && selectedStudent.violations.length > 0 && (
+                    <div className="space-y-2">
+                      <p className="text-xs font-bold text-white/50 uppercase tracking-widest ml-1">Individual Security Breaches ({selectedStudent.violations.length})</p>
+                      <div className="bg-slate-950/40 rounded-xl border border-white/5 overflow-hidden overflow-x-auto">
+                        <table className="w-full text-left text-xs min-w-[500px]">
+                          <thead className="bg-white/5 border-b border-white/10 text-white/50">
+                            <tr>
+                              <th className="p-2.5 font-semibold">Violation Type</th>
+                              <th className="p-2.5 font-semibold text-center">Action Taken</th>
+                              <th className="p-2.5 font-semibold text-right">Time Detected</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {selectedStudent.violations.map((v: any) => (
+                              <tr key={v.id} className="border-b border-white/5 hover:bg-white/5">
+                                <td className="p-2.5 text-white/80 font-medium flex items-center gap-1.5">
+                                  <AlertTriangle className="w-3.5 h-3.5 text-orange-500" />
+                                  {v.violation_type}
+                                </td>
+                                <td className="p-2.5 text-center">
+                                  <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                                    v.action_taken.includes("Warning") ? 'bg-orange-500/20 text-orange-400' : 'bg-red-500/20 text-red-400'
+                                  }`}>
+                                    {v.action_taken}
+                                  </span>
+                                </td>
+                                <td className="p-2.5 text-right text-white/40 font-mono">
+                                  {new Date(v.timestamp).toLocaleString()}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
             <h3 className="text-lg font-bold mb-4 text-white/90 flex items-center gap-2">
               <BookOpen className="w-5 h-5 text-cyan-400" /> Test History
             </h3>
@@ -565,20 +722,148 @@ function StudentManagementView() {
                      <th className="p-3 font-medium">Test Title</th>
                      <th className="p-3 font-medium text-center">Score</th>
                      <th className="p-3 font-medium text-center">Correct/Total</th>
-                     <th className="p-3 font-medium text-right">Date</th>
+                     <th className="p-3 font-medium text-center">Date</th>
+                     <th className="p-3 font-medium text-right">Actions</th>
                    </tr>
                  </thead>
                  <tbody>
-                   {selectedStudent.test_history.map((test: any) => (
-                     <tr key={test.id} className="border-b border-white/5 hover:bg-white/5">
-                       <td className="p-3 text-white/80">{test.title || test.exam_type}</td>
-                       <td className="p-3 text-center font-bold text-cyan-400">{test.score}</td>
-                       <td className="p-3 text-center text-white/50">{test.correct_count} / {test.total_questions}</td>
-                       <td className="p-3 text-right text-white/50">{new Date(test.created_at).toLocaleDateString()}</td>
-                     </tr>
-                   ))}
+                   {selectedStudent.test_history.map((test: any) => {
+                     const isExpanded = expandedTestId === test.test_id;
+                     return (
+                       <React.Fragment key={test.id}>
+                         <tr className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                           <td className="p-3 text-white/80">{test.title || test.exam_type}</td>
+                           <td className="p-3 text-center font-bold text-cyan-400">{test.score}</td>
+                           <td className="p-3 text-center text-white/50">{test.correct_count} / {test.total_questions}</td>
+                           <td className="p-3 text-center text-white/50">{new Date(test.created_at).toLocaleDateString()}</td>
+                           <td className="p-3 text-right">
+                             <button
+                               onClick={() => handleToggleReview(selectedStudent.id, test.test_id)}
+                               className={`text-xs font-semibold py-1.5 px-3 rounded-lg border transition-all ${
+                                 isExpanded
+                                   ? "bg-cyan-500/20 text-cyan-400 border-cyan-500/30"
+                                   : "bg-white/5 hover:bg-white/10 text-white/80 border-white/10"
+                                }`}
+                             >
+                               {isExpanded ? "Hide Review" : "Review Answers"}
+                             </button>
+                           </td>
+                         </tr>
+                         {isExpanded && (
+                           <tr>
+                             <td colSpan={5} className="p-4 bg-slate-950/60 border-b border-white/10">
+                               {loadingReview ? (
+                                 <div className="flex flex-col items-center justify-center py-10">
+                                   <Loader2 className="w-8 h-8 animate-spin text-cyan-400 mb-2" />
+                                   <span className="text-sm text-white/50">Fetching student responses...</span>
+                                 </div>
+                               ) : expandedTestQuestions.length === 0 ? (
+                                 <div className="text-center py-6 text-white/40 text-sm">
+                                   No questions found or recorded responses for this test.
+                                 </div>
+                               ) : (
+                                 <div className="space-y-6">
+                                   <div className="flex items-center justify-between">
+                                     <h4 className="text-sm font-bold uppercase tracking-wider text-cyan-400">
+                                       Question-by-Question Response Review
+                                     </h4>
+                                     <span className="text-xs text-white/50 font-mono">
+                                       {expandedTestQuestions.length} Questions
+                                     </span>
+                                   </div>
+                                   <div className="space-y-4 max-h-[450px] overflow-y-auto pr-2 custom-scrollbar">
+                                     {expandedTestQuestions.map((q, idx) => {
+                                       return (
+                                         <div key={q.id} className="p-4 rounded-xl bg-slate-900 border border-white/5 hover:border-white/10 transition-all space-y-3">
+                                           <div className="flex justify-between items-start gap-3">
+                                             <span className="text-xs font-bold text-white/40 uppercase">
+                                               Question {idx + 1}
+                                             </span>
+                                             {q.hasResponded ? (
+                                               q.isCorrect ? (
+                                                 <span className="px-2.5 py-0.5 rounded text-[10px] font-bold bg-green-500/20 text-green-400 flex items-center gap-1 border border-green-500/30">
+                                                   <CheckCircle className="w-3 h-3" /> Correct
+                                                 </span>
+                                               ) : (
+                                                 <span className="px-2.5 py-0.5 rounded text-[10px] font-bold bg-red-500/20 text-red-400 flex items-center gap-1 border border-red-500/30">
+                                                   <AlertTriangle className="w-3 h-3" /> Incorrect
+                                                 </span>
+                                               )
+                                             ) : (
+                                               <span className="px-2.5 py-0.5 rounded text-[10px] font-bold bg-slate-500/20 text-slate-400 border border-slate-500/30">
+                                                 Unanswered
+                                               </span>
+                                             )}
+                                           </div>
+                                           <p className="text-sm font-medium text-white/95 leading-relaxed whitespace-pre-wrap">
+                                             {q.text}
+                                           </p>
+                                           
+                                           {/* Options Grid */}
+                                           <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 mt-2">
+                                             {q.options.map((opt: any, optIdx: number) => {
+                                               const isSelected = opt.id === q.selectedOptionId;
+                                               const isCorrectOpt = opt.is_correct;
+                                               
+                                               let cardStyles = "bg-slate-950/40 border-white/5 text-white/60";
+                                               let indicator = null;
+                                               
+                                               if (isSelected) {
+                                                 if (isCorrectOpt) {
+                                                   cardStyles = "bg-green-500/10 border-green-500/30 text-green-400 font-semibold";
+                                                   indicator = (
+                                                     <span className="text-[10px] font-bold uppercase text-green-400 bg-green-500/20 px-1.5 py-0.5 rounded">
+                                                       Correct Choice
+                                                     </span>
+                                                   );
+                                                 } else {
+                                                   cardStyles = "bg-red-500/10 border-red-500/30 text-red-400 font-semibold";
+                                                   indicator = (
+                                                     <span className="text-[10px] font-bold uppercase text-red-400 bg-red-500/20 px-1.5 py-0.5 rounded">
+                                                       Wrong Choice
+                                                     </span>
+                                                   );
+                                                 }
+                                               } else if (isCorrectOpt) {
+                                                 cardStyles = "bg-green-500/5 border-green-500/20 text-green-400/80 font-medium";
+                                                 indicator = (
+                                                   <span className="text-[10px] font-bold uppercase text-green-500/20 px-1.5 py-0.5 rounded">
+                                                     Correct Answer
+                                                   </span>
+                                                 );
+                                               }
+                                               
+                                               return (
+                                                 <div key={opt.id} className={`flex items-center justify-between p-3 rounded-lg border text-xs transition-all ${cardStyles}`}>
+                                                   <div className="flex items-center gap-2.5 min-w-0">
+                                                     <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${
+                                                       isSelected 
+                                                         ? isCorrectOpt ? 'bg-green-500 text-slate-950' : 'bg-red-500 text-slate-950'
+                                                         : isCorrectOpt ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'bg-white/10 text-white/40'
+                                                     }`}>
+                                                       {String.fromCharCode(65 + optIdx)}
+                                                     </span>
+                                                     <span className="truncate" title={opt.text}>{opt.text}</span>
+                                                   </div>
+                                                   {indicator && <div className="shrink-0 ml-2">{indicator}</div>}
+                                                 </div>
+                                               );
+                                             })}
+                                           </div>
+                                         </div>
+                                       );
+                                     })}
+                                   </div>
+                                 </div>
+                               )}
+                             </td>
+                           </tr>
+                         )}
+                       </React.Fragment>
+                     );
+                   })}
                    {selectedStudent.test_history.length === 0 && (
-                     <tr><td colSpan={4} className="p-4 text-center text-white/30">No tests taken yet.</td></tr>
+                     <tr><td colSpan={5} className="p-4 text-center text-white/30">No tests taken yet.</td></tr>
                    )}
                  </tbody>
                </table>
