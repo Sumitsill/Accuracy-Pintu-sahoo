@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, Suspense } from "react";
+import React, { useState, useEffect, useCallback, Suspense, useRef } from "react";
 import {
   AlertTriangle, Clock, ChevronRight, CheckCircle2,
   AlertCircle, XCircle, SkipForward, Loader2, Target,
@@ -28,6 +28,7 @@ function SecureExamHallContent() {
   const [violationCount, setViolationCount] = useState(0);
   const [showWarningModal, setShowWarningModal] = useState(false);
   const [lastViolationType, setLastViolationType] = useState("");
+  const lastViolationTimeRef = useRef<number>(0);
   const [userId, setUserId] = useState<string>("");
   const [attemptNumber, setAttemptNumber] = useState<number>(1);
   
@@ -317,6 +318,14 @@ function SecureExamHallContent() {
 
   const triggerViolation = useCallback(async (type: string) => {
     if (!examActive || testCompleted) return;
+
+    // Throttle violations to prevent double-triggering (e.g. blur + visibilitychange + fullscreenchange in a single switch)
+    const now = Date.now();
+    if (now - lastViolationTimeRef.current < 2000) {
+      console.log("Ignored duplicate violation within cooldown period:", type);
+      return;
+    }
+    lastViolationTimeRef.current = now;
 
     // Log violation locally
     const currentCount = violationCount + 1;
