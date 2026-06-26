@@ -5,7 +5,7 @@ import {
   LayoutDashboard, Users, BookOpen, PenTool, Target, 
   Bell, Zap, LogOut, ChevronDown, Menu,
   Search, Eye, Send, Upload, Plus, MoreVertical, X, Loader2, FileUp, Trash2,
-  ShieldAlert, AlertTriangle, CheckCircle
+  ShieldAlert, AlertTriangle, CheckCircle, Mail, Phone, Award, GraduationCap
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
@@ -287,6 +287,142 @@ function AdminDashboardView({ displayName, setActiveTab }: { displayName: string
 }
 
 // -------------------------------------------------------------------
+// Question Response Review Section (Decoupled helper component)
+// -------------------------------------------------------------------
+function QuestionReviewSection({ questions, loading }: { questions: any[]; loading: boolean }) {
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-10">
+        <Loader2 className="w-8 h-8 animate-spin text-cyan-400 mb-2" />
+        <span className="text-sm text-white/50">Fetching student responses...</span>
+      </div>
+    );
+  }
+
+  if (questions.length === 0) {
+    return (
+      <div className="text-center py-6 text-white/40 text-sm">
+        No questions found or recorded responses for this test.
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6 animate-in fade-in duration-300">
+      <div className="flex items-center justify-between">
+        <h4 className="text-xs font-bold uppercase tracking-wider text-cyan-400">
+          Question-by-Question Response Review
+        </h4>
+        <span className="text-xs text-white/50 font-mono">
+          {questions.length} Questions
+        </span>
+      </div>
+      
+      <div className="space-y-4 max-h-[450px] overflow-y-auto pr-2 scrollbar-thin">
+        {questions.map((q, idx) => {
+          let borderGlow = "border-white/5 bg-slate-900";
+          if (q.hasResponded) {
+            borderGlow = q.isCorrect 
+              ? "border-green-500/30 bg-slate-900/60 shadow-[0_0_15px_rgba(34,197,94,0.02)]" 
+              : "border-red-500/30 bg-slate-900/60 shadow-[0_0_15px_rgba(239,68,68,0.02)]";
+          }
+
+          return (
+            <div key={q.id} className={`p-5 rounded-2xl border transition-all space-y-4 ${borderGlow}`}>
+              <div className="flex justify-between items-start gap-3 flex-wrap">
+                <span className="text-xs font-extrabold text-white/40 uppercase tracking-wider">
+                  Question {idx + 1}
+                </span>
+                
+                {q.hasResponded ? (
+                  q.isCorrect ? (
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-green-500/10 text-green-400 flex items-center gap-1 border border-green-500/20">
+                      <CheckCircle className="w-3 h-3" /> Correct
+                    </span>
+                  ) : (
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-red-500/10 text-red-400 flex items-center gap-1 border border-red-500/20">
+                      <AlertTriangle className="w-3 h-3" /> Incorrect
+                    </span>
+                  )
+                ) : (
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-500/10 text-slate-400 border border-slate-500/20">
+                    Unanswered
+                  </span>
+                )}
+              </div>
+
+              <p className="text-sm font-semibold text-white/95 leading-relaxed whitespace-pre-wrap">
+                {q.text}
+              </p>
+
+              {/* Options Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
+                {q.options.map((opt: any, optIdx: number) => {
+                  const isSelected = opt.id === q.selectedOptionId;
+                  const isCorrectOpt = opt.is_correct;
+
+                  let cardStyles = "bg-slate-950/40 border-white/5 text-white/60";
+                  let indicator = null;
+
+                  if (isSelected) {
+                    if (isCorrectOpt) {
+                      cardStyles = "bg-green-500/10 border-green-500/30 text-green-400 font-bold shadow-[0_0_10px_rgba(34,197,94,0.1)]";
+                      indicator = (
+                        <span className="text-[9px] font-extrabold uppercase text-green-400 bg-green-500/15 px-2 py-0.5 rounded-full border border-green-500/20">
+                          Selected Correct
+                        </span>
+                      );
+                    } else {
+                      cardStyles = "bg-red-500/10 border-red-500/30 text-red-400 font-bold shadow-[0_0_10px_rgba(239,68,68,0.1)]";
+                      indicator = (
+                        <span className="text-[9px] font-extrabold uppercase text-red-400 bg-red-500/15 px-2 py-0.5 rounded-full border border-red-500/20">
+                          Selected Wrong
+                        </span>
+                      );
+                    }
+                  } else if (isCorrectOpt) {
+                    cardStyles = "bg-green-500/5 border-green-500/20 text-green-400/80 font-bold";
+                    indicator = (
+                      <span className="text-[9px] font-extrabold uppercase text-green-400/80 bg-green-500/10 px-2 py-0.5 rounded-full border border-green-500/10">
+                        Correct Answer
+                      </span>
+                    );
+                  }
+
+                  return (
+                    <div key={opt.id} className={`flex items-center justify-between p-3 rounded-xl border text-xs transition-all ${cardStyles}`}>
+                      <div className="flex items-center gap-3 min-w-0">
+                        <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${
+                          isSelected 
+                            ? isCorrectOpt ? 'bg-green-500 text-slate-950' : 'bg-red-500 text-slate-950'
+                            : isCorrectOpt ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'bg-white/5 text-white/40 border border-white/10'
+                        }`}>
+                          {String.fromCharCode(65 + optIdx)}
+                        </span>
+                        <span className="truncate" title={opt.text}>{opt.text}</span>
+                      </div>
+                      {indicator && <div className="shrink-0 ml-2">{indicator}</div>}
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Add Explanation content in Admin View if available */}
+              {q.explanation && (
+                <div className="mt-3 p-4 bg-slate-950/80 border border-white/5 rounded-xl border-l-2 border-l-cyan-500 text-xs">
+                  <span className="font-bold text-cyan-400 uppercase tracking-widest block mb-1">Explanation & Solutions</span>
+                  <p className="text-white/60 leading-relaxed whitespace-pre-wrap">{q.explanation}</p>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// -------------------------------------------------------------------
 // Student Management View
 // -------------------------------------------------------------------
 function StudentManagementView() {
@@ -297,6 +433,105 @@ function StudentManagementView() {
   const [selectedBatch, setSelectedBatch] = useState("All Batches");
   const [selectedClass, setSelectedClass] = useState("All Classes");
   const [selectedExam, setSelectedExam] = useState("All Exams");
+
+  // Subject-wise stats state
+  const [subjectStatsByTest, setSubjectStatsByTest] = useState<Record<string, Record<string, any>>>({});
+  const [loadingStudentStats, setLoadingStudentStats] = useState(false);
+
+  const loadStudentStats = async (student: any) => {
+    if (!student || !student.test_history || student.test_history.length === 0) {
+      setSubjectStatsByTest({});
+      return;
+    }
+    
+    setLoadingStudentStats(true);
+    try {
+      const testIds = Array.from(new Set(student.test_history.map((t: any) => t.test_id))) as string[];
+      
+      // Fetch all questions for these tests
+      const { data: questionsData, error: qError } = await supabase
+        .from('questions')
+        .select('id, test_id, subject, marks, negative_marks')
+        .in('test_id', testIds);
+        
+      if (qError) throw qError;
+      
+      // Fetch all responses for this student and these tests
+      const { data: responsesData, error: rError } = await supabase
+        .from('user_responses')
+        .select('test_id, question_id, selected_option_id, is_correct, attempt_number')
+        .eq('user_id', student.id)
+        .in('test_id', testIds);
+        
+      if (rError) throw rError;
+      
+      const statsByTestAttempt: Record<string, Record<string, { score: number; correct: number; incorrect: number; total: number; attempted: number }>> = {};
+      
+      // Initialize subject stats for all questions in all attempts
+      questionsData?.forEach((q: any) => {
+        const sub = q.subject || "Physics";
+        const attemptsForTest = student.test_history
+          .filter((t: any) => t.test_id === q.test_id)
+          .map((t: any) => t.attempt_number);
+          
+        attemptsForTest.forEach((attemptNum: number) => {
+          const groupKey = `${q.test_id}_${attemptNum}`;
+          if (!statsByTestAttempt[groupKey]) {
+            statsByTestAttempt[groupKey] = {};
+          }
+          if (!statsByTestAttempt[groupKey][sub]) {
+            statsByTestAttempt[groupKey][sub] = { score: 0, correct: 0, incorrect: 0, total: 0, attempted: 0 };
+          }
+          statsByTestAttempt[groupKey][sub].total++;
+        });
+      });
+      
+      // Add data from actual user responses
+      responsesData?.forEach((r: any) => {
+        const attemptNum = r.attempt_number || 1;
+        const groupKey = `${r.test_id}_${attemptNum}`;
+        const q = questionsData?.find((x: any) => x.id === r.question_id);
+        if (r.selected_option_id && q) {
+          const sub = q.subject || "Physics";
+          const qMarks = q.marks !== undefined && q.marks !== null ? q.marks : 4;
+          const qNeg = q.negative_marks !== undefined && q.negative_marks !== null ? q.negative_marks : 1;
+          
+          if (!statsByTestAttempt[groupKey]) {
+            statsByTestAttempt[groupKey] = {};
+          }
+          if (!statsByTestAttempt[groupKey][sub]) {
+            statsByTestAttempt[groupKey][sub] = { score: 0, correct: 0, incorrect: 0, total: 0, attempted: 0 };
+          }
+          
+          statsByTestAttempt[groupKey][sub].attempted++;
+          if (r.is_correct) {
+            statsByTestAttempt[groupKey][sub].score += qMarks;
+            statsByTestAttempt[groupKey][sub].correct++;
+          } else {
+            statsByTestAttempt[groupKey][sub].score -= qNeg;
+            statsByTestAttempt[groupKey][sub].incorrect++;
+          }
+        }
+      });
+      
+      setSubjectStatsByTest(statsByTestAttempt);
+    } catch (err) {
+      console.error("Failed to load student subject statistics:", err);
+    } finally {
+      setLoadingStudentStats(false);
+    }
+  };
+
+  const handleSelectStudent = (student: any) => {
+    setSelectedStudent(student);
+    setExpandedTestId(null);
+    setExpandedTestQuestions([]);
+    if (student) {
+      loadStudentStats(student);
+    } else {
+      setSubjectStatsByTest({});
+    }
+  };
 
   // Dynamic Question-by-Question Response Review State
   const [expandedTestId, setExpandedTestId] = useState<string | null>(null);
@@ -318,7 +553,7 @@ function StudentManagementView() {
       // 1. Fetch questions and options for this test
       const { data: questionsData, error: qError } = await supabase
         .from('questions')
-        .select('id, text, options(id, text, is_correct)')
+        .select('id, text, explanation, options(id, text, is_correct)')
         .eq('test_id', testId)
         .order('created_at', { ascending: true });
         
@@ -339,6 +574,7 @@ function StudentManagementView() {
         return {
           id: q.id,
           text: q.text,
+          explanation: q.explanation,
           options: q.options || [],
           selectedOptionId: userResp?.selected_option_id || null,
           isCorrect: userResp?.is_correct || false,
@@ -376,9 +612,23 @@ function StudentManagementView() {
           const violationsData = violationsRes.data || [];
           
           const studentsWithDetails = profilesData.map(profile => {
-             const studentResults = resultsData.filter(r => r.user_id === profile.id);
+             const rawStudentResults = resultsData.filter(r => r.user_id === profile.id);
              const studentIntegrity = integrityData.filter(r => r.user_id === profile.id);
              const studentViolations = violationsData.filter(r => r.user_id === profile.id);
+             
+             // Sort chronologically to assign attempt numbers
+             const resultsByTest: Record<string, any[]> = {};
+             const chronological = [...rawStudentResults].sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+             chronological.forEach((res) => {
+               if (!resultsByTest[res.test_id]) {
+                 resultsByTest[res.test_id] = [];
+               }
+               resultsByTest[res.test_id].push(res);
+               res.attempt_number = resultsByTest[res.test_id].length;
+             });
+
+             // Sort descending for display
+             const studentResults = [...chronological].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
              
              let strengths: string[] = [];
              let weaknesses: string[] = [];
@@ -608,7 +858,7 @@ function StudentManagementView() {
                 </thead>
                 <tbody>
                   {filteredStudents.map(s => (
-                    <tr key={s.id} onClick={() => setSelectedStudent(s)} className="border-b border-white/5 hover:bg-white/5 transition-colors cursor-pointer">
+                    <tr key={s.id} onClick={() => handleSelectStudent(s)} className="border-b border-white/5 hover:bg-white/5 transition-colors cursor-pointer">
                       <td className="p-4">
                         <div className="font-medium text-white">{s.full_name || s.email}</div>
                         <div className="text-xs text-white/50 font-mono mt-1">ID: {s.id.substring(0,8)}</div>
@@ -635,7 +885,7 @@ function StudentManagementView() {
               {filteredStudents.map(s => (
                 <div 
                   key={s.id} 
-                  onClick={() => setSelectedStudent(s)}
+                  onClick={() => handleSelectStudent(s)}
                   className="p-5 rounded-2xl bg-white/5 border border-white/10 hover:border-orange-500/30 transition-all space-y-4 cursor-pointer"
                 >
                   <div className="flex justify-between items-start">
@@ -681,7 +931,7 @@ function StudentManagementView() {
                   </div>
 
                   <button 
-                    onClick={(e) => { e.stopPropagation(); setSelectedStudent(s); }}
+                    onClick={(e) => { e.stopPropagation(); handleSelectStudent(s); }}
                     className="w-full text-center py-2.5 bg-white/5 hover:bg-white/10 text-white font-bold text-sm rounded-xl transition-colors border border-white/10"
                   >
                     View Detailed Report Card
@@ -695,334 +945,538 @@ function StudentManagementView() {
 
       {/* Detailed Student Report Modal */}
       {selectedStudent && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
-          <div className="bg-slate-900 border border-white/10 rounded-3xl w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl relative animate-in zoom-in-95 p-5 md:p-8">
-            <button 
-              onClick={() => { setSelectedStudent(null); setExpandedTestId(null); setExpandedTestQuestions([]); }}
-              className="absolute top-4 right-4 md:top-6 md:right-6 p-2 rounded-full hover:bg-white/10 text-white/50 hover:text-white transition-colors"
-            >
-              <X className="w-5 h-5" />
-            </button>
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-2 sm:p-4 bg-slate-950/90 backdrop-blur-md animate-in fade-in duration-300">
+          <div className="bg-[#0f172a] border border-white/10 rounded-[2rem] w-full max-w-4xl h-[95vh] md:h-[90vh] flex flex-col shadow-[0_0_50px_rgba(249,115,22,0.15)] relative overflow-hidden animate-in zoom-in-95 duration-300">
             
-            <h2 className="text-2xl font-bold text-white mb-1">Student Report Card</h2>
-            <div className="flex flex-col gap-1 mb-4">
-              <p className="text-cyan-400 font-medium text-lg">{selectedStudent.full_name || selectedStudent.email}</p>
-              <div className="flex items-center flex-wrap gap-2 text-xs md:text-sm text-white/50 mt-1">
-                <span className="font-mono bg-white/5 px-2 py-0.5 rounded break-all">ID: {selectedStudent.id}</span>
-                <span className="hidden sm:inline">•</span>
-                <span className="bg-white/5 px-2 py-0.5 rounded">Class {selectedStudent.class}</span>
-                <span className="hidden sm:inline">•</span>
-                <span className="text-orange-400 font-bold bg-orange-500/10 px-2 py-0.5 rounded">{selectedStudent.aspiration}</span>
-                <span className="hidden sm:inline">•</span>
-                <span className="text-green-400 font-medium bg-green-500/10 px-2 py-0.5 rounded">{selectedStudent.batch}</span>
-              </div>
-            </div>
+            {/* Modal Ambient Glows */}
+            <div className="absolute top-[-10%] left-[-10%] w-[300px] h-[300px] bg-orange-600/10 rounded-full blur-[80px] pointer-events-none" />
+            <div className="absolute bottom-[-10%] right-[-10%] w-[300px] h-[300px] bg-red-600/10 rounded-full blur-[80px] pointer-events-none" />
 
-            {/* Student Personal details Section */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 p-4 rounded-2xl bg-white/5 border border-white/10 mb-8 text-xs sm:text-sm">
+            {/* Modal Header (Sticky) */}
+            <div className="p-5 md:p-6 pb-4 border-b border-white/10 flex justify-between items-start shrink-0 relative z-10 bg-slate-900/40 backdrop-blur-md">
               <div>
-                <span className="text-white/40 block mb-0.5">Email Address</span>
-                <span className="text-white font-semibold truncate block animate-pulse-none" title={selectedStudent.email}>{selectedStudent.email}</span>
-              </div>
-              <div>
-                <span className="text-white/40 block mb-0.5">Phone Number</span>
-                <span className="text-white font-semibold">{selectedStudent.phone || "Not Provided"}</span>
-              </div>
-              <div>
-                <span className="text-white/40 block mb-0.5">Educational Board</span>
-                <span className="text-white font-semibold">{selectedStudent.board || "Not Provided"}</span>
-              </div>
-              <div>
-                <span className="text-white/40 block mb-0.5">School / College</span>
-                <span className="text-white font-semibold truncate block" title={selectedStudent.school_name}>{selectedStudent.school_name || "Not Provided"}</span>
-              </div>
-            </div>
-
-            <h3 className="text-lg font-bold mb-4 text-white/90 flex items-center gap-2">
-              <Target className="w-5 h-5 text-green-400" /> Performance SWOT Analysis
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-              <div className="bg-white/5 border border-white/10 rounded-2xl p-5">
-                <h4 className="text-green-400 font-bold mb-3">Strengths (S)</h4>
-                <ul className="text-sm text-white/70 space-y-1">
-                  {selectedStudent.full_swot.strengths.length > 0 ? selectedStudent.full_swot.strengths.map((x: string, i: number) => <li key={i}>• {x}</li>) : <li>Keep practicing to build strengths.</li>}
-                </ul>
-              </div>
-              <div className="bg-white/5 border border-white/10 rounded-2xl p-5">
-                <h4 className="text-red-400 font-bold mb-3">Weaknesses (W)</h4>
-                <ul className="text-sm text-white/70 space-y-1">
-                  {selectedStudent.full_swot.weaknesses.length > 0 ? selectedStudent.full_swot.weaknesses.map((x: string, i: number) => <li key={i}>• {x}</li>) : <li>No major weaknesses.</li>}
-                </ul>
-              </div>
-              <div className="bg-white/5 border border-white/10 rounded-2xl p-5">
-                <h4 className="text-blue-400 font-bold mb-3">Opportunities (O)</h4>
-                <ul className="text-sm text-white/70 space-y-1">
-                  {selectedStudent.full_swot.opportunities.map((x: string, i: number) => <li key={i}>• {x}</li>)}
-                </ul>
-              </div>
-              <div className="bg-white/5 border border-white/10 rounded-2xl p-5">
-                <h4 className="text-orange-400 font-bold mb-3">Threats (T)</h4>
-                <ul className="text-sm text-white/70 space-y-1">
-                  {selectedStudent.full_swot.threats.map((x: string, i: number) => <li key={i}>• {x}</li>)}
-                </ul>
-              </div>
-            </div>
-
-            {/* Exam Security & Integrity Section */}
-            <h3 className="text-lg font-bold mb-4 text-white/90 flex items-center gap-2">
-              <ShieldAlert className="w-5 h-5 text-red-500" /> Exam Security & Integrity Analysis
-            </h3>
-            
-            <div className="bg-white/5 border border-white/10 rounded-2xl p-5 mb-8 space-y-4">
-              {(!selectedStudent.violations || selectedStudent.violations.length === 0) && (!selectedStudent.integrity_reports || selectedStudent.integrity_reports.length === 0) ? (
-                <div className="flex items-center gap-3 text-green-400 text-sm">
-                  <CheckCircle className="w-5 h-5 shrink-0" />
-                  <span>No security violations detected. Candidate has maintained full browser compliance.</span>
+                <span className="px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/30 text-orange-500 text-[10px] font-bold uppercase tracking-wider mb-2 inline-block">
+                  Student Profile Report
+                </span>
+                <h2 className="text-2xl md:text-3xl font-black tracking-tight text-white mb-2 leading-none">
+                  {selectedStudent.full_name || "Roster Student"}
+                </h2>
+                <div className="flex flex-wrap items-center gap-2 text-xs text-white/50">
+                  <span className="font-mono bg-white/5 px-2 py-0.5 rounded-md border border-white/10">
+                    ID: {selectedStudent.id.substring(0,8)}
+                  </span>
+                  <span className="hidden sm:inline text-white/30">•</span>
+                  <span className="bg-white/5 px-2.5 py-0.5 rounded-md border border-white/10 font-semibold text-white/70">
+                    Class {selectedStudent.class}
+                  </span>
+                  <span className="hidden sm:inline text-white/30">•</span>
+                  <span className="text-cyan-400 font-bold bg-cyan-500/10 px-2.5 py-0.5 rounded-md border border-cyan-500/20">
+                    {selectedStudent.aspiration}
+                  </span>
+                  <span className="hidden sm:inline text-white/30">•</span>
+                  <span className="text-orange-400 font-medium bg-orange-500/10 px-2.5 py-0.5 rounded-md border border-orange-500/20">
+                    {selectedStudent.batch}
+                  </span>
                 </div>
-              ) : (
-                <div className="space-y-4">
-                  {/* Integrity report summary */}
-                  {selectedStudent.integrity_reports && selectedStudent.integrity_reports.length > 0 && (
-                    <div className="grid grid-cols-1 gap-3">
-                      {selectedStudent.integrity_reports.map((rep: any) => (
-                        <div key={rep.id} className="p-3 bg-slate-950/60 rounded-xl border border-white/5 text-xs md:text-sm">
-                          <div className="flex justify-between items-center mb-1 gap-2 flex-wrap">
-                            <span className="font-semibold text-white/60">Session Security Report</span>
-                            <div className="flex items-center gap-2">
-                              <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
-                                rep.status === 'normal' 
-                                  ? 'bg-green-500/20 text-green-400' 
-                                  : rep.status === 'warned'
-                                    ? 'bg-orange-500/20 text-orange-400'
-                                    : 'bg-red-500/20 text-red-400'
-                              }`}>
-                                Status: {rep.status.replace(/_/g, ' ')}
-                              </span>
-                              {(rep.status === 'submitted_due_to_violation' || rep.status === 'warned') && (
-                                <button
-                                  onClick={() => handleAllowReattempt(selectedStudent.id, rep.test_id)}
-                                  className="px-2.5 py-1 text-[10px] font-bold uppercase bg-red-500/20 hover:bg-red-500/40 text-red-400 rounded-lg border border-red-500/30 transition-all cursor-pointer"
-                                >
-                                  Allow this user to re attempt the test
-                                </button>
-                              )}
-                            </div>
-                          </div>
-                          <p className="text-white/80 leading-relaxed">{rep.violation_summary}</p>
-                          {rep.device_info && (
-                            <div className="text-[10px] text-white/40 mt-1 font-mono">
-                              Device: {rep.device_info.platform || "Unknown"} | {rep.device_info.screenWidth}x{rep.device_info.screenHeight}
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  )}
+              </div>
+              <button 
+                onClick={() => { handleSelectStudent(null); }}
+                className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-white/50 hover:text-white hover:bg-white/10 hover:border-white/20 transition-all cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
 
-                  {/* Violations detail list */}
-                  {selectedStudent.violations && selectedStudent.violations.length > 0 && (
-                    <div className="space-y-2">
-                      <p className="text-xs font-bold text-white/50 uppercase tracking-widest ml-1">Individual Security Breaches ({selectedStudent.violations.length})</p>
-                      <div className="bg-slate-950/40 rounded-xl border border-white/5 overflow-hidden overflow-x-auto">
-                        <table className="w-full text-left text-xs min-w-[500px]">
-                          <thead className="bg-white/5 border-b border-white/10 text-white/50">
-                            <tr>
-                              <th className="p-2.5 font-semibold">Violation Type</th>
-                              <th className="p-2.5 font-semibold text-center">Action Taken</th>
-                              <th className="p-2.5 font-semibold text-right">Time Detected</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {selectedStudent.violations.map((v: any) => (
-                              <tr key={v.id} className="border-b border-white/5 hover:bg-white/5">
-                                <td className="p-2.5 text-white/80 font-medium flex items-center gap-1.5">
-                                  <AlertTriangle className="w-3.5 h-3.5 text-orange-500" />
-                                  {v.violation_type}
-                                </td>
-                                <td className="p-2.5 text-center">
-                                  <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                                    v.action_taken.includes("Warning") ? 'bg-orange-500/20 text-orange-400' : 'bg-red-500/20 text-red-400'
-                                  }`}>
-                                    {v.action_taken}
-                                  </span>
-                                </td>
-                                <td className="p-2.5 text-right text-white/40 font-mono">
-                                  {new Date(v.timestamp).toLocaleString()}
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
+            {/* Modal Body (Scrollable) */}
+            <div className="flex-1 overflow-y-auto p-5 md:p-6 space-y-8 scrollbar-thin relative z-10">
+              
+              {/* Student Personal details Section */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-col justify-between hover:border-white/20 transition-colors">
+                  <span className="text-white/40 text-[10px] font-bold uppercase tracking-wider block mb-1.5 flex items-center gap-1"><Mail className="w-3.5 h-3.5" /> Email Address</span>
+                  <span className="text-white text-sm font-semibold truncate block" title={selectedStudent.email}>{selectedStudent.email}</span>
+                </div>
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-col justify-between hover:border-white/20 transition-colors">
+                  <span className="text-white/40 text-[10px] font-bold uppercase tracking-wider block mb-1.5 flex items-center gap-1"><Phone className="w-3.5 h-3.5" /> Phone Number</span>
+                  <span className="text-white text-sm font-semibold truncate block">{selectedStudent.phone || "Not Provided"}</span>
+                </div>
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-col justify-between hover:border-white/20 transition-colors">
+                  <span className="text-white/40 text-[10px] font-bold uppercase tracking-wider block mb-1.5 flex items-center gap-1"><Award className="w-3.5 h-3.5" /> Educational Board</span>
+                  <span className="text-white text-sm font-semibold truncate block">{selectedStudent.board || "Not Provided"}</span>
+                </div>
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-col justify-between hover:border-white/20 transition-colors">
+                  <span className="text-white/40 text-[10px] font-bold uppercase tracking-wider block mb-1.5 flex items-center gap-1"><GraduationCap className="w-3.5 h-3.5" /> School / College</span>
+                  <span className="text-white text-sm font-semibold truncate block" title={selectedStudent.school_name}>{selectedStudent.school_name || "Not Provided"}</span>
+                </div>
+              </div>
+
+              {/* Subject-Wise Cumulative Summary Card */}
+              {selectedStudent.test_history && selectedStudent.test_history.length > 0 && (
+                <div className="bg-slate-950/40 p-5 rounded-3xl border border-white/10 space-y-4">
+                  <h3 className="text-base font-extrabold text-white flex items-center gap-2">
+                    <Target className="w-5 h-5 text-cyan-400" /> Overall Subject-Wise Statistics
+                  </h3>
+                  
+                  {loadingStudentStats ? (
+                    <div className="flex items-center gap-3 py-6 justify-center text-white/40 text-sm">
+                      <Loader2 className="w-5 h-5 animate-spin text-cyan-400" />
+                      <span>Computing subject breakdowns...</span>
+                    </div>
+                  ) : Object.keys(subjectStatsByTest).length === 0 ? (
+                    <p className="text-xs text-white/30 text-center py-4">No subject statistics recorded yet.</p>
+                  ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                      {(() => {
+                        // Compute cumulative subject stats
+                        const cumulative: Record<string, { score: number; correct: number; incorrect: number; total: number; attempted: number }> = {};
+                        selectedStudent.test_history.forEach((test: any) => {
+                          const testKey = `${test.test_id}_${test.attempt_number}`;
+                          const stats = subjectStatsByTest[testKey];
+                          if (stats) {
+                            Object.entries(stats).forEach(([sub, stat]: any) => {
+                              if (!cumulative[sub]) {
+                                cumulative[sub] = { score: 0, correct: 0, incorrect: 0, total: 0, attempted: 0 };
+                              }
+                              cumulative[sub].score += stat.score;
+                              cumulative[sub].correct += stat.correct;
+                              cumulative[sub].incorrect += stat.incorrect;
+                              cumulative[sub].total += stat.total;
+                              cumulative[sub].attempted += stat.attempted;
+                            });
+                          }
+                        });
+
+                        if (Object.keys(cumulative).length === 0) {
+                          return <div className="col-span-full text-xs text-white/30 text-center py-2">No subject scores found.</div>;
+                        }
+
+                        return Object.entries(cumulative).map(([sub, stat]) => {
+                          const accuracy = stat.attempted > 0 ? ((stat.correct / stat.attempted) * 100).toFixed(0) : "0";
+                          return (
+                            <div key={sub} className="p-4 bg-white/5 border border-white/5 rounded-2xl hover:border-cyan-500/30 transition-colors flex flex-col justify-between">
+                              <div className="flex justify-between items-start mb-2.5">
+                                <span className="text-sm font-bold text-white">{sub}</span>
+                                <span className="px-2.5 py-0.5 rounded text-[10px] font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                                  {stat.score} Marks
+                                </span>
+                              </div>
+                              <div className="space-y-1.5 text-xs text-white/50 pt-2 border-t border-white/5">
+                                <div className="flex justify-between items-center">
+                                  <span className="text-[10px] uppercase text-white/40 font-semibold">Attempted</span>
+                                  <span className="text-cyan-400 font-bold">{stat.attempted} / {stat.total}</span>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                  <span className="text-[10px] uppercase text-white/40 font-semibold">Correct</span>
+                                  <span className="text-green-400 font-bold">{stat.correct}</span>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                  <span className="text-[10px] uppercase text-white/40 font-semibold">Wrong</span>
+                                  <span className="text-red-400 font-bold">{stat.incorrect}</span>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                  <span className="text-[10px] uppercase text-white/40 font-semibold">Unattended</span>
+                                  <span className="text-amber-500 font-bold">{stat.total - stat.attempted}</span>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                  <span className="text-[10px] uppercase text-white/40 font-semibold">Accuracy</span>
+                                  <span className="text-white font-bold">{accuracy}%</span>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        });
+                      })()}
                     </div>
                   )}
                 </div>
               )}
-            </div>
 
-            <h3 className="text-lg font-bold mb-4 text-white/90 flex items-center gap-2">
-              <BookOpen className="w-5 h-5 text-cyan-400" /> Test History
-            </h3>
-            <div className="bg-white/5 rounded-xl border border-white/10 overflow-hidden overflow-x-auto">
-               <table className="w-full text-left text-sm min-w-[500px]">
-                 <thead className="bg-white/5 border-b border-white/10 text-white/50">
-                   <tr>
-                     <th className="p-3 font-medium">Test Title</th>
-                     <th className="p-3 font-medium text-center">Score</th>
-                     <th className="p-3 font-medium text-center">Correct/Total</th>
-                     <th className="p-3 font-medium text-center">Date</th>
-                     <th className="p-3 font-medium text-right">Actions</th>
-                   </tr>
-                 </thead>
-                 <tbody>
-                   {selectedStudent.test_history.map((test: any) => {
-                     const isExpanded = expandedTestId === test.test_id;
-                     return (
-                       <React.Fragment key={test.id}>
-                         <tr className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                           <td className="p-3 text-white/80">{test.title || test.exam_type}</td>
-                           <td className="p-3 text-center font-bold text-cyan-400">{test.score}</td>
-                           <td className="p-3 text-center text-white/50">{test.correct_count} / {test.total_questions}</td>
-                           <td className="p-3 text-center text-white/50">{new Date(test.created_at).toLocaleDateString()}</td>
-                           <td className="p-3 text-right flex justify-end gap-2">
-                              <button
-                                onClick={() => handleToggleReview(selectedStudent.id, test.test_id)}
-                                className={`text-xs font-semibold py-1.5 px-3 rounded-lg border transition-all ${
-                                  isExpanded
-                                    ? "bg-cyan-500/20 text-cyan-400 border-cyan-500/30"
-                                    : "bg-white/5 hover:bg-white/10 text-white/80 border-white/10"
-                                 }`}
-                              >
-                                {isExpanded ? "Hide Review" : "Review Answers"}
-                              </button>
-                              <button
-                                onClick={() => handleAllowReattempt(selectedStudent.id, test.test_id)}
-                                className="text-xs font-semibold py-1.5 px-3 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/20 hover:border-red-500/30 transition-all cursor-pointer"
-                              >
-                                Allow Re-attempt
-                              </button>
-                            </td>
-                         </tr>
-                         {isExpanded && (
-                           <tr>
-                             <td colSpan={5} className="p-4 bg-slate-950/60 border-b border-white/10">
-                               {loadingReview ? (
-                                 <div className="flex flex-col items-center justify-center py-10">
-                                   <Loader2 className="w-8 h-8 animate-spin text-cyan-400 mb-2" />
-                                   <span className="text-sm text-white/50">Fetching student responses...</span>
-                                 </div>
-                               ) : expandedTestQuestions.length === 0 ? (
-                                 <div className="text-center py-6 text-white/40 text-sm">
-                                   No questions found or recorded responses for this test.
-                                 </div>
-                               ) : (
-                                 <div className="space-y-6">
-                                   <div className="flex items-center justify-between">
-                                     <h4 className="text-sm font-bold uppercase tracking-wider text-cyan-400">
-                                       Question-by-Question Response Review
-                                     </h4>
-                                     <span className="text-xs text-white/50 font-mono">
-                                       {expandedTestQuestions.length} Questions
-                                     </span>
-                                   </div>
-                                   <div className="space-y-4 max-h-[450px] overflow-y-auto pr-2 custom-scrollbar">
-                                     {expandedTestQuestions.map((q, idx) => {
-                                       return (
-                                         <div key={q.id} className="p-4 rounded-xl bg-slate-900 border border-white/5 hover:border-white/10 transition-all space-y-3">
-                                           <div className="flex justify-between items-start gap-3">
-                                             <span className="text-xs font-bold text-white/40 uppercase">
-                                               Question {idx + 1}
-                                             </span>
-                                             {q.hasResponded ? (
-                                               q.isCorrect ? (
-                                                 <span className="px-2.5 py-0.5 rounded text-[10px] font-bold bg-green-500/20 text-green-400 flex items-center gap-1 border border-green-500/30">
-                                                   <CheckCircle className="w-3 h-3" /> Correct
-                                                 </span>
-                                               ) : (
-                                                 <span className="px-2.5 py-0.5 rounded text-[10px] font-bold bg-red-500/20 text-red-400 flex items-center gap-1 border border-red-500/30">
-                                                   <AlertTriangle className="w-3 h-3" /> Incorrect
-                                                 </span>
-                                               )
-                                             ) : (
-                                               <span className="px-2.5 py-0.5 rounded text-[10px] font-bold bg-slate-500/20 text-slate-400 border border-slate-500/30">
-                                                 Unanswered
-                                               </span>
-                                             )}
-                                           </div>
-                                           <p className="text-sm font-medium text-white/95 leading-relaxed whitespace-pre-wrap">
-                                             {q.text}
-                                           </p>
-                                           
-                                           {/* Options Grid */}
-                                           <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 mt-2">
-                                             {q.options.map((opt: any, optIdx: number) => {
-                                               const isSelected = opt.id === q.selectedOptionId;
-                                               const isCorrectOpt = opt.is_correct;
-                                               
-                                               let cardStyles = "bg-slate-950/40 border-white/5 text-white/60";
-                                               let indicator = null;
-                                               
-                                               if (isSelected) {
-                                                 if (isCorrectOpt) {
-                                                   cardStyles = "bg-green-500/10 border-green-500/30 text-green-400 font-semibold";
-                                                   indicator = (
-                                                     <span className="text-[10px] font-bold uppercase text-green-400 bg-green-500/20 px-1.5 py-0.5 rounded">
-                                                       Correct Choice
-                                                     </span>
-                                                   );
-                                                 } else {
-                                                   cardStyles = "bg-red-500/10 border-red-500/30 text-red-400 font-semibold";
-                                                   indicator = (
-                                                     <span className="text-[10px] font-bold uppercase text-red-400 bg-red-500/20 px-1.5 py-0.5 rounded">
-                                                       Wrong Choice
-                                                     </span>
-                                                   );
-                                                 }
-                                               } else if (isCorrectOpt) {
-                                                 cardStyles = "bg-green-500/5 border-green-500/20 text-green-400/80 font-medium";
-                                                 indicator = (
-                                                   <span className="text-[10px] font-bold uppercase text-green-500/20 px-1.5 py-0.5 rounded">
-                                                     Correct Answer
-                                                   </span>
-                                                 );
-                                               }
-                                               
-                                               return (
-                                                 <div key={opt.id} className={`flex items-center justify-between p-3 rounded-lg border text-xs transition-all ${cardStyles}`}>
-                                                   <div className="flex items-center gap-2.5 min-w-0">
-                                                     <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${
-                                                       isSelected 
-                                                         ? isCorrectOpt ? 'bg-green-500 text-slate-950' : 'bg-red-500 text-slate-950'
-                                                         : isCorrectOpt ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'bg-white/10 text-white/40'
-                                                     }`}>
-                                                       {String.fromCharCode(65 + optIdx)}
-                                                     </span>
-                                                     <span className="truncate" title={opt.text}>{opt.text}</span>
-                                                   </div>
-                                                   {indicator && <div className="shrink-0 ml-2">{indicator}</div>}
-                                                 </div>
-                                               );
-                                             })}
-                                           </div>
-                                         </div>
-                                       );
-                                     })}
-                                   </div>
-                                 </div>
-                               )}
-                             </td>
-                           </tr>
-                         )}
-                       </React.Fragment>
-                     );
-                   })}
-                   {selectedStudent.test_history.length === 0 && (
-                     <tr><td colSpan={5} className="p-4 text-center text-white/30">No tests taken yet.</td></tr>
-                   )}
-                 </tbody>
-               </table>
-            </div>
+              {/* Performance SWOT Analysis */}
+              <div className="space-y-4">
+                <h3 className="text-base font-extrabold text-white flex items-center gap-2">
+                  <Target className="w-5 h-5 text-green-400" /> Performance SWOT Analysis
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="bg-gradient-to-br from-emerald-500/10 to-emerald-500/5 border border-emerald-500/25 rounded-2xl p-4 hover:border-emerald-500/40 transition-colors">
+                    <h4 className="text-emerald-400 font-bold mb-2.5 flex items-center gap-1.5 text-sm">
+                      <span className="w-2 h-2 rounded-full bg-emerald-400" /> Strengths (S)
+                    </h4>
+                    <ul className="text-xs text-white/70 space-y-1">
+                      {selectedStudent.full_swot.strengths.length > 0 ? selectedStudent.full_swot.strengths.map((x: string, i: number) => <li key={i} className="flex items-start gap-1.5"><span>•</span> {x}</li>) : <li>Keep practicing to build strengths.</li>}
+                    </ul>
+                  </div>
+                  <div className="bg-gradient-to-br from-rose-500/10 to-rose-500/5 border border-rose-500/25 rounded-2xl p-4 hover:border-rose-500/40 transition-colors">
+                    <h4 className="text-rose-400 font-bold mb-2.5 flex items-center gap-1.5 text-sm">
+                      <span className="w-2 h-2 rounded-full bg-rose-400" /> Weaknesses (W)
+                    </h4>
+                    <ul className="text-xs text-white/70 space-y-1">
+                      {selectedStudent.full_swot.weaknesses.length > 0 ? selectedStudent.full_swot.weaknesses.map((x: string, i: number) => <li key={i} className="flex items-start gap-1.5"><span>•</span> {x}</li>) : <li>No weaknesses recorded.</li>}
+                    </ul>
+                  </div>
+                  <div className="bg-gradient-to-br from-blue-500/10 to-blue-500/5 border border-blue-500/25 rounded-2xl p-4 hover:border-blue-500/40 transition-colors">
+                    <h4 className="text-blue-400 font-bold mb-2.5 flex items-center gap-1.5 text-sm">
+                      <span className="w-2 h-2 rounded-full bg-blue-400" /> Opportunities (O)
+                    </h4>
+                    <ul className="text-xs text-white/70 space-y-1">
+                      {selectedStudent.full_swot.opportunities.map((x: string, i: number) => <li key={i} className="flex items-start gap-1.5"><span>•</span> {x}</li>)}
+                    </ul>
+                  </div>
+                  <div className="bg-gradient-to-br from-amber-500/10 to-amber-500/5 border border-amber-500/25 rounded-2xl p-4 hover:border-amber-500/40 transition-colors">
+                    <h4 className="text-amber-400 font-bold mb-2.5 flex items-center gap-1.5 text-sm">
+                      <span className="w-2 h-2 rounded-full bg-amber-400" /> Threats (T)
+                    </h4>
+                    <ul className="text-xs text-white/70 space-y-1">
+                      {selectedStudent.full_swot.threats.map((x: string, i: number) => <li key={i} className="flex items-start gap-1.5"><span>•</span> {x}</li>)}
+                    </ul>
+                  </div>
+                </div>
+              </div>
 
+              {/* Exam Security & Integrity Section */}
+              <div className="space-y-4">
+                <h3 className="text-base font-extrabold text-white flex items-center gap-2">
+                  <ShieldAlert className="w-5 h-5 text-red-500" /> Exam Security & Integrity Analysis
+                </h3>
+                
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-5 space-y-4">
+                  {(!selectedStudent.violations || selectedStudent.violations.length === 0) && (!selectedStudent.integrity_reports || selectedStudent.integrity_reports.length === 0) ? (
+                    <div className="flex items-center gap-3 text-green-400 text-sm">
+                      <CheckCircle className="w-5 h-5 shrink-0" />
+                      <span>No security violations detected. Candidate has maintained full browser compliance.</span>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {/* Integrity report summary */}
+                      {selectedStudent.integrity_reports && selectedStudent.integrity_reports.length > 0 && (
+                        <div className="grid grid-cols-1 gap-3">
+                          {selectedStudent.integrity_reports.map((rep: any) => (
+                            <div key={rep.id} className="p-4 bg-slate-950/60 rounded-2xl border border-white/5 text-xs md:text-sm">
+                              <div className="flex justify-between items-center mb-2.5 gap-2 flex-wrap">
+                                <span className="font-bold text-white/80">Session Security Report</span>
+                                <div className="flex items-center gap-2">
+                                  <span className={`px-2.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
+                                    rep.status === 'normal' 
+                                      ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
+                                      : rep.status === 'warned'
+                                        ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30'
+                                        : 'bg-red-500/20 text-red-400 border border-red-500/30'
+                                  }`}>
+                                    Status: {rep.status.replace(/_/g, ' ')}
+                                  </span>
+                                  {(rep.status === 'submitted_due_to_violation' || rep.status === 'warned') && (
+                                    <button
+                                      onClick={() => handleAllowReattempt(selectedStudent.id, rep.test_id)}
+                                      className="px-2.5 py-1 text-[10px] font-bold uppercase bg-red-500/20 hover:bg-red-500/40 text-red-400 rounded-lg border border-red-500/30 transition-all cursor-pointer shadow-sm"
+                                    >
+                                      Allow Re-attempt
+                                    </button>
+                                  )}
+                                </div>
+                              </div>
+                              <p className="text-white/70 leading-relaxed font-medium">{rep.violation_summary}</p>
+                              {rep.device_info && (
+                                <div className="text-[10px] text-white/40 mt-2 font-mono">
+                                  Device: {rep.device_info.platform || "Unknown"} | {rep.device_info.screenWidth}x{rep.device_info.screenHeight}
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Violations detail list */}
+                      {selectedStudent.violations && selectedStudent.violations.length > 0 && (
+                        <div className="space-y-2">
+                          <p className="text-xs font-bold text-white/50 uppercase tracking-widest ml-1">Individual Security Breaches ({selectedStudent.violations.length})</p>
+                          <div className="bg-slate-950/40 rounded-2xl border border-white/5 overflow-hidden overflow-x-auto">
+                            <table className="w-full text-left text-xs min-w-[500px]">
+                              <thead className="bg-white/5 border-b border-white/10 text-white/50">
+                                <tr>
+                                  <th className="p-3 font-bold">Violation Type</th>
+                                  <th className="p-3 font-bold text-center">Action Taken</th>
+                                  <th className="p-3 font-bold text-right">Time Detected</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {selectedStudent.violations.map((v: any) => (
+                                  <tr key={v.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                                    <td className="p-3 text-white/80 font-semibold flex items-center gap-1.5">
+                                      <AlertTriangle className="w-3.5 h-3.5 text-orange-500" />
+                                      {v.violation_type}
+                                    </td>
+                                    <td className="p-3 text-center">
+                                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                                        v.action_taken.includes("Warning") ? 'bg-orange-500/20 text-orange-400' : 'bg-red-500/20 text-red-400'
+                                      }`}>
+                                        {v.action_taken}
+                                      </span>
+                                    </td>
+                                    <td className="p-3 text-right text-white/40 font-mono">
+                                      {new Date(v.timestamp).toLocaleString()}
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Test History Section */}
+              <div className="space-y-4">
+                <h3 className="text-base font-extrabold text-white flex items-center gap-2">
+                  <BookOpen className="w-5 h-5 text-cyan-400" /> Test History
+                </h3>
+                
+                {/* Desktop Test History Table */}
+                <div className="hidden md:block bg-white/5 rounded-3xl border border-white/10 overflow-hidden">
+                  <table className="w-full text-left text-sm">
+                    <thead className="bg-white/5 border-b border-white/10 text-white/50">
+                      <tr>
+                        <th className="p-4 font-bold">Test Title</th>
+                        <th className="p-4 font-bold text-center">Score</th>
+                        <th className="p-4 font-bold text-center">Correct/Total</th>
+                        <th className="p-4 font-bold text-center">Date</th>
+                        <th className="p-4 font-bold text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {selectedStudent.test_history.map((test: any) => {
+                        const isExpanded = expandedTestId === test.test_id;
+                        const testKey = `${test.test_id}_${test.attempt_number}`;
+                        const stats = subjectStatsByTest[testKey];
+                        
+                        return (
+                          <React.Fragment key={test.id}>
+                            <tr className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                              <td className="p-4">
+                                <div className="text-white font-semibold">{test.title || test.exam_type}</div>
+                                <div className="flex flex-wrap gap-2 items-center mt-1">
+                                  <span className="px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 text-[10px] font-bold uppercase tracking-wider">
+                                    Attempt {test.attempt_number}
+                                  </span>
+                                  {/* Subject pill scores */}
+                                  {stats && Object.entries(stats).map(([sub, stat]: any) => (
+                                    <span key={sub} className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-white/5 border border-white/10 text-white/50">
+                                      {sub}: <span className="text-cyan-400">{stat.score}</span>
+                                    </span>
+                                  ))}
+                                </div>
+                              </td>
+                              <td className="p-4 text-center font-black text-cyan-400 text-lg">{test.score}</td>
+                              <td className="p-4 text-center text-white/60 font-semibold">{test.correct_count} / {test.total_questions}</td>
+                              <td className="p-4 text-center text-white/50 font-medium">{new Date(test.created_at).toLocaleDateString()}</td>
+                              <td className="p-4 text-right">
+                                <div className="flex justify-end gap-2">
+                                  <button
+                                    onClick={() => handleToggleReview(selectedStudent.id, test.test_id)}
+                                    className={`text-xs font-bold py-2 px-4 rounded-xl border transition-all ${
+                                      isExpanded
+                                        ? "bg-cyan-500/20 text-cyan-400 border-cyan-500/30"
+                                        : "bg-white/5 hover:bg-white/10 text-white/80 border-white/10"
+                                    }`}
+                                  >
+                                    {isExpanded ? "Hide Review" : "Review Answers"}
+                                  </button>
+                                  <button
+                                    onClick={() => handleAllowReattempt(selectedStudent.id, test.test_id)}
+                                    className="text-xs font-bold py-2 px-4 rounded-xl bg-red-500/15 hover:bg-red-500/25 text-red-400 border border-red-500/20 hover:border-red-500/30 transition-all cursor-pointer"
+                                  >
+                                    Allow Re-attempt
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                            {isExpanded && (
+                              <tr>
+                                <td colSpan={5} className="p-5 bg-slate-950/60 border-b border-white/10">
+                                  {stats && (
+                                    <div className="mb-6 bg-slate-900/80 p-5 rounded-2xl border border-white/5 space-y-4">
+                                      <h4 className="text-sm font-bold text-white flex items-center gap-2">
+                                        <Target className="w-4 h-4 text-cyan-400" /> Subject-Wise Score Analysis for this Test
+                                      </h4>
+                                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                                        {Object.entries(stats).map(([sub, stat]: any) => {
+                                          const accuracy = stat.attempted > 0 ? ((stat.correct / stat.attempted) * 100).toFixed(0) : "0";
+                                          return (
+                                            <div key={sub} className="p-4 bg-white/5 border border-white/5 rounded-xl flex flex-col justify-between">
+                                              <div className="flex justify-between items-center mb-2.5">
+                                                <span className="text-xs font-bold text-white">{sub}</span>
+                                                <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                                                  {stat.score} Marks
+                                                </span>
+                                              </div>
+                                              <div className="space-y-1.5 text-xs text-white/50 pt-2 border-t border-white/5">
+                                                <div className="flex justify-between items-center">
+                                                  <span className="uppercase text-white/30 text-[9px] font-semibold">Attempted</span>
+                                                  <span className="text-cyan-400 font-bold">{stat.attempted} / {stat.total}</span>
+                                                </div>
+                                                <div className="flex justify-between items-center">
+                                                  <span className="uppercase text-white/30 text-[9px] font-semibold">Correct</span>
+                                                  <span className="text-green-400 font-bold">{stat.correct}</span>
+                                                </div>
+                                                <div className="flex justify-between items-center">
+                                                  <span className="uppercase text-white/30 text-[9px] font-semibold">Wrong</span>
+                                                  <span className="text-red-400 font-bold">{stat.incorrect}</span>
+                                                </div>
+                                                <div className="flex justify-between items-center">
+                                                  <span className="uppercase text-white/30 text-[9px] font-semibold">Unattended</span>
+                                                  <span className="text-amber-500 font-bold">{stat.total - stat.attempted}</span>
+                                                </div>
+                                                <div className="flex justify-between items-center">
+                                                  <span className="uppercase text-white/30 text-[9px] font-semibold">Accuracy</span>
+                                                  <span className="text-white font-bold">{accuracy}%</span>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          );
+                                        })}
+                                      </div>
+                                    </div>
+                                  )}
+                                  <QuestionReviewSection 
+                                    questions={expandedTestQuestions} 
+                                    loading={loadingReview} 
+                                  />
+                                </td>
+                              </tr>
+                            )}
+                          </React.Fragment>
+                        );
+                      })}
+                      {selectedStudent.test_history.length === 0 && (
+                        <tr><td colSpan={5} className="p-8 text-center text-white/30">No tests taken yet.</td></tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Mobile Test History Cards (Responsive) */}
+                <div className="md:hidden space-y-4">
+                  {selectedStudent.test_history.map((test: any) => {
+                    const isExpanded = expandedTestId === test.test_id;
+                    const testKey = `${test.test_id}_${test.attempt_number}`;
+                    const stats = subjectStatsByTest[testKey];
+                    
+                    return (
+                      <div key={test.id} className="bg-[#1e293b]/40 border border-white/10 rounded-3xl p-4 space-y-4 hover:border-orange-500/30 transition-colors">
+                        <div className="flex justify-between items-start gap-2">
+                          <div>
+                            <h4 className="text-sm font-bold text-white leading-snug">{test.title || test.exam_type}</h4>
+                            <span className="inline-block px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 text-[10px] font-bold uppercase tracking-wider mt-1.5">
+                              Attempt {test.attempt_number}
+                            </span>
+                          </div>
+                          <span className="text-[10px] text-white/40 font-semibold">{new Date(test.created_at).toLocaleDateString()}</span>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-3 text-xs bg-slate-950/40 p-3 rounded-xl border border-white/5 text-center">
+                          <div>
+                            <span className="text-white/40 block mb-0.5 uppercase font-bold text-[9px] tracking-wider">Score</span>
+                            <span className="text-cyan-400 font-extrabold text-base">{test.score}</span>
+                          </div>
+                          <div>
+                            <span className="text-white/40 block mb-0.5 uppercase font-bold text-[9px] tracking-wider">Correct/Total</span>
+                            <span className="text-white font-extrabold text-sm">{test.correct_count} / {test.total_questions}</span>
+                          </div>
+                        </div>
+
+                        {/* Subject pill scores */}
+                        {stats && (
+                          <div className="flex flex-wrap gap-1.5 pt-1">
+                            {Object.entries(stats).map(([sub, stat]: any) => (
+                              <span key={sub} className="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-950/60 border border-white/5 text-white/50 flex-1 text-center">
+                                {sub}: <span className="text-cyan-400 font-extrabold">{stat.score}</span>
+                              </span>
+                            ))}
+                          </div>
+                        )}
+
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => handleToggleReview(selectedStudent.id, test.test_id)}
+                            className={`flex-1 py-2 rounded-xl border font-bold text-xs transition-all ${
+                              isExpanded
+                                ? "bg-cyan-500/20 text-cyan-400 border-cyan-500/30"
+                                : "bg-white/5 hover:bg-white/10 text-white/80 border-white/10"
+                            }`}
+                          >
+                            {isExpanded ? "Hide Review" : "Review Answers"}
+                          </button>
+                          <button
+                            onClick={() => handleAllowReattempt(selectedStudent.id, test.test_id)}
+                            className="flex-1 py-2 rounded-xl bg-red-500/15 hover:bg-red-500/25 text-red-400 border border-red-500/20 font-bold text-xs transition-all cursor-pointer text-center"
+                          >
+                            Re-attempt
+                          </button>
+                        </div>
+
+                        {isExpanded && (
+                          <div className="pt-3 border-t border-white/5 mt-3 space-y-4">
+                            {stats && (
+                              <div className="bg-slate-950/60 p-4 rounded-2xl border border-white/5 space-y-3">
+                                <h4 className="text-xs font-bold text-white flex items-center gap-1.5">
+                                  <Target className="w-3.5 h-3.5 text-cyan-400" /> Subject-Wise Analysis
+                                </h4>
+                                <div className="grid grid-cols-1 gap-2">
+                                  {Object.entries(stats).map(([sub, stat]: any) => {
+                                    const accuracy = stat.attempted > 0 ? ((stat.correct / stat.attempted) * 100).toFixed(0) : "0";
+                                    return (
+                                      <div key={sub} className="p-3 bg-white/5 border border-white/5 rounded-xl flex flex-col justify-between">
+                                        <div className="flex justify-between items-center mb-2">
+                                          <span className="text-xs font-bold text-white">{sub}</span>
+                                          <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                                            {stat.score} Marks
+                                          </span>
+                                        </div>
+                                        <div className="space-y-1.5 text-xs text-white/50 pt-1.5 border-t border-white/5">
+                                          <div className="flex justify-between items-center">
+                                            <span className="uppercase text-white/30 text-[9px] font-semibold">Attempted</span>
+                                            <span className="text-cyan-400 font-bold">{stat.attempted} / {stat.total}</span>
+                                          </div>
+                                          <div className="flex justify-between items-center">
+                                            <span className="uppercase text-white/30 text-[9px] font-semibold">Correct</span>
+                                            <span className="text-green-400 font-bold">{stat.correct}</span>
+                                          </div>
+                                          <div className="flex justify-between items-center">
+                                            <span className="uppercase text-white/30 text-[9px] font-semibold">Wrong</span>
+                                            <span className="text-red-400 font-bold">{stat.incorrect}</span>
+                                          </div>
+                                          <div className="flex justify-between items-center">
+                                            <span className="uppercase text-white/30 text-[9px] font-semibold">Unattended</span>
+                                            <span className="text-amber-500 font-bold">{stat.total - stat.attempted}</span>
+                                          </div>
+                                          <div className="flex justify-between items-center">
+                                            <span className="uppercase text-white/30 text-[9px] font-semibold">Accuracy</span>
+                                            <span className="text-white font-bold">{accuracy}%</span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            )}
+                            <QuestionReviewSection 
+                              questions={expandedTestQuestions} 
+                              loading={loadingReview} 
+                            />
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                  {selectedStudent.test_history.length === 0 && (
+                    <div className="p-8 text-center text-white/30 bg-white/5 rounded-3xl border border-white/10">No tests taken yet.</div>
+                  )}
+                </div>
+              </div>
+
+            </div>
           </div>
         </div>
       )}

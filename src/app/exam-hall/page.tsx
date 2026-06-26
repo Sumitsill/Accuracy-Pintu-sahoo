@@ -35,6 +35,7 @@ function SecureExamHallContent() {
   // Post Exam State
   const [testCompleted, setTestCompleted] = useState(false);
   const [showSolutions, setShowSolutions] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [scoreResult, setScoreResult] = useState<any>({
     score: 0,
     total: 0,
@@ -155,23 +156,23 @@ function SecureExamHallContent() {
               savedResponsesData?.forEach((r: any) => {
                 if (r.selected_option_id) {
                   loadedResponses[r.question_id] = r.selected_option_id;
-                }
 
-                // Calculate subject stats
-                const q = formattedQuestions.find((x: any) => x.id === r.question_id);
-                if (q) {
-                  const sub = q.subject || "Physics";
-                  const qMarks = q.marks !== undefined && q.marks !== null ? q.marks : 4;
-                  const qNeg = q.negative_marks !== undefined && q.negative_marks !== null ? q.negative_marks : 1;
+                  // Calculate subject stats
+                  const q = formattedQuestions.find((x: any) => x.id === r.question_id);
+                  if (q) {
+                    const sub = q.subject || "Physics";
+                    const qMarks = q.marks !== undefined && q.marks !== null ? q.marks : 4;
+                    const qNeg = q.negative_marks !== undefined && q.negative_marks !== null ? q.negative_marks : 1;
 
-                  if (subjectStats[sub]) {
-                    subjectStats[sub].attempted++;
-                    if (r.is_correct) {
-                      subjectStats[sub].score += qMarks;
-                      subjectStats[sub].correct++;
-                    } else {
-                      subjectStats[sub].score -= qNeg;
-                      subjectStats[sub].incorrect++;
+                    if (subjectStats[sub]) {
+                      subjectStats[sub].attempted++;
+                      if (r.is_correct) {
+                        subjectStats[sub].score += qMarks;
+                        subjectStats[sub].correct++;
+                      } else {
+                        subjectStats[sub].score -= qNeg;
+                        subjectStats[sub].incorrect++;
+                      }
                     }
                   }
                 }
@@ -270,11 +271,10 @@ function SecureExamHallContent() {
   // -------------------------------------------------------------
   const saveViolationToDB = async (violationType: string, actionTaken: string) => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user || !testDetails || isAdmin) return;
+      if (!userId || !testDetails || isAdmin) return;
 
       await supabase.from('exam_violations').insert([{
-        user_id: user.id,
+        user_id: userId,
         test_id: testDetails.id,
         violation_type: violationType,
         action_taken: actionTaken
@@ -286,8 +286,7 @@ function SecureExamHallContent() {
 
   const createIntegrityReport = async (totalViolations: number, status: 'normal' | 'warned' | 'submitted_due_to_violation') => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user || !testDetails || isAdmin) return;
+      if (!userId || !testDetails || isAdmin) return;
 
       const summary = totalViolations === 0 
         ? "No violations recorded. Candidate followed all security procedures."
@@ -304,7 +303,7 @@ function SecureExamHallContent() {
       };
 
       await supabase.from('exam_integrity_reports').insert([{
-        user_id: user.id,
+        user_id: userId,
         test_id: testDetails.id,
         total_violations: totalViolations,
         violation_summary: summary,
@@ -346,10 +345,15 @@ function SecureExamHallContent() {
       setShowWarningModal(false);
       setExamActive(false);
       setViolationDetected(true);
-      
-      // Save final answers and integrity report
-      await finalSubmitToDB(true);
-      setTestCompleted(true);
+      setSubmitting(true);
+      try {
+        await finalSubmitToDB(true);
+        setTestCompleted(true);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setSubmitting(false);
+      }
     }
   }, [examActive, violationCount, testCompleted]);
 
@@ -487,7 +491,14 @@ function SecureExamHallContent() {
     if (timeLeft <= 0) {
       setExamActive(false);
       alert("Time is up! Your test has been automatically submitted.");
-      finalSubmitToDB().then(() => setTestCompleted(true));
+      setSubmitting(true);
+      finalSubmitToDB().then(() => {
+        setTestCompleted(true);
+        setSubmitting(false);
+      }).catch((err) => {
+        console.error(err);
+        setSubmitting(false);
+      });
       return;
     }
     const timer = setInterval(() => setTimeLeft((prev) => prev - 1), 1000);
@@ -619,8 +630,7 @@ function SecureExamHallContent() {
 
   const finalSubmitToDB = async (isViolationSubmit = false) => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user || !testDetails) return;
+      if (!userId || !testDetails) return;
 
       let score = 0;
       let correctCount = 0;
@@ -668,7 +678,7 @@ function SecureExamHallContent() {
         }
 
         return {
-          user_id: user.id,
+          user_id: userId,
           test_id: testDetails.id,
           question_id: qId,
           selected_option_id: optId,
@@ -676,29 +686,54 @@ function SecureExamHallContent() {
         };
       });
 
-      if (!isAdmin) {
-        await supabase.from('test_results').insert([{
-           user_id: user.id,
-           test_id: testDetails.id,
-           score,
-           total_questions: questions.length,
-           correct_count: correctCount,
-           incorrect_count: incorrectCount,
-           exam_type: testDetails.exam_type,
-           title: testDetails.title
-        }]);
+      const insertResultsPromise = !isAdmin ? supabase.from('test_results').insert([{
+         user_id: userId,
+         test_id: testDetails.id,
+         score,
+         total_questions: questions.length,
+         correct_count: correctCount,
+         incorrect_count: incorrectCount,
+         exam_type: testDetails.exam_type,
+         title: testDetails.title
+      }]) : Promise.resolve(null);
 
-        const reportStatus = isViolationSubmit 
-          ? 'submitted_due_to_violation' 
-          : violationCount === 1 
-            ? 'warned' 
-            : 'normal';
-        
-        await createIntegrityReport(violationCount, reportStatus);
-      }
+      const reportStatus = isViolationSubmit 
+        ? 'submitted_due_to_violation' 
+        : violationCount === 1 
+          ? 'warned' 
+          : 'normal';
+      
+      const integrityReportPromise = !isAdmin 
+        ? createIntegrityReport(violationCount, reportStatus)
+        : Promise.resolve(null);
 
-      // Fetch rank and percentile stats
-      const rankInfo = await fetchRankAndPercentile(testDetails.id, score, user.id);
+      const syncResponsesPromise = !isAdmin ? (async () => {
+        // Delete any temporary autosaved responses to prepare for clean insertion
+        await supabase.from('user_responses')
+          .delete()
+          .eq('user_id', userId)
+          .eq('test_id', testDetails.id)
+          .eq('attempt_number', attemptNumber);
+
+        // Insert final answers with attempt_number
+        if (recordsToInsert.length > 0) {
+          const recordsWithAttempt = recordsToInsert.map(r => ({
+            ...r,
+            attempt_number: attemptNumber
+          }));
+          await supabase.from('user_responses').insert(recordsWithAttempt);
+        }
+      })() : Promise.resolve(null);
+
+      const rankInfoPromise = fetchRankAndPercentile(testDetails.id, score, userId);
+
+      // Execute all database actions and rank calculation concurrently for maximum submission speed!
+      const [_, __, ___, rankInfo] = await Promise.all([
+        insertResultsPromise,
+        integrityReportPromise,
+        syncResponsesPromise,
+        rankInfoPromise
+      ]);
 
       setScoreResult({
         score,
@@ -712,27 +747,9 @@ function SecureExamHallContent() {
         subjectStats
       });
 
-      if (!isAdmin) {
-        // Delete any temporary autosaved responses to prepare for clean insertion
-        await supabase.from('user_responses')
-          .delete()
-          .eq('user_id', user.id)
-          .eq('test_id', testDetails.id)
-          .eq('attempt_number', attemptNumber);
-
-        // Insert final answers with attempt_number
-        if (recordsToInsert.length > 0) {
-          const recordsWithAttempt = recordsToInsert.map(r => ({
-            ...r,
-            attempt_number: attemptNumber
-          }));
-          await supabase.from('user_responses').insert(recordsWithAttempt);
-        }
-      }
-
       // Clear localStorage autosaved answers and remaining time
-      const savedKey = `exam_responses_${user.id}_${testDetails.id}_attempt_${attemptNumber}`;
-      const savedTimeKey = `exam_time_${user.id}_${testDetails.id}_attempt_${attemptNumber}`;
+      const savedKey = `exam_responses_${userId}_${testDetails.id}_attempt_${attemptNumber}`;
+      const savedTimeKey = `exam_time_${userId}_${testDetails.id}_attempt_${attemptNumber}`;
       localStorage.removeItem(savedKey);
       localStorage.removeItem(savedTimeKey);
     } catch (err) {
@@ -742,9 +759,17 @@ function SecureExamHallContent() {
 
   const manualSubmit = async () => {
     if (!confirm("Are you sure you want to submit your test?")) return;
+    setSubmitting(true);
     setExamActive(false);
-    await finalSubmitToDB();
-    setTestCompleted(true);
+    try {
+      await finalSubmitToDB();
+      setTestCompleted(true);
+    } catch (err) {
+      console.error(err);
+      alert("Submission failed. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const startExam = () => {
@@ -790,6 +815,21 @@ function SecureExamHallContent() {
   // -------------------------------------------------------------
   if (loading) {
     return <div className="min-h-screen bg-slate-950 flex items-center justify-center"><Loader2 className="w-10 h-10 animate-spin text-cyan-400" /></div>;
+  }
+
+  if (submitting) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-6 text-white font-body animate-in fade-in">
+        <div className="max-w-md w-full bg-slate-900 border border-white/10 rounded-3xl p-8 shadow-2xl text-center relative overflow-hidden flex flex-col items-center justify-center gap-4">
+          <div className="absolute inset-0 bg-cyan-500/5 rounded-full blur-[100px] pointer-events-none" />
+          <Loader2 className="w-12 h-12 animate-spin text-cyan-400 mb-2" />
+          <h2 className="text-xl font-bold text-white tracking-wide">Submitting Your Exam</h2>
+          <p className="text-white/50 text-xs md:text-sm leading-relaxed max-w-xs">
+            Securing response sheets, verifying integrity, and calculating subject-wise statistics. Please do not close or reload this window.
+          </p>
+        </div>
+      </div>
+    );
   }
 
   if (alreadySubmitted) {
@@ -1211,41 +1251,46 @@ function SecureExamHallContent() {
 
                   {/* Options Grid */}
                   <div className="space-y-4">
-                    {currentQ.options.map((opt: any) => {
+                    {currentQ.options.map((opt: any, optIdx: number) => {
                       const isSelected = selectedOptionId === opt.id;
                       const isCorrectAnswer = opt.is_correct;
                       
                       let optionClasses = "bg-white/5 border-white/10 hover:border-cyan-500/50";
-                      let indicatorColor = "border-white/30 group-hover:border-cyan-500/50";
                       let textColor = "text-white/80";
-
                       let suffix = null;
 
                       if (showSolutions) {
                         if (isCorrectAnswer) {
-                          optionClasses = "bg-green-500/20 border-green-500 shadow-[0_0_15px_rgba(34,197,94,0.3)]";
-                          indicatorColor = "border-green-400 bg-green-400";
-                          textColor = "text-green-400 font-bold";
-                          suffix = <span className="ml-auto flex items-center gap-1 text-green-400 text-sm font-bold"><CheckCircle2 className="w-5 h-5"/> Correct Answer</span>;
+                          optionClasses = "bg-emerald-500/10 border-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.15)]";
+                          textColor = "text-emerald-400 font-bold";
+                          suffix = (
+                            <span className="px-2.5 py-0.5 rounded-full text-xs bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 font-bold flex items-center gap-1 shrink-0">
+                              <CheckCircle2 className="w-4 h-4" /> Correct Answer
+                            </span>
+                          );
                         } else if (isSelected && !isCorrectAnswer) {
-                          optionClasses = "bg-red-500/20 border-red-500 shadow-[0_0_15px_rgba(239,68,68,0.3)]";
-                          indicatorColor = "border-red-400 bg-red-400";
-                          textColor = "text-red-400 font-bold";
-                          suffix = <span className="ml-auto flex items-center gap-1 text-red-400 text-sm font-bold"><XCircle className="w-5 h-5"/> Your Choice</span>;
+                          optionClasses = "bg-rose-500/10 border-rose-500 shadow-[0_0_20px_rgba(244,63,94,0.15)]";
+                          textColor = "text-rose-400 font-bold";
+                          suffix = (
+                            <span className="px-2.5 py-0.5 rounded-full text-xs bg-rose-500/20 border border-rose-500/30 text-rose-400 font-bold flex items-center gap-1 shrink-0">
+                              <XCircle className="w-4 h-4" /> Your Choice (Incorrect)
+                            </span>
+                          );
                         } else {
-                          optionClasses = "bg-white/5 border-white/10 opacity-50 grayscale";
+                          optionClasses = "bg-slate-900/30 border-white/5 opacity-40 text-white/40 cursor-not-allowed";
                           textColor = "text-white/50";
                         }
                       } else if (isSelected) {
                         optionClasses = "bg-cyan-500/10 border-cyan-500 shadow-[0_0_15px_rgba(34,211,238,0.2)]";
-                        indicatorColor = "border-cyan-400";
-                        textColor = "text-cyan-400";
+                        textColor = "text-cyan-400 font-semibold";
                       }
+
+                      const letter = opt.option_letter || String.fromCharCode(65 + optIdx);
 
                       return (
                         <label
                           key={opt.id}
-                          className={`flex items-start p-4 md:p-5 rounded-2xl border transition-all duration-200 group ${showSolutions ? 'cursor-default' : 'cursor-pointer'} ${optionClasses}`}
+                          className={`flex items-center p-4 md:p-5 rounded-2xl border transition-all duration-200 group ${showSolutions ? 'cursor-default' : 'cursor-pointer'} ${optionClasses}`}
                         >
                           <input
                             type="radio"
@@ -1255,13 +1300,22 @@ function SecureExamHallContent() {
                             disabled={showSolutions}
                             onChange={() => handleSelectOption(opt.id)}
                           />
-                          <div className={`w-6 h-6 rounded-full border-2 mr-4 mt-0.5 flex items-center justify-center flex-shrink-0 transition-colors ${indicatorColor}`}>
-                            {isSelected && !showSolutions && <div className="w-3 h-3 rounded-full bg-cyan-400" />}
-                            {showSolutions && isSelected && <div className="w-2 h-2 rounded-full bg-slate-900" />}
+                          <div className={`w-8 h-8 rounded-full border flex items-center justify-center flex-shrink-0 text-xs font-bold transition-all mr-4 ${
+                            isSelected 
+                              ? isCorrectAnswer 
+                                ? 'bg-emerald-500 border-emerald-500 text-slate-950 shadow-[0_0_10px_rgba(16,185,129,0.4)]'
+                                : 'bg-rose-500 border-rose-500 text-slate-950 shadow-[0_0_10px_rgba(244,63,94,0.4)]'
+                              : isCorrectAnswer && showSolutions
+                                ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400'
+                                : isSelected
+                                  ? 'bg-cyan-500 border-cyan-500 text-slate-950 shadow-[0_0_10px_rgba(34,211,238,0.4)]'
+                                  : 'bg-white/5 border-white/10 text-white/45'
+                          }`}>
+                            {letter}
                           </div>
-                          <div className="flex-1 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                            <span className={`text-base md:text-lg font-medium ${textColor}`}>
-                              {opt.option_letter ? `${opt.option_letter}. ` : ""}{opt.text}
+                          <div className="flex-1 flex flex-col sm:flex-row sm:items-center justify-between gap-3 min-w-0">
+                            <span className={`text-base md:text-lg font-medium truncate ${textColor}`} title={opt.text}>
+                              {opt.text}
                             </span>
                             {suffix}
                           </div>
@@ -1272,11 +1326,11 @@ function SecureExamHallContent() {
 
                   {/* Explanation Section */}
                   {showSolutions && currentQ.explanation && (
-                    <div className="mt-6 p-5 rounded-2xl bg-white/5 border border-white/10 animate-in fade-in duration-300">
-                      <h4 className="text-xs font-bold uppercase tracking-widest text-cyan-400 mb-2 flex items-center gap-1.5">
+                    <div className="mt-6 p-5 rounded-2xl bg-slate-900 border border-white/10 border-l-4 border-l-cyan-400 animate-in fade-in duration-300 shadow-inner">
+                      <h4 className="text-xs font-black uppercase tracking-widest text-cyan-400 mb-2.5 flex items-center gap-1.5">
                         <CheckCircle2 className="w-4 h-4 text-cyan-400" /> Explanation & Solution Path
                       </h4>
-                      <p className="text-sm text-white/70 leading-relaxed whitespace-pre-wrap">
+                      <p className="text-sm text-white/85 leading-relaxed whitespace-pre-wrap font-medium">
                         {currentQ.explanation}
                       </p>
                     </div>
@@ -1295,13 +1349,6 @@ function SecureExamHallContent() {
                   className="flex-1 sm:flex-none px-4 md:px-6 py-2.5 md:py-3 rounded-xl border border-white/20 text-white/70 font-bold hover:bg-white/5 hover:text-white transition-colors flex items-center justify-center gap-1.5 text-sm md:text-base"
                 >
                   <XCircle className="w-4.5 h-4.5 md:w-5 md:h-5" /> Clear Response
-                </button>
-                {/* Submit button visible in footer on mobile/tablet only */}
-                <button
-                  onClick={manualSubmit}
-                  className="lg:hidden flex-1 sm:flex-none px-4 py-2.5 rounded-xl bg-green-500 text-slate-950 font-bold hover:bg-green-400 transition-colors flex items-center justify-center gap-1.5 text-sm shadow-[0_0_10px_rgba(34,197,94,0.3)]"
-                >
-                  <CheckCircle2 className="w-4.5 h-4.5" /> Submit Exam
                 </button>
               </div>
             ) : (

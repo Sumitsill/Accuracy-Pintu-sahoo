@@ -1317,7 +1317,7 @@ const Hyperspeed: FC<HyperspeedProps> = ({ effectOptions = DEFAULT_EFFECT_OPTION
     };
   }, [effectOptions]);
 
-  return <div id="lights" className="w-full h-full" ref={hyperspeed}></div>;
+  return <div id="lights" className="w-full h-full relative overflow-hidden" ref={hyperspeed}></div>;
 };
 
 export default Hyperspeed;

@@ -7,7 +7,7 @@ const Hyperspeed = dynamic(() => import("@/components/Hyperspeed"), { ssr: false
 export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-6 relative overflow-hidden bg-transparent text-neutral">
-      <div className="absolute inset-0 -z-10 w-full h-full bg-[#0a192f]">
+      <div className="fixed inset-0 -z-10 w-full h-full bg-[#0a192f]">
         <Hyperspeed
           effectOptions={{
             distortion: 'turbulentDistortion',
