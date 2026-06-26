@@ -14,14 +14,53 @@ export default async function StudentDashboard() {
   }
 
   // 2. Fetch the dynamic profile from the database
-  const { data: profile, error: profileError } = await supabase
+  let { data: profile, error: profileError } = await supabase
     .from("profiles")
     .select("*")
     .eq("id", user.id)
-    .single();
+    .maybeSingle();
 
   if (profileError || !profile) {
-    // If somehow the profile is missing, force onboarding
+    // If the profile is missing, attempt to create a basic one
+    const defaultRole = user.user_metadata?.role || "student";
+    const { data: newProfile, error: createError } = await supabase
+      .from("profiles")
+      .insert([{
+        id: user.id,
+        email: user.email,
+        role: defaultRole,
+        is_initialized: false
+      }])
+      .select()
+      .maybeSingle();
+
+    if (createError || !newProfile) {
+      redirect("/onboarding");
+    }
+    profile = newProfile;
+  }
+
+  // If email or role is missing in the existing profile, auto-heal them
+  if (profile && (!profile.email || !profile.role)) {
+    const updatedFields: any = {};
+    if (!profile.email && user.email) updatedFields.email = user.email;
+    if (!profile.role) updatedFields.role = user.user_metadata?.role || "student";
+
+    if (Object.keys(updatedFields).length > 0) {
+      const { data: updatedProfile } = await supabase
+        .from("profiles")
+        .update(updatedFields)
+        .eq("id", user.id)
+        .select()
+        .maybeSingle();
+
+      if (updatedProfile) {
+        profile = updatedProfile;
+      }
+    }
+  }
+
+  if (!profile.is_initialized) {
     redirect("/onboarding");
   }
 

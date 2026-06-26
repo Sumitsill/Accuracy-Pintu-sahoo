@@ -34,9 +34,10 @@ USING (auth.uid() = id);
 CREATE OR REPLACE FUNCTION public.handle_new_user() 
 RETURNS trigger AS $$
 BEGIN
-  INSERT INTO public.profiles (id, role, class, is_initialized)
+  INSERT INTO public.profiles (id, email, role, class, is_initialized)
   VALUES (
     new.id, 
+    new.email,
     new.raw_user_meta_data->>'role', 
     new.raw_user_meta_data->>'class',
     true -- Automatically initialize them since we collect data at signup!
