@@ -253,7 +253,7 @@ function SecureExamHallContent() {
       }
     };
     fetchTest();
-  }, []);
+  }, [searchParams, supabase]);
 
 
   // Autosave remaining time to localStorage when it changes
