@@ -28,6 +28,8 @@ function SecureExamHallContent() {
   const [violationCount, setViolationCount] = useState(0);
   const [showWarningModal, setShowWarningModal] = useState(false);
   const [lastViolationType, setLastViolationType] = useState("");
+  const [userId, setUserId] = useState<string>("");
+  const [attemptNumber, setAttemptNumber] = useState<number>(1);
   
   // Post Exam State
   const [testCompleted, setTestCompleted] = useState(false);
@@ -105,6 +107,7 @@ function SecureExamHallContent() {
         // Determine User Role and Profile Info for Results
         const { data: { user } } = await supabase.auth.getUser();
         if (user) {
+          setUserId(user.id);
           const { data: profile } = await supabase.from('profiles').select('role, full_name, email').eq('id', user.id).single();
           const userIsAdmin = profile?.role === 'admin';
           setIsAdmin(userIsAdmin);
@@ -112,15 +115,39 @@ function SecureExamHallContent() {
 
           // Check if student has already submitted results for this test
           if (!userIsAdmin) {
-            const { data: existingResult } = await supabase
+            const { data: existingResults } = await supabase
               .from('test_results')
               .select('id')
               .eq('user_id', user.id)
-              .eq('test_id', testData.id)
-              .maybeSingle();
+              .eq('test_id', testData.id);
 
-            if (existingResult) {
+            const attemptCount = existingResults ? existingResults.length : 0;
+            if (attemptCount >= 2) {
               setAlreadySubmitted(true);
+            } else {
+              const currentAttempt = attemptCount + 1;
+              setAttemptNumber(currentAttempt);
+
+              // Restore saved responses from localStorage if present
+              const savedKey = `exam_responses_${user.id}_${testData.id}_attempt_${currentAttempt}`;
+              const savedResponses = localStorage.getItem(savedKey);
+              if (savedResponses) {
+                try {
+                  setResponses(JSON.parse(savedResponses));
+                } catch (e) {
+                  console.error("Failed to parse saved responses", e);
+                }
+              }
+
+              // Restore saved remaining time from localStorage if present
+              const savedTimeKey = `exam_time_${user.id}_${testData.id}_attempt_${currentAttempt}`;
+              const savedTime = localStorage.getItem(savedTimeKey);
+              if (savedTime) {
+                const parsedTime = parseInt(savedTime, 10);
+                if (!isNaN(parsedTime) && parsedTime > 0) {
+                  setTimeLeft(parsedTime);
+                }
+              }
             }
           }
         }
@@ -133,6 +160,22 @@ function SecureExamHallContent() {
     };
     fetchTest();
   }, []);
+
+  // Autosave responses to localStorage when they change
+  useEffect(() => {
+    if (userId && testDetails && examActive && !testCompleted) {
+      const savedKey = `exam_responses_${userId}_${testDetails.id}_attempt_${attemptNumber}`;
+      localStorage.setItem(savedKey, JSON.stringify(responses));
+    }
+  }, [responses, userId, testDetails, examActive, testCompleted, attemptNumber]);
+
+  // Autosave remaining time to localStorage when it changes
+  useEffect(() => {
+    if (userId && testDetails && examActive && !testCompleted) {
+      const savedTimeKey = `exam_time_${userId}_${testDetails.id}_attempt_${attemptNumber}`;
+      localStorage.setItem(savedTimeKey, timeLeft.toString());
+    }
+  }, [timeLeft, userId, testDetails, examActive, testCompleted, attemptNumber]);
 
   // -------------------------------------------------------------
   // Anti-Cheat Engine: Tab Switching & Minimizing Detection
@@ -523,6 +566,12 @@ function SecureExamHallContent() {
       if (recordsToInsert.length > 0 && !isAdmin) {
         await supabase.from('user_responses').insert(recordsToInsert);
       }
+
+      // Clear localStorage autosaved answers and time
+      const savedKey = `exam_responses_${user.id}_${testDetails.id}_attempt_${attemptNumber}`;
+      const savedTimeKey = `exam_time_${user.id}_${testDetails.id}_attempt_${attemptNumber}`;
+      localStorage.removeItem(savedKey);
+      localStorage.removeItem(savedTimeKey);
     } catch (err) {
       console.error("Submission failed", err);
     }
@@ -590,7 +639,7 @@ function SecureExamHallContent() {
           </div>
           <h2 className="text-2xl font-bold text-white mb-2">Attempt Locked</h2>
           <p className="text-white/60 mb-8 text-sm leading-relaxed">
-            You have already completed and submitted this examination. Multiple attempts are strictly prohibited.
+            You have already completed both attempts for this examination. Further attempts are strictly prohibited.
           </p>
           <Link href="/dashboard" className="w-full py-4 rounded-xl bg-cyan-500 text-slate-950 font-bold text-lg hover:bg-cyan-400 transition-colors shadow-[0_0_20px_rgba(34,211,238,0.4)] block">
             Return to Dashboard
@@ -695,6 +744,14 @@ function SecureExamHallContent() {
               <span className="flex items-center gap-1.5 text-cyan-400 text-xs font-bold">
                 <Clock className="w-3.5 h-3.5" /> {testDetails.duration} Minutes
               </span>
+              {!isAdmin && (
+                <>
+                  <span className="w-1 h-1 rounded-full bg-white/20" />
+                  <span className="px-3 py-1 rounded-md bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-bold uppercase tracking-wider">
+                    Attempt {attemptNumber} / 2
+                  </span>
+                </>
+              )}
             </div>
             
             {/* Rich Instructions Area */}
