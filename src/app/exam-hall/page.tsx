@@ -128,22 +128,34 @@ function SecureExamHallContent() {
               const currentAttempt = attemptCount + 1;
               setAttemptNumber(currentAttempt);
 
-              // Restore saved responses from database if present
-              const { data: savedResponsesData, error: loadResponsesError } = await supabase
-                .from('user_responses')
-                .select('question_id, selected_option_id')
-                .eq('user_id', user.id)
-                .eq('test_id', testData.id)
-                .eq('attempt_number', currentAttempt);
+              // Restore saved responses from localStorage first, fallback to database
+              const savedKey = `exam_responses_${user.id}_${testData.id}_attempt_${currentAttempt}`;
+              const savedResponses = localStorage.getItem(savedKey);
+              if (savedResponses) {
+                try {
+                  setResponses(JSON.parse(savedResponses));
+                } catch (e) {
+                  console.error("Failed to parse saved responses", e);
+                }
+              } else {
+                const { data: savedResponsesData, error: loadResponsesError } = await supabase
+                  .from('user_responses')
+                  .select('question_id, selected_option_id')
+                  .eq('user_id', user.id)
+                  .eq('test_id', testData.id)
+                  .eq('attempt_number', currentAttempt);
 
-              if (savedResponsesData && !loadResponsesError) {
-                const loadedResponses: Record<string, string> = {};
-                savedResponsesData.forEach((r: any) => {
-                  if (r.selected_option_id) {
-                    loadedResponses[r.question_id] = r.selected_option_id;
-                  }
-                });
-                setResponses(loadedResponses);
+                if (savedResponsesData && !loadResponsesError) {
+                  const loadedResponses: Record<string, string> = {};
+                  savedResponsesData.forEach((r: any) => {
+                    if (r.selected_option_id) {
+                      loadedResponses[r.question_id] = r.selected_option_id;
+                    }
+                  });
+                  setResponses(loadedResponses);
+                  // Cache it in localStorage
+                  localStorage.setItem(savedKey, JSON.stringify(loadedResponses));
+                }
               }
 
               // Restore saved remaining time from localStorage if present
@@ -412,7 +424,16 @@ function SecureExamHallContent() {
     const q = questions[currentQuestionIndex];
     if (!q) return;
     const qId = q.id;
-    setResponses(prev => ({ ...prev, [qId]: optionId }));
+    
+    // Save to responses state and localStorage immediately
+    setResponses(prev => {
+      const nextResponses = { ...prev, [qId]: optionId };
+      if (userId && testDetails) {
+        const savedKey = `exam_responses_${userId}_${testDetails.id}_attempt_${attemptNumber}`;
+        localStorage.setItem(savedKey, JSON.stringify(nextResponses));
+      }
+      return nextResponses;
+    });
 
     if (!isAdmin && userId && testDetails) {
       const opt = q.options.find((o: any) => o.id === optionId);
@@ -442,9 +463,17 @@ function SecureExamHallContent() {
     const q = questions[currentQuestionIndex];
     if (!q) return;
     const qId = q.id;
-    const newRes = { ...responses };
-    delete newRes[qId];
-    setResponses(newRes);
+    
+    // Clear from responses state and localStorage immediately
+    setResponses(prev => {
+      const nextResponses = { ...prev };
+      delete nextResponses[qId];
+      if (userId && testDetails) {
+        const savedKey = `exam_responses_${userId}_${testDetails.id}_attempt_${attemptNumber}`;
+        localStorage.setItem(savedKey, JSON.stringify(nextResponses));
+      }
+      return nextResponses;
+    });
 
     if (!isAdmin && userId && testDetails) {
       await supabase.from('user_responses')
@@ -617,8 +646,10 @@ function SecureExamHallContent() {
         }
       }
 
-      // Clear localStorage autosaved remaining time
+      // Clear localStorage autosaved answers and remaining time
+      const savedKey = `exam_responses_${user.id}_${testDetails.id}_attempt_${attemptNumber}`;
       const savedTimeKey = `exam_time_${user.id}_${testDetails.id}_attempt_${attemptNumber}`;
+      localStorage.removeItem(savedKey);
       localStorage.removeItem(savedTimeKey);
     } catch (err) {
       console.error("Submission failed", err);
