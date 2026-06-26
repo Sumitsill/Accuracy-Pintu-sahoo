@@ -295,6 +295,8 @@ function StudentManagementView() {
   const [loading, setLoading] = useState(true);
   const [selectedStudent, setSelectedStudent] = useState<any>(null);
   const [selectedBatch, setSelectedBatch] = useState("All Batches");
+  const [selectedClass, setSelectedClass] = useState("All Classes");
+  const [selectedExam, setSelectedExam] = useState("All Exams");
 
   // Dynamic Question-by-Question Response Review State
   const [expandedTestId, setExpandedTestId] = useState<string | null>(null);
@@ -429,30 +431,65 @@ function StudentManagementView() {
   }, []);
 
   const uniqueBatches = Array.from(new Set(students.map(s => s.batch).filter(b => b && b !== 'Unassigned')));
-  const filteredStudents = selectedBatch === "All Batches" ? students : students.filter(s => s.batch === selectedBatch);
+  const uniqueClasses = Array.from(new Set(students.map(s => String(s.class || '')).filter(c => c && c !== 'N/A' && c !== 'undefined' && c !== 'null')));
+  const uniqueExams = Array.from(new Set(students.map(s => s.aspiration).filter(e => e && e !== 'Not Set' && e !== 'N/A')));
+
+  const filteredStudents = students.filter(s => {
+    const matchesBatch = selectedBatch === "All Batches" || s.batch === selectedBatch;
+    const matchesClass = selectedClass === "All Classes" || String(s.class) === selectedClass;
+    const matchesExam = selectedExam === "All Exams" || s.aspiration === selectedExam;
+    return matchesBatch && matchesClass && matchesExam;
+  });
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="bg-white/5 p-6 rounded-3xl border border-white/10">
-        <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="mb-6 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <h3 className="text-xl font-bold text-white flex items-center gap-2"><Users className="w-5 h-5 text-orange-500" /> Student Roster & Analytics</h3>
           
-          <select
-            value={selectedBatch}
-            onChange={(e) => setSelectedBatch(e.target.value)}
-            className="bg-slate-900 border border-white/10 rounded-xl px-4 py-2 text-white text-sm focus:outline-none focus:border-orange-500 transition-all cursor-pointer shadow-inner min-w-[200px]"
-          >
-            <option value="All Batches">All Batches</option>
-            {uniqueBatches.map(b => (
-              <option key={String(b)} value={String(b)}>{String(b)}</option>
-            ))}
-          </select>
+          <div className="flex flex-wrap items-center gap-3">
+            {/* Batch Filter */}
+            <select
+              value={selectedBatch}
+              onChange={(e) => setSelectedBatch(e.target.value)}
+              className="bg-slate-900 border border-white/10 rounded-xl px-4 py-2 text-white text-sm focus:outline-none focus:border-orange-500 transition-all cursor-pointer shadow-inner min-w-[150px]"
+            >
+              <option value="All Batches">All Batches</option>
+              {uniqueBatches.map(b => (
+                <option key={String(b)} value={String(b)}>{String(b)}</option>
+              ))}
+            </select>
+
+            {/* Class Filter */}
+            <select
+              value={selectedClass}
+              onChange={(e) => setSelectedClass(e.target.value)}
+              className="bg-slate-900 border border-white/10 rounded-xl px-4 py-2 text-white text-sm focus:outline-none focus:border-orange-500 transition-all cursor-pointer shadow-inner min-w-[120px]"
+            >
+              <option value="All Classes">All Classes</option>
+              {uniqueClasses.map(c => (
+                <option key={String(c)} value={String(c)}>Class {String(c)}</option>
+              ))}
+            </select>
+
+            {/* Exam Filter */}
+            <select
+              value={selectedExam}
+              onChange={(e) => setSelectedExam(e.target.value)}
+              className="bg-slate-900 border border-white/10 rounded-xl px-4 py-2 text-white text-sm focus:outline-none focus:border-orange-500 transition-all cursor-pointer shadow-inner min-w-[120px]"
+            >
+              <option value="All Exams">All Exams</option>
+              {uniqueExams.map(e => (
+                <option key={String(e)} value={String(e)}>{String(e)}</option>
+              ))}
+            </select>
+          </div>
         </div>
         
         {loading ? (
           <div className="flex justify-center p-12"><Loader2 className="w-8 h-8 animate-spin text-orange-500" /></div>
         ) : filteredStudents.length === 0 ? (
-          <div className="flex justify-center p-12 text-white/50">No students found in the selected batch.</div>
+          <div className="flex justify-center p-12 text-white/50">No students found matching the selected filters.</div>
         ) : (
           <>
             {/* Desktop Table View */}

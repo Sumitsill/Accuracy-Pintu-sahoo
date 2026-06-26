@@ -1,0 +1,1127 @@
+[
+  {
+    "questionNumber": 1,
+    "subject": "Physics",
+    "questionText": "Statement 1: If you push on a cart being pulled by a horse so that it does not move, the cart pushes you back with an equal and opposite force.\nStatement 2: The cart does not move because the force described in Statement 1 cancels each other.\nWhich is correct?",
+    "options": {
+      "A": "S1 true, S2 true, S2 is correct explanation",
+      "B": "S1 false, S2 true",
+      "C": "S1 true, S2 false",
+      "D": "S1 true, S2 true, S2 is not correct explanation"
+    },
+    "correctOption": "C",
+    "explanation": "(c) Statement 1 true, Statement 2 false (Action-reaction pairs act on different bodies and never cancel each other)",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 2,
+    "subject": "Physics",
+    "questionText": "Time (T), velocity (C) and angular momentum (h) are chosen as fundamental quantities instead of mass, length and time. In terms of these, the dimensions of mass would be:",
+    "options": {
+      "A": "[M] = [T^-1 C^-2 h]",
+      "B": "[M] = [T^-1 C^2 h]",
+      "C": "[M] = [T C^-2 h]",
+      "D": "[M] = [T C^2 h]"
+    },
+    "correctOption": "A",
+    "explanation": "(a) [M] = [T^-1C^-2h]",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 3,
+    "subject": "Physics",
+    "questionText": "From a building two balls A and B are thrown such that A is thrown upwards and B downwards (both vertically). If v_A and v_B are their respective velocities on reaching the ground, then:",
+    "options": {
+      "A": "v_A > v_B",
+      "B": "v_A = v_B",
+      "C": "v_A < v_B",
+      "D": "their velocities depend on their masses."
+    },
+    "correctOption": "B",
+    "explanation": "(b) v_A = v_B (The final velocity depends only on initial speed and height, not the direction of projection)",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 4,
+    "subject": "Physics",
+    "questionText": "A body of mass 5 kg under the action of constant force F = F_x i + F_y j has velocity at t = 0 as v = (6i - 2j) m/s and at t = 10s as v = +6j m/s. The force F is:",
+    "options": {
+      "A": "(-3i + 4j) N",
+      "B": "(-3/5 i + 4/5 j) N",
+      "C": "(3i - 4j) N",
+      "D": "(3/5 i - 4/5 j) N"
+    },
+    "correctOption": "A",
+    "explanation": "(a) (-3i + 4j) N",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 5,
+    "subject": "Physics",
+    "questionText": "The co-ordinates of a moving particle at any time t are given by x = at^3 and y = bt^3. The speed of the particle at time t is given by:",
+    "options": {
+      "A": "3t√(a^2 + b^2)",
+      "B": "3t^2√(a^2 + b^2)",
+      "C": "t^2√(a^2 + b^2)",
+      "D": "√(a^2 + b^2)"
+    },
+    "correctOption": "B",
+    "explanation": "(b) 3t^2√(a^2+b^2)",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 6,
+    "subject": "Physics",
+    "questionText": "A rocket with a lift-off mass 3.5×10^4 kg is blasted upwards with an initial acceleration of 10 m/s^2. Then the initial thrust of the blast is:",
+    "options": {
+      "A": "3.5×10^5 N",
+      "B": "7.0×10^5 N",
+      "C": "14.0×10^5 N",
+      "D": "1.75×10^5 N"
+    },
+    "correctOption": "B",
+    "explanation": "(b) 7.0 × 10^5 N",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 7,
+    "subject": "Physics",
+    "questionText": "If A × B = B × A, then the angle between A and B is:",
+    "options": {
+      "A": "π/2",
+      "B": "π/3",
+      "C": "π",
+      "D": "π/4"
+    },
+    "correctOption": "C",
+    "explanation": "(c) π",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 8,
+    "subject": "Physics",
+    "questionText": "A spring is compressed between two blocks of masses m_1 and m_2 placed on a horizontal frictionless surface. When released, they have initial velocities v_1 and v_2 as shown. The blocks travel distances x_1 and x_2 respectively before coming to rest. The ratio x_1/x_2 is:",
+    "options": {
+      "A": "m_2/m_1",
+      "B": "m_1/m_2",
+      "C": "√(m_2/m_1)",
+      "D": "√(m_1/m_2)"
+    },
+    "correctOption": "A",
+    "explanation": "(a) m_2/m_1 (Derived from the conservation of momentum)",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 9,
+    "subject": "Physics",
+    "questionText": "If a body moving in circular path maintains constant speed of 10 ms^-1, then which of the following correctly describes the relation between acceleration and radius?",
+    "options": {
+      "A": "Graph (a) showing a curve increasing with r",
+      "B": "Graph (b) showing constant a with r",
+      "C": "Graph (c) showing a rectangular hyperbola (a ∝ 1/r)",
+      "D": "Graph (d) showing a straight line (a ∝ r)"
+    },
+    "correctOption": "C",
+    "explanation": "(c) Rectangular hyperbola graph (Since acceleration a = v^2/r, a is inversely proportional to r)",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 10,
+    "subject": "Physics",
+    "questionText": "A car covers the first half of the distance between two places at 40 km/h and the other half at 60 km/h. The average speed of the car is:",
+    "options": {
+      "A": "40 km/h",
+      "B": "45 km/h",
+      "C": "48 km/h",
+      "D": "60 km/h"
+    },
+    "correctOption": "C",
+    "explanation": "(c) 48 km/h",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 11,
+    "subject": "Physics",
+    "questionText": "A particle has an initial velocity of 3i + 4j and an acceleration of 0.4i + 0.3j. Its speed after 10 s is:",
+    "options": {
+      "A": "7√2 units",
+      "B": "7 units",
+      "C": "8.5 units",
+      "D": "10 units"
+    },
+    "correctOption": "A",
+    "explanation": "(a) 7√2 units",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 12,
+    "subject": "Physics",
+    "questionText": "A metal sample carrying a current along X-axis with density J_x is subjected to a magnetic field B_z (along z-axis). The electric field E_y developed along Y-axis is directly proportional to J_x as well as B_z. The constant of proportionality has SI unit:",
+    "options": {
+      "A": "m^2/A",
+      "B": "m^3/A",
+      "C": "A/m",
+      "D": "m^2/(As)"
+    },
+    "correctOption": "B",
+    "explanation": "(b) m^3/(A·s) or m^3/C",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 13,
+    "subject": "Physics",
+    "questionText": "A marble block of mass 2 kg lying on ice when given a velocity of 6 m/s is stopped by friction in 10 s. Then the coefficient of friction is:",
+    "options": {
+      "A": "0.02",
+      "B": "0.03",
+      "C": "0.04",
+      "D": "0.06"
+    },
+    "correctOption": "D",
+    "explanation": "(d) 0.06 (Note: Corrected from 'a' in original key to match choice 'd')",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 14,
+    "subject": "Physics",
+    "questionText": "A rocket is fired vertically from the earth with an acceleration of 2g, where g is the gravitational acceleration. On an inclined plane inside the rocket, making an angle θ with the horizontal, a point object of mass m is kept. The minimum coefficient of friction μ_min between the mass and the inclined surface such that the mass does not move is:",
+    "options": {
+      "A": "tan2θ",
+      "B": "tanθ",
+      "C": "3 tanθ",
+      "D": "2 tanθ"
+    },
+    "correctOption": "B",
+    "explanation": "(b) tan θ",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 15,
+    "subject": "Physics",
+    "questionText": "The position of a projectile launched from the origin at t = 0 is given by r = (40i + 50j) m at t = 2s. If the projectile was launched at angle θ from the horizontal, then θ is (take g = 10 ms^-2):",
+    "options": {
+      "A": "tan^-1(2/3)",
+      "B": "tan^-1(3/2)",
+      "C": "tan^-1(7/4)",
+      "D": "tan^-1(4/5)"
+    },
+    "correctOption": "C",
+    "explanation": "(c) tan^-1(7/4)",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 16,
+    "subject": "Physics",
+    "questionText": "Three forces start acting simultaneously on a particle moving with velocity v. These forces are represented in magnitude and direction by the three sides of a triangle ABC. The particle will now move with velocity:",
+    "options": {
+      "A": "less than v",
+      "B": "greater than v",
+      "C": "|v| in the direction of the largest force BC",
+      "D": "v, remaining unchanged"
+    },
+    "correctOption": "D",
+    "explanation": "(d) Velocity remains constant/unchanged (Resultant force is zero) (Note: Corrected from 'c' in original key to match choice 'd')",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 17,
+    "subject": "Physics",
+    "questionText": "The initial speed of a bullet fired from a rifle is 630 m/s. The rifle is fired at the centre of a target 700 m away at the same level as the target. How far above the centre of the target must it be aimed?",
+    "options": {
+      "A": "1.0 m",
+      "B": "4.2 m",
+      "C": "6.1 m",
+      "D": "9.8 m"
+    },
+    "correctOption": "C",
+    "explanation": "(c) 6.1 m (Note: Corrected from 'a' in original key to match choice 'c' corresponding to ~6.0 m)",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 18,
+    "subject": "Physics",
+    "questionText": "A large number (n) of identical beads of mass m and radius r are strung on a thin smooth rigid horizontal rod of length L (L >> r) and at rest at random positions. If one of the beads is given speed v, the average force experienced by each support after a long time is:",
+    "options": {
+      "A": "mv^2 / (2(L-nr))",
+      "B": "mv^2 / (L-2nr)",
+      "C": "mv^2 / (L-nr)",
+      "D": "0"
+    },
+    "correctOption": "B",
+    "explanation": "(b) mv^2 / (L-2nr)",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 19,
+    "subject": "Physics",
+    "questionText": "Given in the figure are two blocks A and B of weight 20 N and 100 N, respectively. These are being pressed against a wall by a force F as shown. If the coefficient of friction between the blocks is 0.1 and between block B and the wall is 0.15, the frictional force applied by the wall on block B is:",
+    "options": {
+      "A": "120 N",
+      "B": "150 N",
+      "C": "100 N",
+      "D": "80 N"
+    },
+    "correctOption": "A",
+    "explanation": "(a) 120 N (Friction balances the total weight of both blocks) (Note: Corrected from 'b' in original key to match choice 'a')",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 20,
+    "subject": "Physics",
+    "questionText": "If a body loses half of its velocity on penetrating 3 cm in a wooden block, then how much will it penetrate more before coming to rest?",
+    "options": {
+      "A": "1 cm",
+      "B": "2 cm",
+      "C": "3 cm",
+      "D": "4 cm"
+    },
+    "correctOption": "A",
+    "explanation": "(a) 1 cm (Note: Corrected from 'd' in original key to match choice 'a')",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 21,
+    "subject": "Physics",
+    "questionText": "A particle of mass 0.3 kg subject to a force F = -kx with k = 15 N/m. What will be its initial acceleration if it is released from a point 20 cm away from the origin?",
+    "options": {
+      "A": "15 m/s^2",
+      "B": "3 m/s^2",
+      "C": "10 m/s^2",
+      "D": "5 m/s^2"
+    },
+    "correctOption": "C",
+    "explanation": "(c) 10 m/s^2",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 22,
+    "subject": "Physics",
+    "questionText": "A projectile can have the same range R for two angles of projection. If T_1 and T_2 be the times of flight in the two cases, then the product of the two times of flight is directly proportional to:",
+    "options": {
+      "A": "R",
+      "B": "1/R",
+      "C": "1/R^2",
+      "D": "R^2"
+    },
+    "correctOption": "A",
+    "explanation": "(a) T_1T_2 ∝ R",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 23,
+    "subject": "Physics",
+    "questionText": "The relation between time t and distance x is t = ax^2 + βx, where a and β are constants. The acceleration is:",
+    "options": {
+      "A": "2av^3",
+      "B": "-2aβv^2",
+      "C": "2av^2",
+      "D": "-2av^3"
+    },
+    "correctOption": "D",
+    "explanation": "(d) -2αv^3 (Note: Corrected from 'b' in original key to match choice 'd')",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 24,
+    "subject": "Physics",
+    "questionText": "A particle of mass m is acted upon by a force F given by the empirical law F = v(t). If this law is to be tested experimentally by observing the motion starting from rest, the best way is to plot:",
+    "options": {
+      "A": "log v(t) against 1/t",
+      "B": "v(t) against t^2",
+      "C": "log v(t) against 1/t^2",
+      "D": "log v(t) against t"
+    },
+    "correctOption": "A",
+    "explanation": "(a) ln(F/v) vs ln t",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 25,
+    "subject": "Physics",
+    "questionText": "The velocity of a particle is v = v_0 + gt + ft^2. If its position is x = 0 at t = 0, then its displacement after unit time (t = 1) is:",
+    "options": {
+      "A": "v_0 + g/2 + f",
+      "B": "v_0 + 2g + 3f",
+      "C": "v_0 + g/2 + f/3",
+      "D": "v_0 + g + f"
+    },
+    "correctOption": "C",
+    "explanation": "(c) v_0 + g/2 + f/3 (Note: Corrected from 'd' in original key to match choice 'c')",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 26,
+    "subject": "Chemistry",
+    "questionText": "The amount of sugar (C₁₂H₂₂O₁₁) required to prepare 2 L of its 0.1 M aqueous solution is:",
+    "options": {
+      "A": "136.8 g",
+      "B": "17.1 g",
+      "C": "68.4 g",
+      "D": "34.2 g"
+    },
+    "correctOption": "C",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 27,
+    "subject": "Chemistry",
+    "questionText": "Calculate the molarity of water if its density is 1000 kg/m³.",
+    "options": {
+      "A": "18.0",
+      "B": "37.0",
+      "C": "55.5",
+      "D": "100.0"
+    },
+    "correctOption": "C",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 28,
+    "subject": "Chemistry",
+    "questionText": "The largest number of molecules is in:",
+    "options": {
+      "A": "36 g of water",
+      "B": "28 g of carbon monoxide",
+      "C": "46 g of ethyl alcohol",
+      "D": "54 g of nitrogen pentoxide"
+    },
+    "correctOption": "A",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 29,
+    "subject": "Chemistry",
+    "questionText": "The composition of a sample of Wurtzite is Fe₀.₉₃O₁.₀₀. What percentage of the iron is present in the form of Fe(III)?",
+    "options": {
+      "A": "7.5%",
+      "B": "15%",
+      "C": "25%",
+      "D": "30%"
+    },
+    "correctOption": "B",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 30,
+    "subject": "Chemistry",
+    "questionText": "A sample of a hydrate of barium chloride weighing 61 g was heated until all the water of hydration is removed. The dried sample weighed 52 g. The formula of the hydrated salt is: (atomic mass, Ba=137 amu, Cl=35.5 amu)",
+    "options": {
+      "A": "BaCl₂·4H₂O",
+      "B": "BaCl₂·3H₂O",
+      "C": "BaCl₂·H₂O",
+      "D": "BaCl₂·2H₂O"
+    },
+    "correctOption": "D",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 31,
+    "subject": "Chemistry",
+    "questionText": "The average molar mass of chlorine is 35.5 g mol⁻¹. The ratio of ³⁵Cl to ³⁷Cl in naturally occurring chlorine is close to:",
+    "options": {
+      "A": "4 : 1",
+      "B": "3 : 1",
+      "C": "2 : 1",
+      "D": "1 : 1"
+    },
+    "correctOption": "B",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 32,
+    "subject": "Chemistry",
+    "questionText": "A 10 mg effervescent tablet containing sodium bicarbonate and oxalic acid releases 0.25 mL of CO₂ at T = 298.15K and P = 1 bar. If molar volume of CO₂ is 25.0 L under such conditions, what is the percentage of sodium bicarbonate in each tablet? [Molar mass of NaHCO₃ = 84 g mol⁻¹]",
+    "options": {
+      "A": "0.84",
+      "B": "33.6",
+      "C": "16.8",
+      "D": "8.4"
+    },
+    "correctOption": "C",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 33,
+    "subject": "Chemistry",
+    "questionText": "A compound was found to contain nitrogen and oxygen in the ratio of 28 g and 80 g respectively. The formula of the compound is:",
+    "options": {
+      "A": "NO",
+      "B": "N₂O₃",
+      "C": "N₂O₅",
+      "D": "N₂O₄"
+    },
+    "correctOption": "C",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 34,
+    "subject": "Chemistry",
+    "questionText": "An aqueous solution of 6.3 g oxalic acid dihydrate is made up to 250 mL. The volume of 0.1 N NaOH required to neutralize 10 mL of this solution is:",
+    "options": {
+      "A": "40 mL",
+      "B": "20 mL",
+      "C": "10 mL",
+      "D": "4 mL"
+    },
+    "correctOption": "D",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 35,
+    "subject": "Chemistry",
+    "questionText": "The modern atomic mass unit is based on:",
+    "options": {
+      "A": "¹H = 1 amu (exactly)",
+      "B": "¹⁶O = 16 amu (exactly)",
+      "C": "¹²C = 12 amu (exactly)",
+      "D": "Average mass of all elements"
+    },
+    "correctOption": "C",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 36,
+    "subject": "Chemistry",
+    "questionText": "A gaseous mixture contains oxygen and nitrogen in the ratio of 1:4 by weight. Therefore, the ratio of their number of molecules is:",
+    "options": {
+      "A": "1:4",
+      "B": "1:8",
+      "C": "7:32",
+      "D": "3:16"
+    },
+    "correctOption": "C",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 37,
+    "subject": "Chemistry",
+    "questionText": "The ratio of the mass percentages of 'C & H' and 'C & O' of a saturated acyclic organic compound 'X' are 4:1 and 3:4 respectively. Then, the moles of oxygen gas required for complete combustion of two moles of organic compound 'X' is:",
+    "options": {
+      "A": "6.00",
+      "B": "8.75",
+      "C": "11.50",
+      "D": "4.25"
+    },
+    "correctOption": "B",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 38,
+    "subject": "Chemistry",
+    "questionText": "How many moles of electron weigh one kilogram?",
+    "options": {
+      "A": "1/206",
+      "B": "(1/9.108)×10³¹",
+      "C": "(6.023/9.108)×10²⁴",
+      "D": "1/(9.108×6.023) × 10⁸"
+    },
+    "correctOption": "C",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 39,
+    "subject": "Chemistry",
+    "questionText": "A sample of NaClO₃ is converted by heat to NaCl with a loss of 0.16 g of oxygen. The residue is dissolved in water and precipitated as AgCl. The mass of AgCl (in g) obtained will be: (Given: Molar mass of AgCl = 143.5 g mol⁻¹)",
+    "options": {
+      "A": "0.35",
+      "B": "0.54",
+      "C": "0.41",
+      "D": "0.48"
+    },
+    "correctOption": "B",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 40,
+    "subject": "Chemistry",
+    "questionText": "The total number of electrons present in 18 mL of water is:",
+    "options": {
+      "A": "6.02 × 10²³",
+      "B": "6.02 × 10²⁴",
+      "C": "3.01 × 10²⁴",
+      "D": "1.20 × 10²⁵"
+    },
+    "correctOption": "B",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 41,
+    "subject": "Chemistry",
+    "questionText": "2.76 g of silver carbonate on being strongly heated yields a residue weighing:",
+    "options": {
+      "A": "2.16 g",
+      "B": "2.48 g",
+      "C": "2.32 g",
+      "D": "2.64 g"
+    },
+    "correctOption": "A",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 42,
+    "subject": "Chemistry",
+    "questionText": "8 g of NaOH is dissolved in 18 g of H₂O. Mole fraction of NaOH in solution and molality (in mol kg⁻¹) of the solution respectively are:",
+    "options": {
+      "A": "0.2, 22.20",
+      "B": "0.2, 11.11",
+      "C": "0.167, 11.11",
+      "D": "0.167, 22.20"
+    },
+    "correctOption": "C",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 43,
+    "subject": "Chemistry",
+    "questionText": "If two compounds have the same empirical formula but different molecular formulae, they must have:",
+    "options": {
+      "A": "different percentage composition",
+      "B": "different molecular weight",
+      "C": "same viscosity",
+      "D": "same vapour density"
+    },
+    "correctOption": "B",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 44,
+    "subject": "Chemistry",
+    "questionText": "Amongst the following statements, which was not proposed by Dalton:",
+    "options": {
+      "A": "Chemical reactions involve reorganization of atoms; these are neither created nor destroyed",
+      "B": "All atoms of a given element have identical properties including identical mass; atoms of different elements differ in mass",
+      "C": "When gases combine or reproduce in a chemical reaction they do so in a simple ratio by volume provided all gases are at the same T & P",
+      "D": "Matter consists of indivisible atoms"
+    },
+    "correctOption": "C",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 45,
+    "subject": "Chemistry",
+    "questionText": "A molal solution is one that contains one mole of a solute in:",
+    "options": {
+      "A": "1000 g of the solvent",
+      "B": "one litre of the solvent",
+      "C": "one litre of the solution",
+      "D": "22.4 litres of the solution"
+    },
+    "correctOption": "A",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 46,
+    "subject": "Chemistry",
+    "questionText": "Dissolving 120 g of a compound of (mol. wt. 60) in 1000 g of water gave a solution of density 1.12 g/mL. The molarity of the solution is:",
+    "options": {
+      "A": "1.00M",
+      "B": "2.00M",
+      "C": "2.50M",
+      "D": "4.00M"
+    },
+    "correctOption": "B",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 47,
+    "subject": "Chemistry",
+    "questionText": "1 gram of a carbonate (M₂CO₃) on treatment with excess HCl produces 0.01186 mole of CO₂. The molar mass of M₂CO₃ in g mol⁻¹ is:",
+    "options": {
+      "A": "1186",
+      "B": "84.3",
+      "C": "118.6",
+      "D": "11.86"
+    },
+    "correctOption": "B",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 48,
+    "subject": "Chemistry",
+    "questionText": "The mole fraction of glucose (C₆H₁₂O₆) in an aqueous binary solution is 0.1. The mass percentage of water in it, to the nearest integer, is:",
+    "options": {
+      "A": "35%",
+      "B": "47%",
+      "C": "62%",
+      "D": "90%"
+    },
+    "correctOption": "B",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 49,
+    "subject": "Chemistry",
+    "questionText": "What quantity (in mL) of a 45% acid solution of a mono-protic strong acid must be mixed with a 20% solution of the same acid to produce 800 mL of a 29.875% acid solution?",
+    "options": {
+      "A": "320",
+      "B": "325",
+      "C": "316",
+      "D": "330"
+    },
+    "correctOption": "A",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 50,
+    "subject": "Chemistry",
+    "questionText": "If 0.50 mole of BaCl₂ is mixed with 0.20 mol of Na₃PO₄, the maximum number of moles of Ba₃(PO₄)₂ that can be formed is:",
+    "options": {
+      "A": "0.70",
+      "B": "0.50",
+      "C": "0.20",
+      "D": "0.10"
+    },
+    "correctOption": "D",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 51,
+    "subject": "Mathematics",
+    "questionText": "If the angles of a triangle are 30° and 45° and the included side is (√3+1) cm, then the area of the triangle is ______.",
+    "options": {
+      "A": "(1+√3)/2 sq cm",
+      "B": "1 sq cm",
+      "C": "√3 sq cm",
+      "D": "2 sq cm"
+    },
+    "correctOption": "A",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 52,
+    "subject": "Mathematics",
+    "questionText": "The angles A, B and C of a triangle ABC are in AP and a:b = 1:√3, then the area (in sq cm) of this triangle is:",
+    "options": {
+      "A": "2/√3",
+      "B": "4/√3",
+      "C": "2√3",
+      "D": "4/√3"
+    },
+    "correctOption": "A",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 53,
+    "subject": "Mathematics",
+    "questionText": "The sides of a triangle are in the ratio 1:√3:2, then the angles of the triangle are in the ratio:",
+    "options": {
+      "A": "1 : 3 : 5",
+      "B": "2 : 3 : 2",
+      "C": "3 : 2 : 1",
+      "D": "1 : 2 : 3"
+    },
+    "correctOption": "D",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 54,
+    "subject": "Mathematics",
+    "questionText": "In a ΔABC, among the following which one is true?",
+    "options": {
+      "A": "(b+c)cos(A/2) = a sin((B+C)/2)",
+      "B": "(b+c)cos((B+C)/2) = a sin(A/2)",
+      "C": "(b-c)cos((B-C)/2) = a cos(A/2)",
+      "D": "(b-c)cos(A/2) = a sin((B-C)/2)"
+    },
+    "correctOption": "B",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 55,
+    "subject": "Mathematics",
+    "questionText": "Which of the following pieces of data does not uniquely determine an acute angled ΔABC (R being the radius of the circumcircle)?",
+    "options": {
+      "A": "a, sinA, sinB",
+      "B": "a, b, c",
+      "C": "a, sinB, R",
+      "D": "a, sinA, R"
+    },
+    "correctOption": "D",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 56,
+    "subject": "Mathematics",
+    "questionText": "Two vertices of a triangle are (0, 2) and (4, 3). If its orthocentre is at the origin, then its third vertex lies in which quadrant?",
+    "options": {
+      "A": "Fourth",
+      "B": "Third",
+      "C": "Second",
+      "D": "First"
+    },
+    "correctOption": "B",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 57,
+    "subject": "Mathematics",
+    "questionText": "In a ΔABC, 2ac sin[(1/2)(A-B+C)] is equal to:",
+    "options": {
+      "A": "a² + b² - c²",
+      "B": "c² + a² - b²",
+      "C": "b² - c² - a²",
+      "D": "c² - a² - b²"
+    },
+    "correctOption": "B",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 58,
+    "subject": "Mathematics",
+    "questionText": "If the angles A, B and C of a triangle are in arithmetic progression and if a, b and c denote the lengths of the sides opposite to A, B and C respectively, then the value of the expression (a/c)sin2C + (c/a)sin2A is:",
+    "options": {
+      "A": "1/2",
+      "B": "√3/2",
+      "C": "1",
+      "D": "√3"
+    },
+    "correctOption": "C",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 59,
+    "subject": "Mathematics",
+    "questionText": "If the angles of a triangle are in the ratio 4:1:1, then the ratio of the longest side to the perimeter is:",
+    "options": {
+      "A": "√3 : (2+√3)",
+      "B": "1 : 3 : 2",
+      "C": "1 : 2+√3",
+      "D": "2 : 3"
+    },
+    "correctOption": "A",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 60,
+    "subject": "Mathematics",
+    "questionText": "In a ΔABC, let ∠C = π/2. If r is the inradius and R is the circumradius of the triangle, then 2(r+R) is equal to:",
+    "options": {
+      "A": "a+b",
+      "B": "b+c",
+      "C": "c+a",
+      "D": "a+b+c"
+    },
+    "correctOption": "A",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 61,
+    "subject": "Mathematics",
+    "questionText": "If in a ΔABC, (2cosA)/a + (cosB)/b + (2cosC)/c = a/bc + b/ca, then the value of the angle A is _____ degree.",
+    "options": {
+      "A": "60°",
+      "B": "90°",
+      "C": "120°",
+      "D": "45°"
+    },
+    "correctOption": "B",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 62,
+    "subject": "Mathematics",
+    "questionText": "Let the equations of two sides of a triangle be 3x - 2y + 6 = 0 and 4x + 5y - 20 = 0. If the orthocentre of this triangle is at (1, 1) then the equation of its third side is:",
+    "options": {
+      "A": "122y - 26x - 1675 = 0",
+      "B": "26x - 122y - 1675 = 0",
+      "C": "122y + 26x + 1675 = 0",
+      "D": "26x + 61y + 1675 = 0"
+    },
+    "correctOption": "B",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 63,
+    "subject": "Mathematics",
+    "questionText": "If PQR is a triangle of area Δ with a=2, b=7/2 and c=5/2, where a, b and c are the lengths of the sides of the triangle opposite to the angles at P, Q and R respectively. Then (2 sin P - sin 2P) / (2 sin P + sin 2P) equals:",
+    "options": {
+      "A": "3 / 4Δ",
+      "B": "45 / 4Δ",
+      "C": "(3 / 4Δ)²",
+      "D": "(45 / 4Δ)²"
+    },
+    "correctOption": "B",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 64,
+    "subject": "Mathematics",
+    "questionText": "If in a ΔPQR, sin P, sin Q, sin R are in AP, then:",
+    "options": {
+      "A": "the altitudes are in AP",
+      "B": "the altitudes are in HP",
+      "C": "the medians are in GP",
+      "D": "the medians are in AP"
+    },
+    "correctOption": "B",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 65,
+    "subject": "Mathematics",
+    "questionText": "The radius of the circumcircle of the ΔPRS is:",
+    "options": {
+      "A": "5",
+      "B": "3√3",
+      "C": "3√2",
+      "D": "2√3"
+    },
+    "correctOption": "B",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 66,
+    "subject": "Mathematics",
+    "questionText": "The sides of a triangle inscribed in a given circle subtend angles α, β and γ at the centre. The minimum value of the arithmetic mean of cos(α+π/2), cos(β+π/2) and cos(γ+π/2) is _____.",
+    "options": {
+      "A": "0",
+      "B": "negative",
+      "C": "1",
+      "D": "1/2"
+    },
+    "correctOption": "B",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 67,
+    "subject": "Mathematics",
+    "questionText": "Let ABC be a triangle such that ∠ACB = π/6 and let a, b and c denote the lengths of the sides opposite to A, B and C respectively. The value(s) of x for which a = x²+x+1, b = x²-1 and c = 2x+1 is (are):",
+    "options": {
+      "A": "-(2+√3)",
+      "B": "1+√3",
+      "C": "2+√3",
+      "D": "4/3"
+    },
+    "correctOption": "B",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 68,
+    "subject": "Mathematics",
+    "questionText": "In a ΔABC, ∠B = π/3 and ∠C = π/4. Let D divide BC internally in the ratio 1:3, then sin∠BAD / sin∠CAD is equal to:",
+    "options": {
+      "A": "1/√6",
+      "B": "1/3",
+      "C": "1/√3",
+      "D": "√(2/3)"
+    },
+    "correctOption": "A",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 69,
+    "subject": "Mathematics",
+    "questionText": "In a triangle, the sum of lengths of two sides is x and the product of the lengths of the same two sides is y. If x² - c² = y, where c is the length of the third side of the triangle, the circumradius of the triangle is:",
+    "options": {
+      "A": "c/3",
+      "B": "c/√3",
+      "C": "(3/2)y",
+      "D": "y/√3"
+    },
+    "correctOption": "B",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 70,
+    "subject": "Mathematics",
+    "questionText": "In a radius of a circle which is inscribed in an isosceles triangle one of whose angle is 2π/3, is √3, then area of triangle (in sq units) is:",
+    "options": {
+      "A": "4√3",
+      "B": "12-7√3",
+      "C": "12+7√3",
+      "D": "None of these"
+    },
+    "correctOption": "C",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 71,
+    "subject": "Mathematics",
+    "questionText": "In a ΔPQR, ∠R = π/2. If tan(P/2) and tan(Q/2) are the roots of the equation ax² + bx + c = 0 (a≠0), then:",
+    "options": {
+      "A": "a+b = c",
+      "B": "b+c = a",
+      "C": "a+c = b",
+      "D": "b = c"
+    },
+    "correctOption": "A",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 72,
+    "subject": "Mathematics",
+    "questionText": "In a ΔABC, AD is the altitude from A. Given b > c, ∠C = 23° and AD = abc/(b²-c²), then ∠B = _____.",
+    "options": {
+      "A": "113°",
+      "B": "90°",
+      "C": "75°",
+      "D": "67°"
+    },
+    "correctOption": "A",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 73,
+    "subject": "Mathematics",
+    "questionText": "With the usual notation, in ΔABC, if ∠A + ∠B = 120°, a = √3+1 and b = √3-1, then the ratio ∠A : ∠B, is:",
+    "options": {
+      "A": "7 : 1",
+      "B": "3 : 1",
+      "C": "9 : 7",
+      "D": "5 : 3"
+    },
+    "correctOption": "B",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 74,
+    "subject": "Mathematics",
+    "questionText": "Given, (b+c)/11 = (c+a)/12 = (a+b)/13 for a triangle ABC with usual notation. If cosA/α = cosB/β = cosC/γ, then the ordered triad (α, β, γ) has a value:",
+    "options": {
+      "A": "(19, 7, 25)",
+      "B": "(3, 4, 5)",
+      "C": "(5, 12, 13)",
+      "D": "(7, 19, 25)"
+    },
+    "correctOption": "D",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  },
+  {
+    "questionNumber": 75,
+    "subject": "Mathematics",
+    "questionText": "There exists a ΔABC satisfying the conditions:",
+    "options": {
+      "A": "b sin A = a, a < π/2",
+      "B": "b sin A > a, a > π/2",
+      "C": "b sin A > a, a < π/2",
+      "D": "b sin A < a, a < π/2, b > a"
+    },
+    "correctOption": "C",
+    "explanation": "",
+    "marks": 4,
+    "negativeMarks": 1
+  }
+]
