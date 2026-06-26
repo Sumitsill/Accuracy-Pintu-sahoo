@@ -128,15 +128,22 @@ function SecureExamHallContent() {
               const currentAttempt = attemptCount + 1;
               setAttemptNumber(currentAttempt);
 
-              // Restore saved responses from localStorage if present
-              const savedKey = `exam_responses_${user.id}_${testData.id}_attempt_${currentAttempt}`;
-              const savedResponses = localStorage.getItem(savedKey);
-              if (savedResponses) {
-                try {
-                  setResponses(JSON.parse(savedResponses));
-                } catch (e) {
-                  console.error("Failed to parse saved responses", e);
-                }
+              // Restore saved responses from database if present
+              const { data: savedResponsesData, error: loadResponsesError } = await supabase
+                .from('user_responses')
+                .select('question_id, selected_option_id')
+                .eq('user_id', user.id)
+                .eq('test_id', testData.id)
+                .eq('attempt_number', currentAttempt);
+
+              if (savedResponsesData && !loadResponsesError) {
+                const loadedResponses: Record<string, string> = {};
+                savedResponsesData.forEach((r: any) => {
+                  if (r.selected_option_id) {
+                    loadedResponses[r.question_id] = r.selected_option_id;
+                  }
+                });
+                setResponses(loadedResponses);
               }
 
               // Restore saved remaining time from localStorage if present
@@ -161,13 +168,6 @@ function SecureExamHallContent() {
     fetchTest();
   }, []);
 
-  // Autosave responses to localStorage when they change
-  useEffect(() => {
-    if (userId && testDetails && examActive && !testCompleted) {
-      const savedKey = `exam_responses_${userId}_${testDetails.id}_attempt_${attemptNumber}`;
-      localStorage.setItem(savedKey, JSON.stringify(responses));
-    }
-  }, [responses, userId, testDetails, examActive, testCompleted, attemptNumber]);
 
   // Autosave remaining time to localStorage when it changes
   useEffect(() => {
@@ -408,16 +408,52 @@ function SecureExamHallContent() {
   // -------------------------------------------------------------
   // Handlers & Submission
   // -------------------------------------------------------------
-  const handleSelectOption = (optionId: string) => {
-    const qId = questions[currentQuestionIndex].id;
+  const handleSelectOption = async (optionId: string) => {
+    const q = questions[currentQuestionIndex];
+    if (!q) return;
+    const qId = q.id;
     setResponses(prev => ({ ...prev, [qId]: optionId }));
+
+    if (!isAdmin && userId && testDetails) {
+      const opt = q.options.find((o: any) => o.id === optionId);
+      const isCorrect = opt?.is_correct || false;
+
+      // Delete existing response for this question/attempt to avoid duplicate rows
+      await supabase.from('user_responses')
+        .delete()
+        .eq('user_id', userId)
+        .eq('test_id', testDetails.id)
+        .eq('question_id', qId)
+        .eq('attempt_number', attemptNumber);
+
+      // Insert new response
+      await supabase.from('user_responses').insert({
+        user_id: userId,
+        test_id: testDetails.id,
+        question_id: qId,
+        selected_option_id: optionId,
+        is_correct: isCorrect,
+        attempt_number: attemptNumber
+      });
+    }
   };
 
-  const handleClearResponse = () => {
-    const qId = questions[currentQuestionIndex].id;
+  const handleClearResponse = async () => {
+    const q = questions[currentQuestionIndex];
+    if (!q) return;
+    const qId = q.id;
     const newRes = { ...responses };
     delete newRes[qId];
     setResponses(newRes);
+
+    if (!isAdmin && userId && testDetails) {
+      await supabase.from('user_responses')
+        .delete()
+        .eq('user_id', userId)
+        .eq('test_id', testDetails.id)
+        .eq('question_id', qId)
+        .eq('attempt_number', attemptNumber);
+    }
   };
 
   const handleSaveAndNext = () => {
@@ -563,14 +599,26 @@ function SecureExamHallContent() {
         subjectStats
       });
 
-      if (recordsToInsert.length > 0 && !isAdmin) {
-        await supabase.from('user_responses').insert(recordsToInsert);
+      if (!isAdmin) {
+        // Delete any temporary autosaved responses to prepare for clean insertion
+        await supabase.from('user_responses')
+          .delete()
+          .eq('user_id', user.id)
+          .eq('test_id', testDetails.id)
+          .eq('attempt_number', attemptNumber);
+
+        // Insert final answers with attempt_number
+        if (recordsToInsert.length > 0) {
+          const recordsWithAttempt = recordsToInsert.map(r => ({
+            ...r,
+            attempt_number: attemptNumber
+          }));
+          await supabase.from('user_responses').insert(recordsWithAttempt);
+        }
       }
 
-      // Clear localStorage autosaved answers and time
-      const savedKey = `exam_responses_${user.id}_${testDetails.id}_attempt_${attemptNumber}`;
+      // Clear localStorage autosaved remaining time
       const savedTimeKey = `exam_time_${user.id}_${testDetails.id}_attempt_${attemptNumber}`;
-      localStorage.removeItem(savedKey);
       localStorage.removeItem(savedTimeKey);
     } catch (err) {
       console.error("Submission failed", err);

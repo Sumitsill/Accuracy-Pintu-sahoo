@@ -39,6 +39,7 @@ CREATE TABLE IF NOT EXISTS public.user_responses (
   question_id uuid references public.questions(id),
   selected_option_id uuid references public.options(id),
   is_correct boolean,
+  attempt_number integer default 1,
   answered_at timestamp with time zone default timezone('utc'::text, now())
 );
 
@@ -58,6 +59,8 @@ CREATE POLICY "Students read tests" ON public.tests FOR SELECT USING (true);
 CREATE POLICY "Students read questions" ON public.questions FOR SELECT USING (true);
 CREATE POLICY "Students read options" ON public.options FOR SELECT USING (true);
 
--- Students can insert/read their own responses
+-- Students can insert/read/update/delete their own responses
 CREATE POLICY "Students insert responses" ON public.user_responses FOR INSERT WITH CHECK (auth.uid() = user_id);
 CREATE POLICY "Students select responses" ON public.user_responses FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Students update responses" ON public.user_responses FOR UPDATE USING (auth.uid() = user_id);
+CREATE POLICY "Students delete responses" ON public.user_responses FOR DELETE USING (auth.uid() = user_id);
