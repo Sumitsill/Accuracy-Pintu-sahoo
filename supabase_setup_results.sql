@@ -72,3 +72,25 @@ USING (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin');
 CREATE POLICY "Admins can view all integrity reports"
 ON public.exam_integrity_reports FOR SELECT
 USING (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin');
+
+
+-- 7. Grant Admin Permissions to delete test results, violations, integrity reports, and user responses (for Re-attempt feature)
+DROP POLICY IF EXISTS "Admins can delete all test results" ON public.test_results;
+CREATE POLICY "Admins can delete all test results"
+ON public.test_results FOR DELETE
+USING (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin');
+
+DROP POLICY IF EXISTS "Admins can delete all violations" ON public.exam_violations;
+CREATE POLICY "Admins can delete all violations"
+ON public.exam_violations FOR DELETE
+USING (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin');
+
+DROP POLICY IF EXISTS "Admins can delete all integrity reports" ON public.exam_integrity_reports;
+CREATE POLICY "Admins can delete all integrity reports"
+ON public.exam_integrity_reports FOR DELETE
+USING (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin');
+
+DROP POLICY IF EXISTS "Admins can delete all user responses" ON public.user_responses;
+CREATE POLICY "Admins can delete all user responses"
+ON public.user_responses FOR DELETE
+USING (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin');

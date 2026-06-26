@@ -430,6 +430,107 @@ function StudentManagementView() {
     fetchStudentsAndSwot();
   }, []);
 
+  const handleAllowReattempt = async (studentId: string, testId: string) => {
+    if (!confirm("Are you sure you want to allow this user to re-attempt the test? This will delete their violations, integrity reports, and test results for this exam.")) {
+      return;
+    }
+
+    try {
+      // 1. Delete test results
+      const { error: resultsError } = await supabase
+        .from('test_results')
+        .delete()
+        .eq('user_id', studentId)
+        .eq('test_id', testId);
+
+      if (resultsError) throw resultsError;
+
+      // 2. Delete integrity reports
+      const { error: integrityError } = await supabase
+        .from('exam_integrity_reports')
+        .delete()
+        .eq('user_id', studentId)
+        .eq('test_id', testId);
+
+      if (integrityError) throw integrityError;
+
+      // 3. Delete violations
+      const { error: violationsError } = await supabase
+        .from('exam_violations')
+        .delete()
+        .eq('user_id', studentId)
+        .eq('test_id', testId);
+
+      if (violationsError) throw violationsError;
+
+      // 4. Delete user responses
+      const { error: responsesError } = await supabase
+        .from('user_responses')
+        .delete()
+        .eq('user_id', studentId)
+        .eq('test_id', testId);
+
+      if (responsesError) throw responsesError;
+
+      alert("Success! The student can now re-attempt the test.");
+      
+      // Update local state by removing the test from the active selection
+      setStudents(prevStudents => {
+        const updated = prevStudents.map(student => {
+          if (student.id !== studentId) return student;
+          
+          const newTestHistory = student.test_history.filter((t: any) => t.test_id !== testId);
+          const newIntegrity = student.integrity_reports.filter((r: any) => r.test_id !== testId);
+          const newViolations = student.violations.filter((v: any) => v.test_id !== testId);
+          
+          // Recompute SWOT strengths and weaknesses
+          let strengths: string[] = [];
+          let weaknesses: string[] = [];
+          let opportunities: string[] = ["Attempt more Mock Tests", "Review incorrect questions in detail"];
+          let threats: string[] = ["Time management on lengthy exams", "Negative marking penalties"];
+          
+          newTestHistory.forEach((result: any) => {
+            const accuracy = result.total_questions > 0 ? (result.correct_count / result.total_questions) * 100 : 0;
+            if (accuracy >= 70) strengths.push(result.title || result.exam_type);
+            else if (accuracy <= 40) weaknesses.push(result.title || result.exam_type);
+            else opportunities.push(`Improve speed in ${result.title || result.exam_type}`);
+          });
+
+          const updatedStudent = {
+            ...student,
+            total_tests: newTestHistory.length,
+            test_history: newTestHistory,
+            integrity_reports: newIntegrity,
+            violations: newViolations,
+            full_swot: {
+              strengths: Array.from(new Set(strengths)).slice(0, 3),
+              weaknesses: Array.from(new Set(weaknesses)).slice(0, 3),
+              opportunities: Array.from(new Set(opportunities)).slice(0, 3),
+              threats: threats.slice(0, 2)
+            },
+            strengths: Array.from(new Set(strengths)).slice(0, 2),
+            weaknesses: Array.from(new Set(weaknesses)).slice(0, 2)
+          };
+
+          // Also update selectedStudent state if it's the current student
+          setSelectedStudent((prevSelected: any) => {
+            if (prevSelected && prevSelected.id === studentId) {
+              return updatedStudent;
+            }
+            return prevSelected;
+          });
+
+          return updatedStudent;
+        });
+        return updated;
+      });
+
+    } catch (err: any) {
+      console.error("Failed to allow re-attempt:", err);
+      alert(`Error: ${err.message || "Failed to allow re-attempt"}`);
+    }
+  };
+
   const uniqueBatches = Array.from(new Set(students.map(s => s.batch).filter(b => b && b !== 'Unassigned')));
   const uniqueClasses = Array.from(new Set(students.map(s => String(s.class || '')).filter(c => c && c !== 'N/A' && c !== 'undefined' && c !== 'null')));
   const uniqueExams = Array.from(new Set(students.map(s => s.aspiration).filter(e => e && e !== 'Not Set' && e !== 'N/A')));
@@ -685,17 +786,27 @@ function StudentManagementView() {
                     <div className="grid grid-cols-1 gap-3">
                       {selectedStudent.integrity_reports.map((rep: any) => (
                         <div key={rep.id} className="p-3 bg-slate-950/60 rounded-xl border border-white/5 text-xs md:text-sm">
-                          <div className="flex justify-between items-center mb-1">
+                          <div className="flex justify-between items-center mb-1 gap-2 flex-wrap">
                             <span className="font-semibold text-white/60">Session Security Report</span>
-                            <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
-                              rep.status === 'normal' 
-                                ? 'bg-green-500/20 text-green-400' 
-                                : rep.status === 'warned'
-                                  ? 'bg-orange-500/20 text-orange-400'
-                                  : 'bg-red-500/20 text-red-400'
-                            }`}>
-                              Status: {rep.status.replace(/_/g, ' ')}
-                            </span>
+                            <div className="flex items-center gap-2">
+                              <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
+                                rep.status === 'normal' 
+                                  ? 'bg-green-500/20 text-green-400' 
+                                  : rep.status === 'warned'
+                                    ? 'bg-orange-500/20 text-orange-400'
+                                    : 'bg-red-500/20 text-red-400'
+                              }`}>
+                                Status: {rep.status.replace(/_/g, ' ')}
+                              </span>
+                              {(rep.status === 'submitted_due_to_violation' || rep.status === 'warned') && (
+                                <button
+                                  onClick={() => handleAllowReattempt(selectedStudent.id, rep.test_id)}
+                                  className="px-2.5 py-1 text-[10px] font-bold uppercase bg-red-500/20 hover:bg-red-500/40 text-red-400 rounded-lg border border-red-500/30 transition-all cursor-pointer"
+                                >
+                                  Allow this user to re attempt the test
+                                </button>
+                              )}
+                            </div>
                           </div>
                           <p className="text-white/80 leading-relaxed">{rep.violation_summary}</p>
                           {rep.device_info && (
@@ -773,18 +884,24 @@ function StudentManagementView() {
                            <td className="p-3 text-center font-bold text-cyan-400">{test.score}</td>
                            <td className="p-3 text-center text-white/50">{test.correct_count} / {test.total_questions}</td>
                            <td className="p-3 text-center text-white/50">{new Date(test.created_at).toLocaleDateString()}</td>
-                           <td className="p-3 text-right">
-                             <button
-                               onClick={() => handleToggleReview(selectedStudent.id, test.test_id)}
-                               className={`text-xs font-semibold py-1.5 px-3 rounded-lg border transition-all ${
-                                 isExpanded
-                                   ? "bg-cyan-500/20 text-cyan-400 border-cyan-500/30"
-                                   : "bg-white/5 hover:bg-white/10 text-white/80 border-white/10"
-                                }`}
-                             >
-                               {isExpanded ? "Hide Review" : "Review Answers"}
-                             </button>
-                           </td>
+                           <td className="p-3 text-right flex justify-end gap-2">
+                              <button
+                                onClick={() => handleToggleReview(selectedStudent.id, test.test_id)}
+                                className={`text-xs font-semibold py-1.5 px-3 rounded-lg border transition-all ${
+                                  isExpanded
+                                    ? "bg-cyan-500/20 text-cyan-400 border-cyan-500/30"
+                                    : "bg-white/5 hover:bg-white/10 text-white/80 border-white/10"
+                                 }`}
+                              >
+                                {isExpanded ? "Hide Review" : "Review Answers"}
+                              </button>
+                              <button
+                                onClick={() => handleAllowReattempt(selectedStudent.id, test.test_id)}
+                                className="text-xs font-semibold py-1.5 px-3 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/20 hover:border-red-500/30 transition-all cursor-pointer"
+                              >
+                                Allow Re-attempt
+                              </button>
+                            </td>
                          </tr>
                          {isExpanded && (
                            <tr>

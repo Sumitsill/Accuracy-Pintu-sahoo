@@ -64,3 +64,18 @@ ON public.exam_integrity_reports FOR SELECT
 USING (
   (SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin'
 );
+
+-- Admins can delete violations and integrity reports (for Re-attempt feature)
+DROP POLICY IF EXISTS "Admins can delete all violations" ON public.exam_violations;
+CREATE POLICY "Admins can delete all violations"
+ON public.exam_violations FOR DELETE
+USING (
+  (SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin'
+);
+
+DROP POLICY IF EXISTS "Admins can delete all integrity reports" ON public.exam_integrity_reports;
+CREATE POLICY "Admins can delete all integrity reports"
+ON public.exam_integrity_reports FOR DELETE
+USING (
+  (SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin'
+);
