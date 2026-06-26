@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { 
   Home, FileText, ClipboardList, FileCheck, User, Menu, X,
   Bell, Target, Zap, ArrowRight, Camera, LogOut, ChevronRight, ChevronDown,
-  Loader2, Eye
+  Loader2, Eye, Award
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
@@ -110,7 +110,8 @@ export default function StudentPortalClient({ user, profile }: { user: any, prof
           <NavItem id="dashboard" icon={Home} label="Dashboard" />
           <NavItem id="note" icon={FileText} label="My Notes" />
           <NavItem id="dpp" icon={ClipboardList} label="Daily Practice" />
-          <NavItem id="test" icon={FileCheck} label="Test Center" />
+          <NavItem id="test" icon={Target} label="Test Center" />
+          <NavItem id="results" icon={Award} label="Test Results" />
           <NavItem id="profile" icon={User} label="Profile" />
         </nav>
       </aside>
@@ -176,6 +177,7 @@ export default function StudentPortalClient({ user, profile }: { user: any, prof
           {activeTab === "note" && <ResourceView title="My Notes" type="note" profile={profile} icon={FileText} color="text-blue-400" />}
           {activeTab === "dpp" && <ResourceView title="Daily Practice Problems" type="dpp" profile={profile} icon={ClipboardList} color="text-cyan-400" />}
           {activeTab === "test" && <ResourceView title="Test Center" type="test" profile={profile} icon={Target} color="text-orange-400" />}
+          {activeTab === "results" && <ResultsView user={user} />}
           {activeTab === "profile" && <ProfileView email={user?.email} userId={user?.id} profile={profile} avatarUrl={avatarUrl} handleLogout={handleLogout} isProfileComplete={isProfileComplete} />}
         </div>
       </main>
@@ -684,3 +686,124 @@ function ProfileView({ email, userId, profile, avatarUrl, handleLogout, isProfil
 }
 
 // -------------------------------------------------------------------
+// Test Results & Analysis View
+// -------------------------------------------------------------------
+function ResultsView({ user }: { user: any }) {
+  const supabase = createClient();
+  const [results, setResults] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchResults = async () => {
+      setLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from('test_results')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false });
+
+        if (data && !error) {
+          const resultsByTest: Record<string, any[]> = {};
+          
+          // Work on a copy sorted chronologically to assign attempt numbers
+          const chronological = [...data].sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+          
+          chronological.forEach((res) => {
+            if (!resultsByTest[res.test_id]) {
+              resultsByTest[res.test_id] = [];
+            }
+            resultsByTest[res.test_id].push(res);
+            res.attempt_number = resultsByTest[res.test_id].length;
+          });
+
+          // Sort back to descending to show latest first
+          const sortedResults = [...chronological].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+          setResults(sortedResults);
+        }
+      } catch (err) {
+        console.error("Failed to load results", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchResults();
+  }, [user]);
+
+  return (
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white/5 p-5 md:p-6 rounded-3xl border border-white/10 mb-8">
+        <div className="flex items-center gap-4">
+          <div className="p-3 bg-white/5 rounded-xl text-cyan-400">
+            <Award className="w-8 h-8" />
+          </div>
+          <div>
+            <h3 className="text-2xl font-bold text-white">Test Results & Analysis</h3>
+            <p className="text-white/50 text-sm">Review your scores, wrong answers, and detailed explanations.</p>
+          </div>
+        </div>
+      </div>
+
+      {loading ? (
+        <div className="flex justify-center p-12"><Loader2 className="w-8 h-8 animate-spin text-cyan-400" /></div>
+      ) : results.length === 0 ? (
+        <div className="flex flex-col items-center justify-center p-12 text-center bg-white/5 border border-dashed border-white/10 rounded-3xl">
+          <Award className="w-12 h-12 text-white/20 mb-4" />
+          <p className="text-white/50">You haven't completed any tests yet.</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {results.map((res) => {
+            const skipped = res.total_questions - (res.correct_count + res.incorrect_count);
+            const percentage = res.total_questions > 0 
+              ? ((res.correct_count / res.total_questions) * 100).toFixed(0) 
+              : "0";
+
+            return (
+              <div key={res.id} className="bg-white/5 border border-white/10 rounded-3xl p-6 hover:border-cyan-500/30 transition-all flex flex-col justify-between group">
+                <div>
+                  <div className="flex justify-between items-start mb-4">
+                    <span className="px-2.5 py-1 rounded-md bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-[10px] font-bold uppercase tracking-wider">
+                      Attempt {res.attempt_number}
+                    </span>
+                    <span className="text-xs text-white/40 font-semibold">{new Date(res.created_at).toLocaleDateString()}</span>
+                  </div>
+
+                  <h4 className="text-lg font-bold text-white mb-4 group-hover:text-cyan-300 transition-colors leading-snug">{res.title}</h4>
+
+                  <div className="grid grid-cols-3 gap-3 mb-6 bg-slate-950/40 p-4 rounded-2xl border border-white/5 text-center">
+                    <div>
+                      <span className="block text-[10px] uppercase font-bold text-white/40 mb-0.5">Score</span>
+                      <span className="text-base font-extrabold text-white">{res.score}</span>
+                    </div>
+                    <div>
+                      <span className="block text-[10px] uppercase font-bold text-white/40 mb-0.5">Accuracy</span>
+                      <span className="text-base font-extrabold text-green-400">{percentage}%</span>
+                    </div>
+                    <div>
+                      <span className="block text-[10px] uppercase font-bold text-white/40 mb-0.5">Type</span>
+                      <span className="text-xs font-bold text-white/60 truncate block mt-0.5">{res.exam_type || "Mock"}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-between text-xs text-white/50 px-1 mb-6">
+                    <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-green-500" /> {res.correct_count} Correct</span>
+                    <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-red-500" /> {res.incorrect_count} Wrong</span>
+                    <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-white/20" /> {skipped} Skipped</span>
+                  </div>
+                </div>
+
+                <Link 
+                  href={`/exam-hall?testId=${res.test_id}&viewAnalysis=true&attempt=${res.attempt_number}`}
+                  className="w-full py-3 rounded-xl bg-cyan-500 text-slate-950 font-bold hover:bg-cyan-400 transition-all text-sm flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(34,211,238,0.25)]"
+                >
+                  <Eye className="w-4 h-4" /> View Analysis & Solutions
+                </Link>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}

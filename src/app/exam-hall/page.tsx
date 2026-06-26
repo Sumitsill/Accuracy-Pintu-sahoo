@@ -117,12 +117,87 @@ function SecureExamHallContent() {
           if (!userIsAdmin) {
             const { data: existingResults } = await supabase
               .from('test_results')
-              .select('id')
+              .select('*')
               .eq('user_id', user.id)
-              .eq('test_id', testData.id);
+              .eq('test_id', testData.id)
+              .order('created_at', { ascending: true });
 
             const attemptCount = existingResults ? existingResults.length : 0;
-            if (attemptCount >= 2) {
+            
+            // Check if student is requesting to view test analysis for a completed attempt
+            const viewAnalysis = searchParams.get('viewAnalysis') === 'true';
+            const requestedAttempt = parseInt(searchParams.get('attempt') || '1', 10);
+
+            if (viewAnalysis && existingResults && existingResults.length > 0) {
+              const selectedResult = existingResults[requestedAttempt - 1] || existingResults[existingResults.length - 1];
+
+              // Restore saved responses from database for this attempt
+              const { data: savedResponsesData } = await supabase
+                .from('user_responses')
+                .select('question_id, selected_option_id, is_correct')
+                .eq('user_id', user.id)
+                .eq('test_id', testData.id)
+                .eq('attempt_number', requestedAttempt);
+
+              const loadedResponses: Record<string, string> = {};
+              const subjectStats: Record<string, any> = {};
+
+              // Initialize subject stats for all questions
+              formattedQuestions.forEach((q: any) => {
+                const sub = q.subject || "Physics";
+                if (!subjectStats[sub]) {
+                  subjectStats[sub] = { score: 0, correct: 0, incorrect: 0, total: 0, attempted: 0 };
+                }
+                subjectStats[sub].total++;
+              });
+
+              savedResponsesData?.forEach((r: any) => {
+                if (r.selected_option_id) {
+                  loadedResponses[r.question_id] = r.selected_option_id;
+                }
+
+                // Calculate subject stats
+                const q = formattedQuestions.find((x: any) => x.id === r.question_id);
+                if (q) {
+                  const sub = q.subject || "Physics";
+                  const qMarks = q.marks !== undefined && q.marks !== null ? q.marks : 4;
+                  const qNeg = q.negative_marks !== undefined && q.negative_marks !== null ? q.negative_marks : 1;
+
+                  if (subjectStats[sub]) {
+                    subjectStats[sub].attempted++;
+                    if (r.is_correct) {
+                      subjectStats[sub].score += qMarks;
+                      subjectStats[sub].correct++;
+                    } else {
+                      subjectStats[sub].score -= qNeg;
+                      subjectStats[sub].incorrect++;
+                    }
+                  }
+                }
+              });
+
+              setResponses(loadedResponses);
+
+              // Fetch rank and percentile stats
+              const rankInfo = await fetchRankAndPercentile(testData.id, selectedResult.score, user.id);
+
+              setScoreResult({
+                score: selectedResult.score,
+                total: formattedQuestions.length,
+                attempted: savedResponsesData?.length || 0,
+                correct: selectedResult.correct_count,
+                incorrect: selectedResult.incorrect_count,
+                rank: rankInfo?.rank || 1,
+                percentile: rankInfo?.percentile || "100.0",
+                totalStudents: rankInfo?.totalStudents || 1,
+                subjectStats
+              });
+
+              setAttemptNumber(requestedAttempt);
+              setShowInstructions(false);
+              setExamActive(false);
+              setTestCompleted(true);
+            } else if (attemptCount >= 2) {
               setAlreadySubmitted(true);
             } else {
               const currentAttempt = attemptCount + 1;
