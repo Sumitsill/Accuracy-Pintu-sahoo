@@ -4,11 +4,12 @@ import React, { useState, useEffect } from "react";
 import { 
   Home, FileText, ClipboardList, FileCheck, User, Menu, X,
   Bell, Target, Zap, ArrowRight, Camera, LogOut, ChevronRight, ChevronDown,
-  Loader2, Eye, Award
+  Loader2, Eye, Award, Trophy
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import LeaderboardView from "@/components/LeaderboardView";
 
 interface ProfileData {
   full_name?: string | null;
@@ -189,6 +190,7 @@ export default function StudentPortalClient({ user, profile }: { user: any, prof
           <NavItem id="dpp" icon={ClipboardList} label="Daily Practice" />
           <NavItem id="test" icon={Target} label="Test Center" />
           <NavItem id="results" icon={Award} label="Test Results" />
+          <NavItem id="leaderboard" icon={Trophy} label="Leaderboard" />
           <NavItem id="profile" icon={User} label="Profile" />
         </nav>
       </aside>
@@ -307,6 +309,7 @@ export default function StudentPortalClient({ user, profile }: { user: any, prof
           {activeTab === "dpp" && <ResourceView title="Daily Practice Problems" type="dpp" profile={profile} icon={ClipboardList} color="text-cyan-400" />}
           {activeTab === "test" && <ResourceView title="Test Center" type="test" profile={profile} icon={Target} color="text-orange-400" />}
           {activeTab === "results" && <ResultsView user={user} />}
+          {activeTab === "leaderboard" && <LeaderboardView isAdminPortal={false} />}
           {activeTab === "profile" && <ProfileView email={user?.email} userId={user?.id} profile={profile} avatarUrl={avatarUrl} handleLogout={handleLogout} isProfileComplete={isProfileComplete} />}
         </div>
       </main>

@@ -10,6 +10,7 @@ import {
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import LeaderboardView from "@/components/LeaderboardView";
 
 export default function AdminPortalClient({ user, profile }: { user: any, profile: any }) {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -148,6 +149,7 @@ export default function AdminPortalClient({ user, profile }: { user: any, profil
           <NavItem id="note" icon={BookOpen} label="Notes Management" />
           <NavItem id="dpp" icon={PenTool} label="DPP Management" />
           <NavItem id="test" icon={Target} label="Test Center" />
+          <NavItem id="leaderboard" icon={Award} label="Leaderboard" />
         </nav>
       </aside>
 
@@ -259,6 +261,7 @@ export default function AdminPortalClient({ user, profile }: { user: any, profil
           {activeTab === "note" && <ResourceManagementView title="Notes Management" icon={BookOpen} action="Upload New Notes PDF" type="note" />}
           {activeTab === "dpp" && <ResourceManagementView title="DPP Management" icon={PenTool} action="Upload New DPP PDF" type="dpp" />}
           {activeTab === "test" && <ResourceManagementView title="Test Center Management" icon={Target} action="Create New Test" type="test" isTest />}
+          {activeTab === "leaderboard" && <LeaderboardView isAdminPortal={true} />}
         </div>
       </main>
     </div>
