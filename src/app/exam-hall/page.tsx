@@ -56,6 +56,7 @@ function SecureExamHallContent() {
   // Tracks user responses: { question_id: selected_option_id }
   const [responses, setResponses] = useState<Record<string, string>>({});
   const [userName, setUserName] = useState<string>("");
+  const [userProfile, setUserProfile] = useState<any>(null);
 
   // -------------------------------------------------------------
   // Data Fetching
@@ -110,10 +111,11 @@ function SecureExamHallContent() {
         const { data: { user } } = await supabase.auth.getUser();
         if (user) {
           setUserId(user.id);
-          const { data: profile } = await supabase.from('profiles').select('role, full_name, email').eq('id', user.id).single();
+          const { data: profile } = await supabase.from('profiles').select('role, full_name, email, batch').eq('id', user.id).single();
           const userIsAdmin = profile?.role === 'admin';
           setIsAdmin(userIsAdmin);
           setUserName(profile?.full_name || profile?.email || user.email || "Student");
+          setUserProfile(profile);
 
           // Check if student has already submitted results for this test
           if (!userIsAdmin) {
@@ -727,11 +729,20 @@ function SecureExamHallContent() {
 
       const rankInfoPromise = fetchRankAndPercentile(testDetails.id, score, userId);
 
+      const insertNotificationPromise = !isAdmin ? supabase.from('notifications').insert([{
+         recipient_role: 'admin',
+         title: testDetails.exam_type === "DPP Quiz" ? "New DPP Quiz Submission" : "New Test Submission",
+         message: `${userProfile?.full_name || userProfile?.email || "Student"} (${userProfile?.batch || "Unassigned"}) completed "${testDetails.title || "Exam"}" with a score of ${score}.`,
+         type: testDetails.exam_type === "DPP Quiz" ? "dpp_submit" : "test_submit",
+         target_batch: userProfile?.batch || "Unassigned"
+      }]) : Promise.resolve(null);
+
       // Execute all database actions and rank calculation concurrently for maximum submission speed!
-      const [_, __, ___, rankInfo] = await Promise.all([
+      const [_, __, ___, ____, rankInfo] = await Promise.all([
         insertResultsPromise,
         integrityReportPromise,
         syncResponsesPromise,
+        insertNotificationPromise,
         rankInfoPromise
       ]);
 

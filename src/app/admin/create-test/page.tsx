@@ -468,6 +468,19 @@ export default function TestCreationEngine() {
       const { error: optError } = await supabase.from('options').insert(optionsToInsert);
       if (optError) throw optError;
 
+      // 5. Create notification for students
+      const testNotificationTitle = examType === "DPP Quiz" ? "New DPP Quiz Live" : "New Test Live";
+      const testNotificationMessage = `A new ${examType === "DPP Quiz" ? "DPP Quiz" : `${examType} Mock Test`} titled "${testTitle}" is now live for ${targetBatch}.`;
+      await supabase.from('notifications').insert([
+        {
+          recipient_role: 'student',
+          title: testNotificationTitle,
+          message: testNotificationMessage,
+          type: 'new_test',
+          target_batch: targetBatch
+        }
+      ]);
+
       alert("🎉 Test and questions successfully saved & published!");
       router.push("/admin");
 

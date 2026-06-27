@@ -18,6 +18,72 @@ export default function AdminPortalClient({ user, profile }: { user: any, profil
   const router = useRouter();
   const supabase = createClient();
 
+  // Notifications State
+  const [notifications, setNotifications] = useState<any[]>([]);
+  const [readNotificationIds, setReadNotificationIds] = useState<string[]>([]);
+  const [showNotifications, setShowNotifications] = useState(false);
+
+  useEffect(() => {
+    const stored = localStorage.getItem("read_notification_ids");
+    if (stored) {
+      setReadNotificationIds(JSON.parse(stored));
+    }
+
+    const fetchNotifications = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('notifications')
+          .select('*')
+          .eq('recipient_role', 'admin')
+          .order('created_at', { ascending: false })
+          .limit(50);
+
+        if (data && !error) {
+          setNotifications(data);
+        }
+      } catch (err) {
+        console.error("Failed to fetch notifications:", err);
+      }
+    };
+
+    fetchNotifications();
+
+    const channel = supabase
+      .channel('realtime-notifications-admin')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'notifications', filter: 'recipient_role=eq.admin' },
+        (payload: any) => {
+          setNotifications(prev => [payload.new, ...prev].slice(0, 50));
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
+  const markAllAsRead = () => {
+    const allIds = notifications.map(n => n.id);
+    const updated = Array.from(new Set([...readNotificationIds, ...allIds]));
+    setReadNotificationIds(updated);
+    localStorage.setItem("read_notification_ids", JSON.stringify(updated));
+  };
+
+  const toggleRead = (id: string) => {
+    let updated;
+    if (readNotificationIds.includes(id)) {
+      updated = readNotificationIds.filter(x => x !== id);
+    } else {
+      updated = [...readNotificationIds, id];
+    }
+    setReadNotificationIds(updated);
+    localStorage.setItem("read_notification_ids", JSON.stringify(updated));
+  };
+
+  const unreadCount = notifications.filter(n => !readNotificationIds.includes(n.id)).length;
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
     router.push("/login");
@@ -102,10 +168,62 @@ export default function AdminPortalClient({ user, profile }: { user: any, profil
             </h2>
           </div>
           <div className="flex items-center gap-6">
-            <button className="relative p-2 text-white/50 hover:text-white transition-colors">
-              <Bell className="w-6 h-6" />
-              <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-orange-500 rounded-full shadow-[0_0_8px_rgba(249,115,22,0.8)] border border-slate-950" />
-            </button>
+            <div className="relative">
+              <button 
+                onClick={() => setShowNotifications(!showNotifications)}
+                className="relative p-2.5 rounded-xl bg-white/5 border border-white/10 text-white/50 hover:text-white hover:bg-white/10 hover:border-white/20 transition-all cursor-pointer flex items-center justify-center"
+              >
+                <Bell className="w-5 h-5" />
+                {unreadCount > 0 && (
+                  <span className="absolute top-1 right-1 px-1.5 py-0.5 text-[8px] font-black bg-orange-500 text-white rounded-full leading-none flex items-center justify-center min-w-[15px] h-[15px]">
+                    {unreadCount}
+                  </span>
+                )}
+              </button>
+
+              {showNotifications && (
+                <div className="absolute right-0 mt-2 w-80 bg-slate-900 border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50 animate-in fade-in slide-in-from-top-2">
+                  <div className="p-4 border-b border-white/5 flex justify-between items-center bg-slate-950/40">
+                    <span className="text-sm font-bold text-white">Notifications</span>
+                    {unreadCount > 0 && (
+                      <button 
+                        onClick={markAllAsRead}
+                        className="text-[10px] text-orange-400 hover:text-orange-300 font-bold uppercase tracking-wider cursor-pointer"
+                      >
+                        Mark all read
+                      </button>
+                    )}
+                  </div>
+                  <div className="max-h-80 overflow-y-auto divide-y divide-white/5 scrollbar-thin">
+                    {notifications.length === 0 ? (
+                      <p className="text-xs text-white/40 text-center py-8">No notifications yet.</p>
+                    ) : (
+                      notifications.map(n => {
+                        const isRead = readNotificationIds.includes(n.id);
+                        return (
+                          <div 
+                            key={n.id} 
+                            onClick={() => toggleRead(n.id)}
+                            className={`p-4 hover:bg-white/5 transition-colors cursor-pointer text-left relative ${!isRead ? 'bg-orange-500/[0.03]' : ''}`}
+                          >
+                            {!isRead && (
+                              <div className="absolute top-4 left-2 w-1.5 h-1.5 rounded-full bg-orange-500" />
+                            )}
+                            <div className="pl-2.5 space-y-1">
+                              <p className={`text-xs font-bold leading-tight ${!isRead ? 'text-orange-400' : 'text-white'}`}>{n.title}</p>
+                              <p className="text-[11px] text-white/60 leading-normal">{n.message}</p>
+                              <span className="text-[9px] text-white/30 font-mono block mt-1">
+                                {new Date(n.created_at).toLocaleString()}
+                              </span>
+                            </div>
+                          </div>
+                        );
+                      })
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
             
             {/* Avatar Dropdown */}
             <div className="relative">
@@ -1588,6 +1706,19 @@ function ResourceManagementView({ title, icon: Icon, action, type, isTest = fals
       ]);
 
       if (dbError) throw dbError;
+
+      // 5. Create notification for students
+      const notificationTitle = type === "note" ? "New Notes Uploaded" : "New DPP Uploaded";
+      const notificationMessage = `New ${type === "note" ? "notes" : "DPP"} on ${formSubject} (${formTopic}) titled "${formTitle}" has been uploaded for ${formBatch}.`;
+      await supabase.from('notifications').insert([
+        {
+          recipient_role: 'student',
+          title: notificationTitle,
+          message: notificationMessage,
+          type: type === "note" ? "new_note" : "new_dpp",
+          target_batch: formBatch
+        }
+      ]);
 
       // Success
       setIsModalOpen(false);
