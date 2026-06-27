@@ -669,7 +669,7 @@ export default function TestCreationEngine() {
             <div className="text-center space-y-2">
               <h2 className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-orange-400 flex items-center justify-center gap-2">
                 <Sparkles className="w-6 h-6 text-orange-400 animate-pulse" />
-                AI-Powered NEET Parser Engine
+                AI-Powered {examType || "Mock Test"} Parser Engine
               </h2>
               <p className="text-white/50 text-sm max-w-lg mx-auto">Upload the question sheet and the correct answer key. The system will automatically construct the test, map questions, correct choices, marks, and negative markings.</p>
             </div>
@@ -763,7 +763,7 @@ export default function TestCreationEngine() {
               ) : (
                 <>
                   {!pdfjsLoaded ? <Loader2 className="w-5 h-5 animate-spin" /> : <Sparkles className="w-5 h-5 text-slate-950 group-hover:text-white transition-colors" />}
-                  Process & Auto-Build NEET Exam
+                  Process & Auto-Build {examType === "DPP Quiz" ? "DPP Quiz" : `${examType} Exam`}
                 </>
               )}
             </button>
@@ -858,7 +858,7 @@ export default function TestCreationEngine() {
               <div>
                 <h2 className="text-xl font-bold flex items-center gap-2">
                   <CheckCircle2 className="w-6 h-6 text-green-500" />
-                  Review NEET Mock Test Structure
+                  Review {examType === "DPP Quiz" ? "DPP Quiz" : `${examType} Mock Test`} Structure
                 </h2>
                 <p className="text-white/50 text-xs mt-1">
                   Double check, filter, or edit the extracted question contents before publishing to student portals.
@@ -881,7 +881,7 @@ export default function TestCreationEngine() {
                   className="py-2.5 px-5 rounded-xl bg-green-500 hover:bg-green-400 text-slate-950 font-bold text-xs transition-all shadow-[0_0_15px_rgba(34,197,94,0.4)] flex items-center gap-1.5"
                 >
                   {isPublishing ? <Loader2 className="w-4 h-4 animate-spin" /> : <ChevronRight className="w-4 h-4" />}
-                  Publish NEET Test Live
+                  Publish {examType === "DPP Quiz" ? "DPP Quiz" : `${examType} Test`} Live
                 </button>
               </div>
             </div>

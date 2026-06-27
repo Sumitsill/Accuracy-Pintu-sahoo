@@ -437,6 +437,7 @@ function StudentManagementView() {
   // Subject-wise stats state
   const [subjectStatsByTest, setSubjectStatsByTest] = useState<Record<string, Record<string, any>>>({});
   const [loadingStudentStats, setLoadingStudentStats] = useState(false);
+  const [selectedStatsTestKey, setSelectedStatsTestKey] = useState<string>("");
 
   const loadStudentStats = async (student: any) => {
     if (!student || !student.test_history || student.test_history.length === 0) {
@@ -528,8 +529,15 @@ function StudentManagementView() {
     setExpandedTestQuestions([]);
     if (student) {
       loadStudentStats(student);
+      if (student.test_history && student.test_history.length > 0) {
+        const latest = student.test_history[0];
+        setSelectedStatsTestKey(`${latest.test_id}_${latest.attempt_number}`);
+      } else {
+        setSelectedStatsTestKey("");
+      }
     } else {
       setSubjectStatsByTest({});
+      setSelectedStatsTestKey("");
     }
   };
 
@@ -765,6 +773,12 @@ function StudentManagementView() {
           // Also update selectedStudent state if it's the current student
           setSelectedStudent((prevSelected: any) => {
             if (prevSelected && prevSelected.id === studentId) {
+              if (newTestHistory.length > 0) {
+                const latest = newTestHistory[0];
+                setSelectedStatsTestKey(`${latest.test_id}_${latest.attempt_number}`);
+              } else {
+                setSelectedStatsTestKey("");
+              }
               return updatedStudent;
             }
             return prevSelected;
@@ -1010,82 +1024,80 @@ function StudentManagementView() {
                 </div>
               </div>
 
-              {/* Subject-Wise Cumulative Summary Card */}
+              {/* Subject-Wise Exam/Quiz Analysis Card */}
               {selectedStudent.test_history && selectedStudent.test_history.length > 0 && (
                 <div className="bg-slate-950/40 p-5 rounded-3xl border border-white/10 space-y-4">
-                  <h3 className="text-base font-extrabold text-white flex items-center gap-2">
-                    <Target className="w-5 h-5 text-cyan-400" /> Overall Subject-Wise Statistics
-                  </h3>
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <h3 className="text-base font-extrabold text-white flex items-center gap-2">
+                      <Target className="w-5 h-5 text-cyan-400" /> Subject-Wise Exam / Quiz Analysis
+                    </h3>
+                    
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-white/40 font-medium">Select Exam:</span>
+                      <select
+                        value={selectedStatsTestKey}
+                        onChange={(e) => setSelectedStatsTestKey(e.target.value)}
+                        className="bg-slate-900 border border-white/10 rounded-xl px-3 py-1.5 text-white text-xs font-semibold focus:outline-none focus:border-cyan-500 transition-all cursor-pointer shadow-inner max-w-[280px] truncate"
+                      >
+                        {selectedStudent.test_history.map((test: any) => {
+                          const testKey = `${test.test_id}_${test.attempt_number}`;
+                          return (
+                            <option key={testKey} value={testKey}>
+                              {test.title || test.exam_type} (Attempt {test.attempt_number})
+                            </option>
+                          );
+                        })}
+                      </select>
+                    </div>
+                  </div>
                   
                   {loadingStudentStats ? (
                     <div className="flex items-center gap-3 py-6 justify-center text-white/40 text-sm">
                       <Loader2 className="w-5 h-5 animate-spin text-cyan-400" />
                       <span>Computing subject breakdowns...</span>
                     </div>
-                  ) : Object.keys(subjectStatsByTest).length === 0 ? (
-                    <p className="text-xs text-white/30 text-center py-4">No subject statistics recorded yet.</p>
+                  ) : !selectedStatsTestKey || !subjectStatsByTest[selectedStatsTestKey] ? (
+                    <div className="flex items-center gap-3 py-6 justify-center text-white/40 text-sm">
+                      <Loader2 className="w-5 h-5 animate-spin text-cyan-400" />
+                      <span>Computing subject breakdowns...</span>
+                    </div>
                   ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                      {(() => {
-                        // Compute cumulative subject stats
-                        const cumulative: Record<string, { score: number; correct: number; incorrect: number; total: number; attempted: number }> = {};
-                        selectedStudent.test_history.forEach((test: any) => {
-                          const testKey = `${test.test_id}_${test.attempt_number}`;
-                          const stats = subjectStatsByTest[testKey];
-                          if (stats) {
-                            Object.entries(stats).forEach(([sub, stat]: any) => {
-                              if (!cumulative[sub]) {
-                                cumulative[sub] = { score: 0, correct: 0, incorrect: 0, total: 0, attempted: 0 };
-                              }
-                              cumulative[sub].score += stat.score;
-                              cumulative[sub].correct += stat.correct;
-                              cumulative[sub].incorrect += stat.incorrect;
-                              cumulative[sub].total += stat.total;
-                              cumulative[sub].attempted += stat.attempted;
-                            });
-                          }
-                        });
-
-                        if (Object.keys(cumulative).length === 0) {
-                          return <div className="col-span-full text-xs text-white/30 text-center py-2">No subject scores found.</div>;
-                        }
-
-                        return Object.entries(cumulative).map(([sub, stat]) => {
-                          const accuracy = stat.attempted > 0 ? ((stat.correct / stat.attempted) * 100).toFixed(0) : "0";
-                          return (
-                            <div key={sub} className="p-4 bg-white/5 border border-white/5 rounded-2xl hover:border-cyan-500/30 transition-colors flex flex-col justify-between">
-                              <div className="flex justify-between items-start mb-2.5">
-                                <span className="text-sm font-bold text-white">{sub}</span>
-                                <span className="px-2.5 py-0.5 rounded text-[10px] font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
-                                  {stat.score} Marks
-                                </span>
+                      {Object.entries(subjectStatsByTest[selectedStatsTestKey]).map(([sub, stat]: any) => {
+                        const accuracy = stat.attempted > 0 ? ((stat.correct / stat.attempted) * 100).toFixed(0) : "0";
+                        return (
+                          <div key={sub} className="p-4 bg-white/5 border border-white/5 rounded-2xl hover:border-cyan-500/30 transition-colors flex flex-col justify-between">
+                            <div className="flex justify-between items-start mb-2.5">
+                              <span className="text-sm font-bold text-white">{sub}</span>
+                              <span className="px-2.5 py-0.5 rounded text-[10px] font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                                {stat.score} Marks
+                              </span>
+                            </div>
+                            <div className="space-y-1.5 text-xs text-white/50 pt-2 border-t border-white/5">
+                              <div className="flex justify-between items-center">
+                                <span className="text-[10px] uppercase text-white/40 font-semibold">Attempted</span>
+                                <span className="text-cyan-400 font-bold">{stat.attempted} / {stat.total}</span>
                               </div>
-                              <div className="space-y-1.5 text-xs text-white/50 pt-2 border-t border-white/5">
-                                <div className="flex justify-between items-center">
-                                  <span className="text-[10px] uppercase text-white/40 font-semibold">Attempted</span>
-                                  <span className="text-cyan-400 font-bold">{stat.attempted} / {stat.total}</span>
-                                </div>
-                                <div className="flex justify-between items-center">
-                                  <span className="text-[10px] uppercase text-white/40 font-semibold">Correct</span>
-                                  <span className="text-green-400 font-bold">{stat.correct}</span>
-                                </div>
-                                <div className="flex justify-between items-center">
-                                  <span className="text-[10px] uppercase text-white/40 font-semibold">Wrong</span>
-                                  <span className="text-red-400 font-bold">{stat.incorrect}</span>
-                                </div>
-                                <div className="flex justify-between items-center">
-                                  <span className="text-[10px] uppercase text-white/40 font-semibold">Unattended</span>
-                                  <span className="text-amber-500 font-bold">{stat.total - stat.attempted}</span>
-                                </div>
-                                <div className="flex justify-between items-center">
-                                  <span className="text-[10px] uppercase text-white/40 font-semibold">Accuracy</span>
-                                  <span className="text-white font-bold">{accuracy}%</span>
-                                </div>
+                              <div className="flex justify-between items-center">
+                                <span className="text-[10px] uppercase text-white/40 font-semibold">Correct</span>
+                                <span className="text-green-400 font-bold">{stat.correct}</span>
+                              </div>
+                              <div className="flex justify-between items-center">
+                                <span className="text-[10px] uppercase text-white/40 font-semibold">Wrong</span>
+                                <span className="text-red-400 font-bold">{stat.incorrect}</span>
+                              </div>
+                              <div className="flex justify-between items-center">
+                                <span className="text-[10px] uppercase text-white/40 font-semibold">Unattended</span>
+                                <span className="text-amber-500 font-bold">{stat.total - stat.attempted}</span>
+                              </div>
+                              <div className="flex justify-between items-center">
+                                <span className="text-[10px] uppercase text-white/40 font-semibold">Accuracy</span>
+                                <span className="text-white font-bold">{accuracy}%</span>
                               </div>
                             </div>
-                          );
-                        });
-                      })()}
+                          </div>
+                        );
+                      })}
                     </div>
                   )}
                 </div>
