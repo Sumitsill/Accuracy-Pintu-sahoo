@@ -119,10 +119,24 @@ export default function LeaderboardView({ isAdminPortal = false }: LeaderboardPr
         const activeIntegrity = integrity || [];
 
         // Aggregation logic
-        // We group attempts by user_id and keep each student's highest scoring attempt
+        // Sort chronologically to assign attempt numbers in-memory
+        const userAttempts: Record<string, any[]> = {};
+        const chronologicalResults = [...activeResults].sort(
+          (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+        );
+
+        chronologicalResults.forEach((res: any) => {
+          if (!userAttempts[res.user_id]) {
+            userAttempts[res.user_id] = [];
+          }
+          userAttempts[res.user_id].push(res);
+          res.attempt_number = userAttempts[res.user_id].length;
+        });
+
+        // Group by user_id and keep each student's highest scoring attempt
         const studentBestAttempt: Record<string, any> = {};
 
-        activeResults.forEach((res: any) => {
+        chronologicalResults.forEach((res: any) => {
           const existing = studentBestAttempt[res.user_id];
           if (!existing || res.score > existing.score) {
             studentBestAttempt[res.user_id] = res;
@@ -136,7 +150,7 @@ export default function LeaderboardView({ isAdminPortal = false }: LeaderboardPr
 
           // Calculate subject-wise metrics for this specific attempt
           const attemptResponses = activeResponses.filter(
-            (r: any) => r.user_id === userId && r.attempt_number === res.attempt_number
+            (r: any) => r.user_id === userId && (r.attempt_number || 1) === (res.attempt_number || 1)
           );
 
           const subjectStats: Record<string, { score: number; correct: number; incorrect: number; attempted: number; total: number }> = {};
