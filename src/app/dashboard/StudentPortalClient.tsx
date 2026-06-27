@@ -48,6 +48,13 @@ export default function StudentPortalClient({ user, profile }: { user: any, prof
       setReadNotificationIds(JSON.parse(stored));
     }
 
+    const allowedBatches = ['All Students'];
+    if (profile?.class === '11') allowedBatches.push('Class 11');
+    if (profile?.class === '12' || profile?.class === 'Dropper') allowedBatches.push('Class 12');
+    if (profile?.aspiration === 'JEE') allowedBatches.push('IIT JEE Batch');
+    if (profile?.aspiration === 'NEET') allowedBatches.push('NEET Batch');
+    if (profile?.batch) allowedBatches.push(profile.batch);
+
     const fetchNotifications = async () => {
       try {
         const { data, error } = await supabase
@@ -58,10 +65,7 @@ export default function StudentPortalClient({ user, profile }: { user: any, prof
           .limit(50);
 
         if (data && !error) {
-          const studentBatch = profile.batch || "Unassigned";
-          const filtered = data.filter((n: any) => 
-            n.target_batch === "All Students" || n.target_batch === studentBatch
-          );
+          const filtered = data.filter((n: any) => allowedBatches.includes(n.target_batch));
           setNotifications(filtered);
         }
       } catch (err) {
@@ -78,8 +82,7 @@ export default function StudentPortalClient({ user, profile }: { user: any, prof
         { event: 'INSERT', schema: 'public', table: 'notifications', filter: 'recipient_role=eq.student' },
         (payload: any) => {
           const newNotif = payload.new;
-          const studentBatch = profile.batch || "Unassigned";
-          if (newNotif.target_batch === "All Students" || newNotif.target_batch === studentBatch) {
+          if (allowedBatches.includes(newNotif.target_batch)) {
             setNotifications(prev => [newNotif, ...prev].slice(0, 50));
           }
         }

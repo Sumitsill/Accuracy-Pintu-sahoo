@@ -30,7 +30,14 @@ FOR SELECT USING (
         -- Admins can read admin notifications
         (role = 'admin' AND recipient_role = 'admin')
         -- Students can read student notifications targeting their batch
-        OR (role = 'student' AND recipient_role = 'student' AND (target_batch = 'All Students' OR target_batch = batch))
+        OR (role = 'student' AND recipient_role = 'student' AND (
+          target_batch = 'All Students' 
+          OR target_batch = batch
+          OR (target_batch = 'Class 11' AND class = '11')
+          OR (target_batch = 'Class 12' AND (class = '12' OR class = 'Dropper'))
+          OR (target_batch = 'IIT JEE Batch' AND aspiration = 'JEE')
+          OR (target_batch = 'NEET Batch' AND aspiration = 'NEET')
+        ))
       )
     )
   )
