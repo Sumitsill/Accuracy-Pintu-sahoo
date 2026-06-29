@@ -115,10 +115,11 @@ export default function Home() {
       {!isStandalone && (
         <button
           onClick={handleInstallClick}
-          className="absolute top-6 right-6 z-50 flex items-center gap-2 px-4 py-2.5 bg-dark/40 hover:bg-dark/80 border border-white/10 hover:border-secondary/50 rounded-xl text-white/70 hover:text-white transition-all shadow-lg backdrop-blur-md group animate-in fade-in slide-in-from-top-4 duration-500 font-headline"
+          className="absolute top-4 right-4 md:top-6 md:right-6 z-50 flex items-center gap-1.5 md:gap-2 px-3 py-1.5 md:px-4 md:py-2.5 bg-dark/50 hover:bg-dark/80 border border-white/10 hover:border-secondary/50 rounded-xl text-white/70 hover:text-white transition-all shadow-[0_0_15px_rgba(0,242,255,0.15)] hover:shadow-[0_0_25px_rgba(0,242,255,0.3)] backdrop-blur-md group animate-in fade-in slide-in-from-top-4 duration-500 font-headline text-xs md:text-sm"
         >
-          <Download className="w-4 h-4 text-secondary group-hover:scale-110 transition-transform" />
-          <span className="text-sm font-bold tracking-wide">Download App</span>
+          <Download className="w-3.5 h-3.5 md:w-4 md:h-4 text-secondary group-hover:scale-110 transition-transform" />
+          <span className="hidden sm:inline font-bold tracking-wide">Download App</span>
+          <span className="inline sm:hidden font-bold tracking-wide">Install</span>
         </button>
       )}
       
