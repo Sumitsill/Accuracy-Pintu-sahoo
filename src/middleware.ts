@@ -36,6 +36,24 @@ export async function middleware(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser()
 
+  // Redirect authenticated users away from login/register to their dashboard
+  if (user && (request.nextUrl.pathname === '/login' || request.nextUrl.pathname === '/register')) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('is_initialized, role')
+      .eq('id', user.id)
+      .single()
+
+    const isInitialized = profile?.is_initialized === true
+    if (!isInitialized) {
+      return NextResponse.redirect(new URL('/onboarding', request.url))
+    }
+    const role = profile?.role || user.user_metadata?.role || 'student'
+    return NextResponse.redirect(
+      new URL(role === 'admin' ? '/admin' : '/dashboard', request.url)
+    )
+  }
+
   const isProtectedPath = 
     request.nextUrl.pathname.startsWith('/dashboard') || 
     request.nextUrl.pathname.startsWith('/admin') ||

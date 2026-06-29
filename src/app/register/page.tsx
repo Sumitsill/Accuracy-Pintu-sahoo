@@ -66,7 +66,7 @@ function RegisterForm() {
     if (error) {
       setGlobalError(error.message);
     } else {
-      router.push("/verify-email");
+      router.replace("/verify-email");
     }
   };
 

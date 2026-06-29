@@ -59,7 +59,7 @@ function LoginForm() {
     }
 
     router.refresh();
-    router.push("/dashboard");
+    router.replace("/dashboard");
   };
 
   const handleResetPassword = async (e: React.FormEvent) => {
