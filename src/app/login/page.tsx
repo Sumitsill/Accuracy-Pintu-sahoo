@@ -26,6 +26,10 @@ function LoginForm() {
   
   const [globalError, setGlobalError] = useState<string | null>(null);
   const [unverifiedAlert, setUnverifiedAlert] = useState(false);
+  const [view, setView] = useState<"login" | "forgot">("login");
+  const [resetEmail, setResetEmail] = useState("");
+  const [resetLoading, setResetLoading] = useState(false);
+  const [resetStatus, setResetStatus] = useState<{ type: "success" | "error"; message: string } | null>(null);
 
   const {
     register,
@@ -58,6 +62,29 @@ function LoginForm() {
     router.push("/dashboard");
   };
 
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!resetEmail) return;
+    
+    setResetLoading(true);
+    setResetStatus(null);
+    
+    const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
+      redirectTo: `${window.location.origin}/auth/callback?next=/reset-password`,
+    });
+
+    setResetLoading(false);
+    if (error) {
+      setResetStatus({ type: "error", message: error.message });
+    } else {
+      setResetStatus({
+        type: "success",
+        message: "A password reset link has been sent to your email address.",
+      });
+      setResetEmail("");
+    }
+  };
+
   return (
     <div className="w-full max-w-md z-10 animate-in fade-in zoom-in-95 duration-700">
       <div className="text-center mb-8 flex flex-col items-center">
@@ -75,7 +102,7 @@ function LoginForm() {
         <p className="text-white/50 text-sm mt-3 font-semibold">Master the Laws of the Universe</p>
       </div>
       
-      {unverifiedAlert && (
+      {unverifiedAlert && view === "login" && (
         <div className="mb-6 p-5 bg-red-900/40 border border-red-500/50 rounded-2xl flex flex-col items-center text-center gap-3 shadow-[0_0_30px_rgba(239,68,68,0.3)] animate-in slide-in-from-top-4 backdrop-blur-md">
           <div className="p-3 bg-red-500/20 rounded-full">
             <AlertOctagon className="w-8 h-8 text-red-400 animate-pulse" />
@@ -95,106 +122,176 @@ function LoginForm() {
         
         <div className="relative z-10">
           
-          {/* Role Selector Tabs */}
-          <div className="flex p-1 bg-dark/50 rounded-xl mb-6 border border-white/5">
-            <button
-              type="button"
-              onClick={() => setRole("student")}
-              className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-bold transition-all ${
-                role === "student" 
-                  ? "bg-secondary/20 text-secondary border border-secondary/30 shadow-[0_0_10px_rgba(0,242,255,0.2)]" 
-                  : "text-white/40 hover:text-white"
-              }`}
-            >
-              <User className="w-4 h-4" /> Student
-            </button>
-            <button
-              type="button"
-              onClick={() => setRole("admin")}
-              className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-bold transition-all ${
-                role === "admin" 
-                  ? "bg-tertiary/20 text-tertiary border border-tertiary/30 shadow-[0_0_10px_rgba(255,138,0,0.2)]" 
-                  : "text-white/40 hover:text-white"
-              }`}
-            >
-              <BookOpen className="w-4 h-4" /> Admin
-            </button>
-          </div>
+          {view === "login" ? (
+            <>
+              {/* Role Selector Tabs */}
+              <div className="flex p-1 bg-dark/50 rounded-xl mb-6 border border-white/5">
+                <button
+                  type="button"
+                  onClick={() => setRole("student")}
+                  className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-bold transition-all ${
+                    role === "student" 
+                      ? "bg-secondary/20 text-secondary border border-secondary/30 shadow-[0_0_10px_rgba(0,242,255,0.2)]" 
+                      : "text-white/40 hover:text-white"
+                  }`}
+                >
+                  <User className="w-4 h-4" /> Student
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setRole("admin")}
+                  className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-bold transition-all ${
+                    role === "admin" 
+                      ? "bg-tertiary/20 text-tertiary border border-tertiary/30 shadow-[0_0_10px_rgba(255,138,0,0.2)]" 
+                      : "text-white/40 hover:text-white"
+                  }`}
+                >
+                  <BookOpen className="w-4 h-4" /> Admin
+                </button>
+              </div>
 
-          <h2 className="text-2xl font-bold mb-1 text-white">
-            {role === "student" ? "Student Portal" : "Admin Portal"}
-          </h2>
-          <p className="text-white/50 mb-8 text-sm">Enter your coordinates to begin.</p>
+              <h2 className="text-2xl font-bold mb-1 text-white">
+                {role === "student" ? "Student Portal" : "Admin Portal"}
+              </h2>
+              <p className="text-white/50 mb-8 text-sm">Enter your coordinates to begin.</p>
 
-          {globalError && !unverifiedAlert && (
-            <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm backdrop-blur-sm">
-              <p>{globalError}</p>
-            </div>
+              {globalError && !unverifiedAlert && (
+                <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm backdrop-blur-sm">
+                  <p>{globalError}</p>
+                </div>
+              )}
+              
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold tracking-widest text-white/50 uppercase font-label ml-1">Email Address</label>
+                  <div className="relative group">
+                    <div className="absolute inset-0 bg-gradient-to-r from-secondary to-tertiary rounded-xl blur-[2px] opacity-0 group-focus-within:opacity-50 transition-opacity" />
+                    <div className="relative flex items-center">
+                      <Mail className="absolute left-4 w-5 h-5 text-white/40 group-focus-within:text-secondary transition-colors" />
+                      <input
+                        type="email"
+                        {...register("email")}
+                        placeholder={role === "student" ? "student@academy.com" : "admin@academy.com"}
+                        className={`w-full bg-dark/60 border ${errors.email ? 'border-red-500' : 'border-white/10'} rounded-xl py-3.5 pl-12 pr-4 text-white placeholder-white/20 focus:outline-none focus:border-secondary/50 focus:bg-dark/80 transition-all shadow-inner`}
+                      />
+                    </div>
+                  </div>
+                  {errors.email && <p className="text-red-400 text-xs ml-1 mt-1">{errors.email.message}</p>}
+                </div>
+                
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center ml-1">
+                    <label className="text-[10px] font-bold tracking-widest text-white/50 uppercase font-label">Password</label>
+                    <button
+                      type="button"
+                      onClick={() => setView("forgot")}
+                      className="text-[10px] font-bold tracking-wider text-secondary/80 hover:text-secondary transition-colors uppercase"
+                    >
+                      Forgot?
+                    </button>
+                  </div>
+                  <div className="relative group">
+                    <div className="absolute inset-0 bg-gradient-to-r from-tertiary to-secondary rounded-xl blur-[2px] opacity-0 group-focus-within:opacity-50 transition-opacity" />
+                    <div className="relative flex items-center">
+                      <Lock className="absolute left-4 w-5 h-5 text-white/40 group-focus-within:text-secondary transition-colors" />
+                      <input
+                        type="password"
+                        {...register("password")}
+                        placeholder="••••••••"
+                        className={`w-full bg-dark/60 border ${errors.password ? 'border-red-500' : 'border-white/10'} rounded-xl py-3.5 pl-12 pr-4 text-white placeholder-white/20 focus:outline-none focus:border-secondary/50 focus:bg-dark/80 transition-all shadow-inner`}
+                      />
+                    </div>
+                  </div>
+                  {errors.password && <p className="text-red-400 text-xs ml-1 mt-1">{errors.password.message}</p>}
+                </div>
+                
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full mt-8 py-4 rounded-xl bg-gradient-to-r from-secondary to-blue-500 text-primary font-bold text-lg hover:opacity-90 transition-all shadow-[0_0_20px_rgba(0,242,255,0.4)] hover:shadow-[0_0_30px_rgba(0,242,255,0.6)] hover:-translate-y-0.5 relative overflow-hidden group/btn disabled:opacity-50 disabled:hover:translate-y-0"
+                >
+                  <div className="absolute inset-0 bg-white/20 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300 ease-out" />
+                  <span className="relative z-10 flex items-center justify-center gap-2">
+                    {isSubmitting ? <><Loader2 className="w-5 h-5 animate-spin" /> Authenticating...</> : (
+                      <>
+                        Login to Terminal <Rocket className="w-5 h-5 group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 transition-transform" />
+                      </>
+                    )}
+                  </span>
+                </button>
+                
+                <div className="relative flex items-center py-5">
+                  <div className="flex-grow border-t border-white/10"></div>
+                  <span className="flex-shrink-0 mx-4 text-white/30 text-[10px] uppercase tracking-widest font-bold">New {role}?</span>
+                  <div className="flex-grow border-t border-white/10"></div>
+                </div>
+                
+                <Link
+                  href={`/register?role=${role}`}
+                  className="w-full py-3.5 rounded-xl bg-dark/30 border border-tertiary/40 text-tertiary font-bold hover:bg-tertiary/10 hover:border-tertiary hover:shadow-[0_0_15px_rgba(255,138,0,0.2)] transition-all flex items-center justify-center gap-2 group/init"
+                >
+                  <Orbit className="w-5 h-5 group-hover/init:rotate-180 transition-transform duration-700" /> Sign Up / Initialize
+                </Link>
+              </form>
+            </>
+          ) : (
+            <>
+              <h2 className="text-2xl font-bold mb-1 text-white">Reset Password</h2>
+              <p className="text-white/50 mb-6 text-sm">Enter your registered email to receive a recovery link.</p>
+
+              {resetStatus && (
+                <div className={`mb-6 p-4 rounded-xl text-sm backdrop-blur-sm border ${
+                  resetStatus.type === "success" 
+                    ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400" 
+                    : "bg-red-500/10 border-red-500/20 text-red-400"
+                }`}>
+                  <p>{resetStatus.message}</p>
+                </div>
+              )}
+
+              <form onSubmit={handleResetPassword} className="space-y-5">
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold tracking-widest text-white/50 uppercase font-label ml-1">Email Address</label>
+                  <div className="relative group">
+                    <div className="absolute inset-0 bg-gradient-to-r from-secondary to-tertiary rounded-xl blur-[2px] opacity-0 group-focus-within:opacity-50 transition-opacity" />
+                    <div className="relative flex items-center">
+                      <Mail className="absolute left-4 w-5 h-5 text-white/40 group-focus-within:text-secondary transition-colors" />
+                      <input
+                        type="email"
+                        required
+                        value={resetEmail}
+                        onChange={(e) => setResetEmail(e.target.value)}
+                        placeholder="your-email@example.com"
+                        className="w-full bg-dark/60 border border-white/10 rounded-xl py-3.5 pl-12 pr-4 text-white placeholder-white/20 focus:outline-none focus:border-secondary/50 focus:bg-dark/80 transition-all shadow-inner"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={resetLoading}
+                  className="w-full mt-6 py-4 rounded-xl bg-gradient-to-r from-secondary to-blue-500 text-primary font-bold text-lg hover:opacity-90 transition-all shadow-[0_0_20px_rgba(0,242,255,0.4)] hover:-translate-y-0.5 disabled:opacity-50 disabled:hover:translate-y-0"
+                >
+                  <span className="flex items-center justify-center gap-2">
+                    {resetLoading ? <><Loader2 className="w-5 h-5 animate-spin" /> Dispatching...</> : "Send Recovery Link"}
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setView("login");
+                    setResetStatus(null);
+                  }}
+                  className="w-full py-3 rounded-xl bg-dark/30 border border-white/10 text-white/70 font-bold hover:bg-white/10 hover:border-white/20 hover:text-white transition-all flex items-center justify-center gap-2"
+                >
+                  Back to Login
+                </button>
+              </form>
+            </>
           )}
           
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-            <div className="space-y-1">
-              <label className="text-[10px] font-bold tracking-widest text-white/50 uppercase font-label ml-1">Email Address</label>
-              <div className="relative group">
-                <div className="absolute inset-0 bg-gradient-to-r from-secondary to-tertiary rounded-xl blur-[2px] opacity-0 group-focus-within:opacity-50 transition-opacity" />
-                <div className="relative flex items-center">
-                  <Mail className="absolute left-4 w-5 h-5 text-white/40 group-focus-within:text-secondary transition-colors" />
-                  <input
-                    type="email"
-                    {...register("email")}
-                    placeholder={role === "student" ? "student@academy.com" : "admin@academy.com"}
-                    className={`w-full bg-dark/60 border ${errors.email ? 'border-red-500' : 'border-white/10'} rounded-xl py-3.5 pl-12 pr-4 text-white placeholder-white/20 focus:outline-none focus:border-secondary/50 focus:bg-dark/80 transition-all shadow-inner`}
-                  />
-                </div>
-              </div>
-              {errors.email && <p className="text-red-400 text-xs ml-1 mt-1">{errors.email.message}</p>}
-            </div>
-            
-            <div className="space-y-1">
-              <label className="text-[10px] font-bold tracking-widest text-white/50 uppercase font-label ml-1">Password</label>
-              <div className="relative group">
-                <div className="absolute inset-0 bg-gradient-to-r from-tertiary to-secondary rounded-xl blur-[2px] opacity-0 group-focus-within:opacity-50 transition-opacity" />
-                <div className="relative flex items-center">
-                  <Lock className="absolute left-4 w-5 h-5 text-white/40 group-focus-within:text-secondary transition-colors" />
-                  <input
-                    type="password"
-                    {...register("password")}
-                    placeholder="••••••••"
-                    className={`w-full bg-dark/60 border ${errors.password ? 'border-red-500' : 'border-white/10'} rounded-xl py-3.5 pl-12 pr-4 text-white placeholder-white/20 focus:outline-none focus:border-secondary/50 focus:bg-dark/80 transition-all shadow-inner`}
-                  />
-                </div>
-              </div>
-              {errors.password && <p className="text-red-400 text-xs ml-1 mt-1">{errors.password.message}</p>}
-            </div>
-            
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full mt-8 py-4 rounded-xl bg-gradient-to-r from-secondary to-blue-500 text-primary font-bold text-lg hover:opacity-90 transition-all shadow-[0_0_20px_rgba(0,242,255,0.4)] hover:shadow-[0_0_30px_rgba(0,242,255,0.6)] hover:-translate-y-0.5 relative overflow-hidden group/btn disabled:opacity-50 disabled:hover:translate-y-0"
-            >
-              <div className="absolute inset-0 bg-white/20 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300 ease-out" />
-              <span className="relative z-10 flex items-center justify-center gap-2">
-                {isSubmitting ? <><Loader2 className="w-5 h-5 animate-spin" /> Authenticating...</> : (
-                  <>
-                    Login to Terminal <Rocket className="w-5 h-5 group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 transition-transform" />
-                  </>
-                )}
-              </span>
-            </button>
-            
-            <div className="relative flex items-center py-5">
-              <div className="flex-grow border-t border-white/10"></div>
-              <span className="flex-shrink-0 mx-4 text-white/30 text-[10px] uppercase tracking-widest font-bold">New {role}?</span>
-              <div className="flex-grow border-t border-white/10"></div>
-            </div>
-            
-            <Link
-              href={`/register?role=${role}`}
-              className="w-full py-3.5 rounded-xl bg-dark/30 border border-tertiary/40 text-tertiary font-bold hover:bg-tertiary/10 hover:border-tertiary hover:shadow-[0_0_15px_rgba(255,138,0,0.2)] transition-all flex items-center justify-center gap-2 group/init"
-            >
-              <Orbit className="w-5 h-5 group-hover/init:rotate-180 transition-transform duration-700" /> Sign Up / Initialize
-            </Link>
-          </form>
         </div>
       </div>
     </div>

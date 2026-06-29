@@ -59,7 +59,7 @@ export async function middleware(request: NextRequest) {
     const role = profile?.role || user.user_metadata?.role
 
     // Mandatory Profile Initialization (Onboarding Guard)
-    if (!isInitialized && request.nextUrl.pathname !== '/onboarding') {
+    if (!isInitialized && request.nextUrl.pathname !== '/onboarding' && request.nextUrl.pathname !== '/reset-password') {
       return NextResponse.redirect(new URL('/onboarding', request.url))
     }
 
