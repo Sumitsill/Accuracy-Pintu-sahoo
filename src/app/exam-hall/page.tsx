@@ -1312,15 +1312,17 @@ function SecureExamHallContent() {
                             onChange={() => handleSelectOption(opt.id)}
                           />
                           <div className={`w-8 h-8 rounded-full border flex items-center justify-center flex-shrink-0 text-xs font-bold transition-all mr-4 ${
-                            isSelected 
-                              ? isCorrectAnswer 
-                                ? 'bg-emerald-500 border-emerald-500 text-slate-950 shadow-[0_0_10px_rgba(16,185,129,0.4)]'
-                                : 'bg-rose-500 border-rose-500 text-slate-950 shadow-[0_0_10px_rgba(244,63,94,0.4)]'
-                              : isCorrectAnswer && showSolutions
-                                ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400'
-                                : isSelected
-                                  ? 'bg-cyan-500 border-cyan-500 text-slate-950 shadow-[0_0_10px_rgba(34,211,238,0.4)]'
+                            showSolutions
+                              ? isSelected
+                                ? isCorrectAnswer
+                                  ? 'bg-emerald-500 border-emerald-500 text-slate-950 shadow-[0_0_10px_rgba(16,185,129,0.4)]'
+                                  : 'bg-rose-500 border-rose-500 text-slate-950 shadow-[0_0_10px_rgba(244,63,94,0.4)]'
+                                : isCorrectAnswer
+                                  ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400'
                                   : 'bg-white/5 border-white/10 text-white/45'
+                              : isSelected
+                                ? 'bg-cyan-500 border-cyan-500 text-slate-950 shadow-[0_0_10px_rgba(34,211,238,0.4)]'
+                                : 'bg-white/5 border-white/10 text-white/45'
                           }`}>
                             {letter}
                           </div>
