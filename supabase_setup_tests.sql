@@ -64,3 +64,7 @@ CREATE POLICY "Students insert responses" ON public.user_responses FOR INSERT WI
 CREATE POLICY "Students select responses" ON public.user_responses FOR SELECT USING (auth.uid() = user_id);
 CREATE POLICY "Students update responses" ON public.user_responses FOR UPDATE USING (auth.uid() = user_id);
 CREATE POLICY "Students delete responses" ON public.user_responses FOR DELETE USING (auth.uid() = user_id);
+
+-- Create Indexes for faster responses lookup/updates
+CREATE INDEX IF NOT EXISTS idx_user_responses_lookup ON public.user_responses (user_id, test_id, attempt_number);
+

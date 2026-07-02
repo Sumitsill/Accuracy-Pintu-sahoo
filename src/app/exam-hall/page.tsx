@@ -737,14 +737,37 @@ function SecureExamHallContent() {
          target_batch: userProfile?.batch || "Unassigned"
       }]) : Promise.resolve(null);
 
-      // Execute all database actions and rank calculation concurrently for maximum submission speed!
-      const [_, __, ___, ____, rankInfo] = await Promise.all([
+      // Only await critical database actions (inserting results and rank calculation) to show the score summary card.
+      // Other background tasks (syncing responses, reporting integrity, notifying admin) will run asynchronously in the background.
+      const [_, rankInfo] = await Promise.all([
         insertResultsPromise,
-        integrityReportPromise,
-        syncResponsesPromise,
-        insertNotificationPromise,
         rankInfoPromise
       ]);
+
+      // Fire and forget the background operations, catching any errors so they don't block/crash the submission process.
+      (async () => {
+        try {
+          if (integrityReportPromise) await integrityReportPromise;
+        } catch (err) {
+          console.error("Error saving integrity report in background:", err);
+        }
+      })();
+
+      (async () => {
+        try {
+          if (syncResponsesPromise) await syncResponsesPromise;
+        } catch (err) {
+          console.error("Error syncing responses in background:", err);
+        }
+      })();
+
+      (async () => {
+        try {
+          if (insertNotificationPromise) await insertNotificationPromise;
+        } catch (err) {
+          console.error("Error sending admin notification in background:", err);
+        }
+      })();
 
       setScoreResult({
         score,

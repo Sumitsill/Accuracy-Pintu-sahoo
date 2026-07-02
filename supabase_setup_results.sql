@@ -94,3 +94,7 @@ DROP POLICY IF EXISTS "Admins can delete all user responses" ON public.user_resp
 CREATE POLICY "Admins can delete all user responses"
 ON public.user_responses FOR DELETE
 USING (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin');
+
+-- 8. Create Indexes for faster rank, percentile, and leaderboard queries
+CREATE INDEX IF NOT EXISTS idx_test_results_test_id_score ON public.test_results (test_id, score);
+
