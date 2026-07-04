@@ -52,6 +52,8 @@ function SecureExamHallContent() {
   const [testDetails, setTestDetails] = useState<any>(null);
   const [questions, setQuestions] = useState<any[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [activeSubject, setActiveSubject] = useState<string>("");
+  const [activeSectionTab, setActiveSectionTab] = useState<string>("Section A");
 
   // Tracks user responses: { question_id: selected_option_id }
   const [responses, setResponses] = useState<Record<string, string>>({});
@@ -86,7 +88,7 @@ function SecureExamHallContent() {
         // Fetch Questions with Options
         const { data: qData, error: qError } = await supabase
           .from('questions')
-          .select(`id, text, image_url, subject, explanation, marks, negative_marks, question_number, options(id, text, is_correct, option_letter)`)
+          .select(`id, text, image_url, subject, section, explanation, marks, negative_marks, question_number, options(id, text, is_correct, option_letter)`)
           .eq('test_id', testData.id)
           .order('question_number', { ascending: true });
 
@@ -267,6 +269,58 @@ function SecureExamHallContent() {
       localStorage.setItem(savedTimeKey, timeLeft.toString());
     }
   }, [timeLeft, userId, testDetails, examActive, testCompleted, attemptNumber]);
+
+  // -------------------------------------------------------------
+  // Subject Handling & Dynamic Accents
+  // -------------------------------------------------------------
+  const getSubjectActiveStyle = (sub: string) => {
+    const normalized = sub.toLowerCase();
+    if (normalized.includes("physic")) {
+      return "border-blue-500/40 bg-blue-500/10 text-blue-400 shadow-[0_0_15px_rgba(59,130,246,0.25)]";
+    }
+    if (normalized.includes("chemist")) {
+      return "border-purple-500/40 bg-purple-500/10 text-purple-400 shadow-[0_0_15px_rgba(168,85,247,0.25)]";
+    }
+    if (normalized.includes("botany")) {
+      return "border-green-500/40 bg-green-500/10 text-green-400 shadow-[0_0_15px_rgba(34,197,94,0.25)]";
+    }
+    if (normalized.includes("zoology")) {
+      return "border-orange-500/40 bg-orange-500/10 text-orange-400 shadow-[0_0_15px_rgba(249,115,22,0.25)]";
+    }
+    if (normalized.includes("math") || normalized.includes("mathematic")) {
+      return "border-rose-500/40 bg-rose-500/10 text-rose-400 shadow-[0_0_15px_rgba(244,63,94,0.25)]";
+    }
+    if (normalized.includes("biolog")) {
+      return "border-emerald-500/40 bg-emerald-500/10 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.25)]";
+    }
+    return "border-cyan-500/40 bg-cyan-500/10 text-cyan-400 shadow-[0_0_15px_rgba(34,211,238,0.25)]";
+  };
+
+  const getSubjectDotColor = (sub: string) => {
+    const normalized = sub.toLowerCase();
+    if (normalized.includes("physic")) return "bg-blue-400";
+    if (normalized.includes("chemist")) return "bg-purple-400";
+    if (normalized.includes("botany")) return "bg-green-400";
+    if (normalized.includes("zoology")) return "bg-orange-400";
+    if (normalized.includes("math") || normalized.includes("mathematic")) return "bg-rose-400";
+    if (normalized.includes("biolog")) return "bg-emerald-400";
+    return "bg-cyan-400";
+  };
+
+  // Synchronize activeSubject and activeSectionTab with the current question index
+  useEffect(() => {
+    if (questions.length > 0 && currentQuestionIndex < questions.length) {
+      const currentQ = questions[currentQuestionIndex];
+      const sub = currentQ?.subject || "Physics";
+      const sec = currentQ?.section || "Section A";
+      if (sub && sub !== activeSubject) {
+        setActiveSubject(sub);
+      }
+      if (sec && sec !== activeSectionTab) {
+        setActiveSectionTab(sec);
+      }
+    }
+  }, [currentQuestionIndex, questions, activeSubject, activeSectionTab]);
 
   // -------------------------------------------------------------
   // Anti-Cheat Engine: Tab Switching & Minimizing Detection
@@ -521,6 +575,25 @@ function SecureExamHallContent() {
     const q = questions[currentQuestionIndex];
     if (!q) return;
     const qId = q.id;
+
+    // Check choice limit for Section B questions (JEE Main: 5, NEET: 10)
+    const isSectionB = q.section === "Section B";
+    if (isSectionB) {
+      let limit = 999;
+      if (testDetails?.exam_type === "JEE Main") {
+        limit = 5;
+      } else if (testDetails?.exam_type === "NEET") {
+        limit = 10;
+      }
+      
+      const subjectQuestions = questions.filter(x => x.subject === q.subject && x.section === "Section B");
+      const attemptedCount = subjectQuestions.filter(x => !!responses[x.id] && x.id !== qId).length;
+      
+      if (attemptedCount >= limit) {
+        alert(`Limit Reached: You can only attempt a maximum of ${limit} questions in ${q.subject} Section B. Please clear your response on another question to answer this one.`);
+        return;
+      }
+    }
     
     // Save to responses state and localStorage immediately
     setResponses(prev => {
@@ -584,7 +657,40 @@ function SecureExamHallContent() {
 
   const handleSaveAndNext = () => {
     if (currentQuestionIndex < questions.length - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
+      const nextIndex = currentQuestionIndex + 1;
+      setCurrentQuestionIndex(nextIndex);
+      
+      const nextQ = questions[nextIndex];
+      const nextSub = nextQ?.subject || "Physics";
+      const nextSec = nextQ?.section || "Section A";
+      if (nextSub && nextSub !== activeSubject) {
+        setActiveSubject(nextSub);
+      }
+      if (nextSec && nextSec !== activeSectionTab) {
+        setActiveSectionTab(nextSec);
+      }
+    }
+  };
+
+  const handleSubjectChange = (sub: string) => {
+    setActiveSubject(sub);
+    // Select the first question of Section A if exists, otherwise first question of that subject
+    let firstIdx = questions.findIndex(q => (q.subject || "Physics") === sub && (q.section || "Section A") === "Section A");
+    if (firstIdx === -1) {
+      firstIdx = questions.findIndex(q => (q.subject || "Physics") === sub);
+    }
+    if (firstIdx !== -1) {
+      setCurrentQuestionIndex(firstIdx);
+      const sec = questions[firstIdx]?.section || "Section A";
+      setActiveSectionTab(sec);
+    }
+  };
+
+  const handleSectionTabChange = (sec: string) => {
+    setActiveSectionTab(sec);
+    const firstIdx = questions.findIndex(q => (q.subject || "Physics") === activeSubject && (q.section || "Section A") === sec);
+    if (firstIdx !== -1) {
+      setCurrentQuestionIndex(firstIdx);
     }
   };
 
@@ -1246,6 +1352,89 @@ function SecureExamHallContent() {
 
         {/* Left Side: Question Display */}
         <main className="flex-1 flex flex-col h-full lg:border-r border-white/10 relative min-w-0">
+          
+          {/* Subject Navigation Tabs */}
+          {questions.length > 0 && (
+            <div className="flex-shrink-0 bg-slate-900 border-b border-white/10 px-4 md:px-6 py-3 flex items-center gap-2 overflow-x-auto scrollbar-hide z-10">
+              <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide">
+                {Array.from(new Set(questions.map(q => q.subject || "Physics"))).map((sub) => {
+                  const isActive = activeSubject === sub;
+                  const totalSubQ = questions.filter(q => (q.subject || "Physics") === sub).length;
+                  const answeredSubQ = questions.filter(q => (q.subject || "Physics") === sub && !!responses[q.id]).length;
+                  const activeStyle = getSubjectActiveStyle(sub);
+                  
+                  return (
+                    <button
+                      key={sub}
+                      onClick={() => handleSubjectChange(sub)}
+                      className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs md:text-sm font-bold border transition-all duration-300 shrink-0 ${
+                        isActive 
+                          ? activeStyle 
+                          : "border-white/5 bg-slate-950/40 text-white/50 hover:bg-white/5 hover:text-white"
+                      }`}
+                    >
+                      <span className={`w-2 h-2 rounded-full ${getSubjectDotColor(sub)} ${isActive ? 'animate-pulse' : 'opacity-65'}`} />
+                      <span>{sub}</span>
+                      <span className={`px-1.5 py-0.5 rounded text-[10px] font-mono font-bold ${
+                        isActive 
+                          ? "bg-white/15 text-white" 
+                          : "bg-white/5 text-white/40"
+                      }`}>
+                        {answeredSubQ}/{totalSubQ}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Section Navigation Tabs */}
+          {questions.length > 0 && questions.some(q => q.section === "Section B") && (
+            <div className="flex-shrink-0 bg-[#0c1322] border-b border-white/5 px-4 md:px-6 py-2.5 flex items-center justify-between z-10 select-none">
+              <div className="flex items-center gap-2">
+                {["Section A", "Section B"].map(sec => {
+                  const isActive = activeSectionTab === sec;
+                  const totalSecQ = questions.filter(q => (q.subject || "Physics") === activeSubject && (q.section || "Section A") === sec).length;
+                  const answeredSecQ = questions.filter(q => (q.subject || "Physics") === activeSubject && (q.section || "Section A") === sec && !!responses[q.id]).length;
+                  
+                  if (totalSecQ === 0) return null;
+                  
+                  return (
+                    <button
+                      key={sec}
+                      onClick={() => handleSectionTabChange(sec)}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-all duration-300 ${
+                        isActive 
+                          ? "border-cyan-500/30 bg-cyan-500/10 text-cyan-400 shadow-[0_0_12px_rgba(6,182,212,0.15)]" 
+                          : "border-transparent text-white/50 hover:text-white"
+                      }`}
+                    >
+                      {sec === "Section A" ? "Section A (Mandatory)" : "Section B (Choice-based)"}
+                      <span className={`ml-2 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold ${
+                        isActive ? "bg-cyan-500/20 text-cyan-400" : "bg-white/5 text-white/40"
+                      }`}>
+                        {answeredSecQ}/{totalSecQ}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {activeSectionTab === "Section B" && (
+                <div className="hidden sm:flex items-center gap-2 text-[10px] md:text-xs text-orange-400 font-bold bg-orange-500/5 px-3 py-1.5 rounded-lg border border-orange-500/20">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
+                  </span>
+                  <span>
+                    Attempted {questions.filter(q => q.subject === activeSubject && q.section === "Section B" && !!responses[q.id]).length} / {testDetails?.exam_type === "JEE Main" ? 5 : 10}
+                  </span>
+                </div>
+              )}
+            </div>
+          )}
+
           <div className="flex-1 p-4 md:p-8 overflow-y-auto scrollbar-hide">
             <div className="max-w-4xl mx-auto">
               {questions.length === 0 ? (
@@ -1432,8 +1621,30 @@ function SecureExamHallContent() {
           </div>
 
           <div className="p-6 flex-1 overflow-y-auto scrollbar-hide">
+            {activeSubject && (
+              <div className="mb-4 text-xs font-bold uppercase tracking-wider text-cyan-400 flex flex-col gap-1 border-b border-white/5 pb-2">
+                <div className="flex justify-between items-center">
+                  <span>{activeSubject}</span>
+                  <span className="font-mono text-white/50 text-[10px]">
+                    {questions.filter(q => (q.subject || "Physics") === activeSubject && !!responses[q.id]).length} / {questions.filter(q => (q.subject || "Physics") === activeSubject).length} Solved
+                  </span>
+                </div>
+                {questions.some(q => q.section === "Section B") && (
+                  <div className="text-[10px] text-white/40 font-medium">
+                    {activeSectionTab} Questions
+                  </div>
+                )}
+              </div>
+            )}
             <div className="grid grid-cols-5 gap-3">
               {questions.map((q, idx) => {
+                // Filter to show only questions of the active subject
+                if ((q.subject || "Physics") !== activeSubject) return null;
+
+                // Filter by section if sections exist
+                const hasSections = questions.some(x => x.subject === activeSubject && x.section === "Section B");
+                if (hasSections && (q.section || "Section A") !== activeSectionTab) return null;
+
                 const isCurrent = idx === currentQuestionIndex;
                 const isAnswered = !!responses[q.id];
 

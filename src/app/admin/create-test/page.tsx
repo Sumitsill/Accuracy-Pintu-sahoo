@@ -29,6 +29,8 @@ interface ParsedQuestion {
   negativeMarks: number;
   imageUrl?: string;
   imageFile?: File | null;
+  section?: "Section A" | "Section B";
+  finalImageUrl?: string;
 }
 
 export default function TestCreationEngine() {
@@ -44,7 +46,7 @@ export default function TestCreationEngine() {
   const [creationMode, setCreationMode] = useState<"upload" | "manual">("upload");
 
   // Manual Mode States
-  const [numberOfQuestions, setNumberOfQuestions] = useState(180);
+  const [numberOfQuestions, setNumberOfQuestions] = useState(200);
   const [manualQuestions, setManualQuestions] = useState<ParsedQuestion[]>([]);
   const [manualGenerated, setManualGenerated] = useState(false);
 
@@ -74,7 +76,7 @@ export default function TestCreationEngine() {
   useEffect(() => {
     if (examType === "NEET") {
       setDuration(200);
-      setNumberOfQuestions(180);
+      setNumberOfQuestions(200);
     } else if (examType === "JEE Main") {
       setDuration(180);
       setNumberOfQuestions(90);
@@ -302,20 +304,63 @@ export default function TestCreationEngine() {
   const generateManualSlots = () => {
     if (numberOfQuestions <= 0) return;
     
-    const slots: ParsedQuestion[] = Array.from({ length: numberOfQuestions }).map((_, i) => ({
-      questionNumber: i + 1,
-      subject: examType === "NEET" ? (i < 45 ? "Physics" : i < 90 ? "Chemistry" : "Botany") : "Physics", // dummy split
-      questionText: "",
-      options: {
-        A: "",
-        B: "",
-        C: "",
-        D: ""
-      },
-      correctOption: "",
-      marks: 4,
-      negativeMarks: 1
-    }));
+    const slots: ParsedQuestion[] = Array.from({ length: numberOfQuestions }).map((_, i) => {
+      const qNum = i + 1;
+      let subject: "Physics" | "Chemistry" | "Botany" | "Zoology" | "Mathematics" | "Other" = "Physics";
+      let section: "Section A" | "Section B" = "Section A";
+      
+      if (examType === "NEET") {
+        if (qNum <= 50) {
+          subject = "Physics";
+          section = qNum <= 35 ? "Section A" : "Section B";
+        } else if (qNum <= 100) {
+          subject = "Chemistry";
+          section = qNum <= 85 ? "Section A" : "Section B";
+        } else if (qNum <= 150) {
+          subject = "Botany";
+          section = qNum <= 135 ? "Section A" : "Section B";
+        } else {
+          subject = "Zoology";
+          section = qNum <= 185 ? "Section A" : "Section B";
+        }
+      } else if (examType === "JEE Main") {
+        if (qNum <= 30) {
+          subject = "Physics";
+          section = qNum <= 20 ? "Section A" : "Section B";
+        } else if (qNum <= 60) {
+          subject = "Chemistry";
+          section = qNum <= 50 ? "Section A" : "Section B";
+        } else {
+          subject = "Mathematics";
+          section = qNum <= 80 ? "Section A" : "Section B";
+        }
+      } else if (examType === "JEE Advanced") {
+        if (qNum <= 18) {
+          subject = "Physics";
+        } else if (qNum <= 36) {
+          subject = "Chemistry";
+        } else {
+          subject = "Mathematics";
+        }
+        section = "Section A";
+      }
+      
+      return {
+        questionNumber: qNum,
+        subject,
+        section,
+        questionText: "",
+        options: {
+          A: "",
+          B: "",
+          C: "",
+          D: ""
+        },
+        correctOption: "",
+        marks: 4,
+        negativeMarks: 1
+      };
+    });
     
     setParsedQuestions(slots);
     setManualGenerated(true);
@@ -379,6 +424,38 @@ export default function TestCreationEngine() {
     });
   };
 
+  const assignSections = (qs: ParsedQuestion[], type: string): ParsedQuestion[] => {
+    const sorted = [...qs].sort((a, b) => a.questionNumber - b.questionNumber);
+    const subjectGroups: Record<string, ParsedQuestion[]> = {};
+    
+    sorted.forEach(q => {
+      const sub = q.subject || "Physics";
+      if (!subjectGroups[sub]) {
+        subjectGroups[sub] = [];
+      }
+      subjectGroups[sub].push(q);
+    });
+
+    Object.keys(subjectGroups).forEach(sub => {
+      const group = subjectGroups[sub];
+      group.sort((a, b) => a.questionNumber - b.questionNumber);
+      group.forEach((q, idx) => {
+        // Respect manually assigned Section B if present, else apply default bounds
+        if (q.section === "Section B") return;
+        
+        if (type === "JEE Main") {
+          q.section = idx < 20 ? "Section A" : "Section B";
+        } else if (type === "NEET") {
+          q.section = idx < 35 ? "Section A" : "Section B";
+        } else {
+          q.section = "Section A";
+        }
+      });
+    });
+
+    return sorted;
+  };
+
   // Publish to Database
   const handlePublishTest = async () => {
     if (!testTitle) return alert("Please provide a Test Title.");
@@ -430,8 +507,11 @@ export default function TestCreationEngine() {
 
       const questionsWithImages = await Promise.all(uploadPromises);
 
+      // Assign sections dynamically based on the exam pattern rules
+      const questionsWithSections = assignSections(questionsWithImages, examType);
+
       // 3. Insert all questions in bulk
-      const questionsToInsert = questionsWithImages.map(q => ({
+      const questionsToInsert = questionsWithSections.map(q => ({
         test_id: testData.id,
         text: q.questionText || "Question text details",
         subject: q.subject,
@@ -439,7 +519,8 @@ export default function TestCreationEngine() {
         marks: q.marks,
         negative_marks: q.negativeMarks,
         question_number: q.questionNumber,
-        image_url: q.finalImageUrl || ""
+        image_url: q.finalImageUrl || "",
+        section: q.section || "Section A"
       }));
 
       const { data: qRows, error: qError } = await supabase
@@ -455,7 +536,7 @@ export default function TestCreationEngine() {
         const matchingInsertedQuestion = qRows.find(row => row.question_number === q.questionNumber);
         if (!matchingInsertedQuestion) return;
 
-        Object.entries(q.options).forEach(([letter, text]) => {
+        Object.entries(q.options || { A: "", B: "", C: "", D: "" }).forEach(([letter, text]) => {
           optionsToInsert.push({
             question_id: matchingInsertedQuestion.id,
             text: text || `Option ${letter}`,
@@ -956,6 +1037,11 @@ export default function TestCreationEngine() {
                             <span className={`px-2.5 py-0.5 rounded-md border text-xs font-bold ${subjectColors[q.subject] || subjectColors.Other}`}>
                               {q.subject}
                             </span>
+                            {q.section && (
+                              <span className="px-2.5 py-0.5 rounded-md border border-white/10 bg-white/5 text-xs text-white/60 font-medium">
+                                {q.section}
+                              </span>
+                            )}
                             <span className="text-[10px] text-white/40 font-mono">
                               +{q.marks} / -{q.negativeMarks} Marks
                             </span>
@@ -992,7 +1078,7 @@ export default function TestCreationEngine() {
 
                         {/* Options */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
-                          {Object.entries(q.options).map(([letter, text]) => {
+                          {Object.entries(q.options || { A: "", B: "", C: "", D: "" }).map(([letter, text]) => {
                             const isCorrect = q.correctOption === letter;
                             return (
                               <div 
@@ -1094,7 +1180,7 @@ export default function TestCreationEngine() {
               </button>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-3 gap-4">
               <div>
                 <label className="text-xs font-bold text-white/40 uppercase block mb-1">Subject</label>
                 <select
@@ -1108,6 +1194,18 @@ export default function TestCreationEngine() {
                   <option value="Zoology">Zoology</option>
                   <option value="Mathematics">Mathematics</option>
                   <option value="Other">Other</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-white/40 uppercase block mb-1">Section</label>
+                <select
+                  value={editForm.section || "Section A"}
+                  onChange={e => setEditForm({ ...editForm, section: e.target.value as any })}
+                  className="w-full bg-slate-950 border border-white/10 rounded-xl py-2.5 px-3 text-sm focus:border-orange-500 outline-none cursor-pointer"
+                >
+                  <option value="Section A">Section A</option>
+                  <option value="Section B">Section B</option>
                 </select>
               </div>
               
@@ -1196,12 +1294,12 @@ export default function TestCreationEngine() {
                         <input
                           type="text"
                           // @ts-ignore
-                          value={editForm.options[letter] || ""}
+                          value={editForm.options?.[letter] || ""}
                           // @ts-ignore
                           onChange={e => setEditForm({
                             ...editForm,
                             options: {
-                              ...editForm.options,
+                              ...(editForm.options || { A: "", B: "", C: "", D: "" }),
                               [letter]: e.target.value
                             }
                           })}
