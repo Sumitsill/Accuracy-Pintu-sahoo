@@ -345,8 +345,22 @@ function ResourceView({ title, type, profile, icon: Icon, color }: any) {
           .eq('status', 'live')
           .in('target_batch', allowedBatches)
           .order('created_at', { ascending: false });
-        // Don't show DPP quizzes in the regular Test Center tab
-        if (data) setResources(data.filter((t: any) => t.exam_type !== 'DPP'));
+        
+        // Filter tests based on Board/Class if it is a Boards type test
+        if (data) {
+          const filtered = data.filter((t: any) => {
+            if (t.exam_type === 'DPP') return false;
+            if (t.exam_type === 'Boards') {
+              const boardMatch = !t.exam_board || 
+                (t.exam_board === 'WB' && profile.board === 'WB') ||
+                (t.exam_board === 'CBSE_ISC' && (profile.board === 'CBSE' || profile.board === 'ISC'));
+              const classMatch = !t.target_class || t.target_class === profile.class;
+              return boardMatch && classMatch;
+            }
+            return true;
+          });
+          setResources(filtered);
+        }
       } else if (type === 'dpp') {
         const { data: tests } = await supabase
           .from('tests')
@@ -422,7 +436,13 @@ function ResourceView({ title, type, profile, icon: Icon, color }: any) {
             <div key={res.id} className="bg-white/5 border border-white/10 rounded-2xl p-5 md:p-6 hover:border-cyan-500/30 transition-all group relative flex flex-col justify-between">
               <div>
                 <span className="px-2.5 py-1 rounded-md bg-white/10 text-white/70 text-[10px] font-bold uppercase tracking-wider mb-4 inline-block">
-                  {res.isMerged ? 'DPP Module' : (res.duration !== undefined ? `${res.exam_type} • ${res.duration} Mins` : `${res.subject} • ${res.topic}`)}
+                  {res.isMerged 
+                    ? 'DPP Module' 
+                    : (res.duration !== undefined 
+                      ? (res.exam_type === 'Boards' 
+                        ? `Boards (${res.exam_board === 'WB' ? 'WB' : 'CBSE/ISC'} Class ${res.target_class}) • ${res.duration} Mins` 
+                        : `${res.exam_type} • ${res.duration} Mins`)
+                      : `${res.subject} • ${res.topic}`)}
                 </span>
                 
                 <h4 className="text-lg font-bold text-white mb-6">{res.title}</h4>
@@ -914,7 +934,11 @@ function ResultsView({ user }: { user: any }) {
                     </div>
                     <div>
                       <span className="block text-[10px] uppercase font-bold text-white/40 mb-0.5">Type</span>
-                      <span className="text-xs font-bold text-white/60 truncate block mt-0.5">{res.exam_type || "Mock"}</span>
+                      <span className="text-xs font-bold text-white/60 truncate block mt-0.5">
+                        {res.exam_type === 'Boards' 
+                          ? `Boards (${res.exam_board === 'WB' ? 'WB' : 'CBSE/ISC'})` 
+                          : (res.exam_type || "Mock")}
+                      </span>
                     </div>
                   </div>
 

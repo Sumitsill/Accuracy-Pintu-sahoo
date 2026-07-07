@@ -37,11 +37,21 @@ export default function TestCreationEngine() {
   const router = useRouter();
   const supabase = createClient();
 
-  const [examType, setExamType] = useState<"NEET" | "JEE Main" | "JEE Advanced" | "DPP Quiz" | "">("NEET");
+  const [examType, setExamType] = useState<"NEET" | "JEE Main" | "JEE Advanced" | "DPP Quiz" | "Boards" | "">("NEET");
   const [difficulty, setDifficulty] = useState<number>(3);
   const [testTitle, setTestTitle] = useState("");
   const [targetBatch, setTargetBatch] = useState("All Students");
   const [duration, setDuration] = useState(200); // 200 minutes for NEET
+
+  const [selectedBoard, setSelectedBoard] = useState<"WB" | "CBSE_ISC" | null>(null);
+  const [selectedClass, setSelectedClass] = useState<"11" | "12" | null>(null);
+  const [showClassDropdown, setShowClassDropdown] = useState(false);
+
+  // Manual Question Distributions
+  const [count1Mark, setCount1Mark] = useState(0);
+  const [count2Mark, setCount2Mark] = useState(0);
+  const [count3Mark, setCount3Mark] = useState(0);
+  const [count5Mark, setCount5Mark] = useState(0);
 
   const [creationMode, setCreationMode] = useState<"upload" | "manual">("upload");
 
@@ -72,22 +82,61 @@ export default function TestCreationEngine() {
 
   const [isPublishing, setIsPublishing] = useState(false);
 
-  // Rule Enforcement for NEET / JEE
+  // Rule Enforcement for NEET / JEE / Boards
   useEffect(() => {
     if (examType === "NEET") {
       setDuration(200);
       setNumberOfQuestions(200);
+      setSelectedBoard(null);
+      setSelectedClass(null);
     } else if (examType === "JEE Main") {
       setDuration(180);
       setNumberOfQuestions(90);
+      setSelectedBoard(null);
+      setSelectedClass(null);
     } else if (examType === "JEE Advanced") {
       setDuration(180);
       setNumberOfQuestions(54);
+      setSelectedBoard(null);
+      setSelectedClass(null);
     } else if (examType === "DPP Quiz") {
       setDuration(45);
       setNumberOfQuestions(15);
+      setSelectedBoard(null);
+      setSelectedClass(null);
+    } else if (examType === "Boards") {
+      setDuration(180);
     }
   }, [examType]);
+
+  // Adjust question distribution when board selection changes
+  useEffect(() => {
+    if (examType === "Boards") {
+      if (selectedBoard === "WB") {
+        setCount1Mark(35);
+        setCount2Mark(0);
+        setCount3Mark(0);
+        setCount5Mark(0);
+        setNumberOfQuestions(35);
+      } else if (selectedBoard === "CBSE_ISC") {
+        setCount1Mark(20);
+        setCount2Mark(0);
+        setCount3Mark(0);
+        setCount5Mark(0);
+        setNumberOfQuestions(20);
+      }
+    }
+  }, [examType, selectedBoard]);
+
+  // Handle Class dropdown animation trigger
+  useEffect(() => {
+    if (selectedBoard) {
+      const timer = setTimeout(() => setShowClassDropdown(true), 50);
+      return () => clearTimeout(timer);
+    } else {
+      setShowClassDropdown(false);
+    }
+  }, [selectedBoard]);
 
   // Log message helper
   const addLog = (message: string) => {
@@ -302,6 +351,43 @@ export default function TestCreationEngine() {
 
   // Manual Mode Generation
   const generateManualSlots = () => {
+    if (examType === "Boards") {
+      let slots: ParsedQuestion[] = [];
+      let qNum = 1;
+
+      const addSlots = (count: number, marksVal: number) => {
+        for (let i = 0; i < count; i++) {
+          slots.push({
+            questionNumber: qNum++,
+            subject: "Other",
+            section: "Section A",
+            questionText: "",
+            options: {
+              A: "",
+              B: "",
+              C: "",
+              D: ""
+            },
+            correctOption: "",
+            marks: marksVal,
+            negativeMarks: 0
+          });
+        }
+      };
+
+      addSlots(count1Mark, 1);
+      addSlots(count2Mark, 2);
+      addSlots(count3Mark, 3);
+      addSlots(count5Mark, 5);
+
+      if (slots.length > 0) {
+        setParsedQuestions(slots);
+        setManualGenerated(true);
+        setShowPreview(true);
+        return;
+      }
+    }
+
     if (numberOfQuestions <= 0) return;
     
     const slots: ParsedQuestion[] = Array.from({ length: numberOfQuestions }).map((_, i) => {
@@ -459,6 +545,10 @@ export default function TestCreationEngine() {
   // Publish to Database
   const handlePublishTest = async () => {
     if (!testTitle) return alert("Please provide a Test Title.");
+    if (examType === "Boards") {
+      if (!selectedBoard) return alert("Please select an Exam Board.");
+      if (!selectedClass) return alert("Please select a Class.");
+    }
     if (parsedQuestions.length === 0) return alert("No questions to publish.");
     
     // Check if any question has no correct option
@@ -479,7 +569,9 @@ export default function TestCreationEngine() {
           difficulty,
           duration,
           target_batch: targetBatch,
-          status: 'live' // Publish it as live directly
+          status: 'live', // Publish it as live directly
+          exam_board: selectedBoard,
+          target_class: selectedClass
         }])
         .select()
         .single();
@@ -713,8 +805,8 @@ export default function TestCreationEngine() {
             </div>
             <div className="space-y-2">
               <label className="text-xs font-bold text-white/50 uppercase ml-1">Target Exam Type</label>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {["NEET", "JEE Main", "JEE Advanced", "DPP Quiz"].map((type) => (
+              <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+                {["NEET", "JEE Main", "JEE Advanced", "DPP Quiz", "Boards"].map((type) => (
                   <button
                     key={type}
                     type="button"
@@ -731,6 +823,53 @@ export default function TestCreationEngine() {
               </div>
             </div>
           </div>
+
+          {examType === "Boards" && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-white/5 animate-in fade-in duration-200">
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-white/50 uppercase ml-1">BOARD</label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {[
+                    { id: "WB", label: "West Bengal Board" },
+                    { id: "CBSE_ISC", label: "CBSE / ISC" }
+                  ].map((boardOption) => (
+                    <button
+                      key={boardOption.id}
+                      type="button"
+                      onClick={() => setSelectedBoard(boardOption.id as any)}
+                      className={`py-2.5 px-3 rounded-xl border font-bold text-xs transition-all ${
+                        selectedBoard === boardOption.id
+                          ? "bg-orange-500/20 border-orange-500 text-orange-400 font-extrabold"
+                          : "bg-slate-900/50 border-white/10 text-white/50 hover:bg-white/5"
+                      }`}
+                    >
+                      {boardOption.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div 
+                className={`space-y-2 transition-all duration-200 ease-out transform ${
+                  showClassDropdown 
+                    ? "opacity-100 translate-y-0 max-h-24" 
+                    : "opacity-0 -translate-y-2 max-h-0 overflow-hidden pointer-events-none"
+                }`}
+              >
+                <label className="text-xs font-bold text-white/50 uppercase ml-1">CLASS</label>
+                <select
+                  value={selectedClass || ""}
+                  onChange={(e) => setSelectedClass(e.target.value as any)}
+                  className="w-full bg-slate-900/50 border border-white/10 rounded-xl py-3.5 px-4 text-white focus:border-orange-500 outline-none cursor-pointer"
+                  required
+                >
+                  <option value="" disabled>Select Class</option>
+                  <option value="11">Class 11</option>
+                  <option value="12">Class 12</option>
+                </select>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Dual Mode Switcher */}
@@ -899,16 +1038,76 @@ export default function TestCreationEngine() {
                 Generate empty question slots matching your requirements, then fill in details manually.
               </p>
               
-              <div className="space-y-2 text-left">
-                <label className="text-xs font-bold text-white/50 uppercase ml-1">Number of Question Slots</label>
-                <input 
-                  type="number" 
-                  value={numberOfQuestions} 
-                  onChange={e => setNumberOfQuestions(Number(e.target.value))}
-                  placeholder="e.g. 180" 
-                  className="w-full bg-slate-900/50 border border-white/10 rounded-xl py-3.5 px-4 text-white focus:outline-none"
-                />
-              </div>
+              {examType === "Boards" ? (
+                <div className="space-y-4 text-left border-t border-white/5 pt-4">
+                  <span className="text-xs font-bold text-white/50 uppercase ml-1 block">Question Marks Distribution</span>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-bold text-white/40 uppercase ml-1">1 Mark Qs (MCQ)</label>
+                      <input 
+                        type="number" 
+                        value={count1Mark} 
+                        onChange={e => {
+                          const val = Math.max(0, Number(e.target.value));
+                          setCount1Mark(val);
+                          setNumberOfQuestions(val + count2Mark + count3Mark + count5Mark);
+                        }}
+                        className="w-full bg-slate-900/50 border border-white/10 rounded-xl py-2.5 px-3 text-sm text-white focus:outline-none focus:border-orange-500"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-bold text-white/40 uppercase ml-1">2 Marks Qs</label>
+                      <input 
+                        type="number" 
+                        value={count2Mark} 
+                        onChange={e => {
+                          const val = Math.max(0, Number(e.target.value));
+                          setCount2Mark(val);
+                          setNumberOfQuestions(count1Mark + val + count3Mark + count5Mark);
+                        }}
+                        className="w-full bg-slate-900/50 border border-white/10 rounded-xl py-2.5 px-3 text-sm text-white focus:outline-none focus:border-orange-500"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-bold text-white/40 uppercase ml-1">3 Marks Qs</label>
+                      <input 
+                        type="number" 
+                        value={count3Mark} 
+                        onChange={e => {
+                          const val = Math.max(0, Number(e.target.value));
+                          setCount3Mark(val);
+                          setNumberOfQuestions(count1Mark + count2Mark + val + count5Mark);
+                        }}
+                        className="w-full bg-slate-900/50 border border-white/10 rounded-xl py-2.5 px-3 text-sm text-white focus:outline-none focus:border-orange-500"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-bold text-white/40 uppercase ml-1">5 Marks Qs</label>
+                      <input 
+                        type="number" 
+                        value={count5Mark} 
+                        onChange={e => {
+                          const val = Math.max(0, Number(e.target.value));
+                          setCount5Mark(val);
+                          setNumberOfQuestions(count1Mark + count2Mark + count3Mark + val);
+                        }}
+                        className="w-full bg-slate-900/50 border border-white/10 rounded-xl py-2.5 px-3 text-sm text-white focus:outline-none focus:border-orange-500"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-2 text-left">
+                  <label className="text-xs font-bold text-white/50 uppercase ml-1">Number of Question Slots</label>
+                  <input 
+                    type="number" 
+                    value={numberOfQuestions} 
+                    onChange={e => setNumberOfQuestions(Number(e.target.value))}
+                    placeholder="e.g. 180" 
+                    className="w-full bg-slate-900/50 border border-white/10 rounded-xl py-3.5 px-4 text-white focus:outline-none"
+                  />
+                </div>
+              )}
 
               <button
                 onClick={generateManualSlots}
