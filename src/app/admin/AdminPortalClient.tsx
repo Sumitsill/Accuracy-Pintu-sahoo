@@ -499,7 +499,7 @@ function QuestionReviewSection({ questions, loading }: { questions: any[]; loadi
                   )}
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
+                <div className={`grid gap-3 mt-2 ${q.questionType === "AssertionReason" ? "grid-cols-1" : "grid-cols-1 sm:grid-cols-2"}`}>
                   {q.options.map((opt: any, optIdx: number) => {
                     const isSelected = opt.id === q.selectedOptionId;
                     const isCorrectOpt = opt.is_correct;
@@ -533,16 +533,16 @@ function QuestionReviewSection({ questions, loading }: { questions: any[]; loadi
                     }
 
                     return (
-                      <div key={opt.id} className={`flex items-center justify-between p-3 rounded-xl border text-xs transition-all ${cardStyles}`}>
-                        <div className="flex items-center gap-3 min-w-0">
-                          <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${
+                      <div key={opt.id} className={`flex items-start justify-between p-3 rounded-xl border text-xs transition-all ${cardStyles}`}>
+                        <div className="flex items-start gap-3 min-w-0 flex-1">
+                          <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5 ${
                             isSelected 
                               ? isCorrectOpt ? 'bg-green-500 text-slate-950' : 'bg-red-500 text-slate-950'
                               : isCorrectOpt ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'bg-white/5 text-white/40 border border-white/10'
                           }`}>
                             {String.fromCharCode(65 + optIdx)}
                           </span>
-                          <span className="truncate" title={opt.text}>{opt.text}</span>
+                          <span className="break-words whitespace-normal leading-relaxed text-left flex-1" title={opt.text}>{opt.text}</span>
                         </div>
                         {indicator && <div className="shrink-0 ml-2">{indicator}</div>}
                       </div>

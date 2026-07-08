@@ -1398,7 +1398,7 @@ export default function TestCreationEngine() {
 
                         {/* Options */}
                         {!isSubjectiveOrObjective ? (
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                          <div className={`grid gap-3 mb-4 ${q.questionType === "AssertionReason" ? "grid-cols-1" : "grid-cols-1 md:grid-cols-2"}`}>
                             {Object.entries(
                               q.questionType === "AssertionReason" 
                               ? {
@@ -1413,20 +1413,20 @@ export default function TestCreationEngine() {
                               return (
                                 <div 
                                   key={letter} 
-                                  className={`p-3 rounded-xl border text-xs flex items-center gap-3 transition-colors ${
+                                  className={`p-3 rounded-xl border text-xs flex items-start gap-3 transition-colors ${
                                     isCorrect 
                                       ? "bg-green-500/10 border-green-500/30 text-green-400" 
                                       : "bg-slate-950/40 border-white/5 text-white/70"
                                   }`}
                                 >
-                                  <span className={`w-5 h-5 rounded-full flex items-center justify-center font-bold text-[10px] shrink-0 border ${
+                                  <span className={`w-5 h-5 rounded-full flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5 border ${
                                     isCorrect 
                                       ? "bg-green-500 text-slate-950 border-green-400" 
                                       : "bg-white/5 border-white/10 text-white/50"
                                   }`}>
                                     {letter}
                                   </span>
-                                  <span className="truncate">{text || <span className="text-red-400 italic">Empty option</span>}</span>
+                                  <span className="break-words whitespace-normal leading-relaxed text-left flex-1">{text || <span className="text-red-400 italic">Empty option</span>}</span>
                                 </div>
                               );
                             })}
