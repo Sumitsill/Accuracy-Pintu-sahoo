@@ -1576,7 +1576,7 @@ function SecureExamHallContent() {
                         return (
                           <label
                             key={opt.id}
-                            className={`flex items-start p-4 md:p-5 rounded-2xl border transition-all duration-200 group ${showSolutions ? 'cursor-default' : 'cursor-pointer'} ${optionClasses}`}
+                            className={`flex items-start p-3 md:p-5 rounded-2xl border transition-all duration-200 group ${showSolutions ? 'cursor-default' : 'cursor-pointer'} ${optionClasses}`}
                           >
                             <input
                               type="radio"
@@ -1586,7 +1586,7 @@ function SecureExamHallContent() {
                               disabled={showSolutions}
                               onChange={() => handleSelectOption(opt.id)}
                             />
-                            <div className={`w-8 h-8 rounded-full border flex items-center justify-center flex-shrink-0 text-xs font-bold transition-all mr-4 mt-0.5 ${
+                            <div className={`w-7 h-7 md:w-8 md:h-8 rounded-full border flex items-center justify-center flex-shrink-0 text-[10px] md:text-xs font-bold transition-all mr-3 md:mr-4 mt-0.5 ${
                               showSolutions
                                 ? isSelected
                                   ? isCorrectAnswer
@@ -1601,8 +1601,8 @@ function SecureExamHallContent() {
                             }`}>
                               {letter}
                             </div>
-                            <div className="flex-1 flex flex-col sm:flex-row sm:items-start justify-between gap-3 min-w-0">
-                              <span className={`text-base md:text-lg font-medium break-words whitespace-normal leading-relaxed text-left flex-1 ${textColor}`} title={opt.text}>
+                            <div className="flex-1 flex flex-col sm:flex-row sm:items-start justify-between gap-2 md:gap-3 min-w-0">
+                              <span className={`text-sm md:text-base font-medium break-words whitespace-normal leading-relaxed text-left flex-1 ${textColor}`} title={opt.text}>
                                 {opt.text}
                               </span>
                               {suffix}
