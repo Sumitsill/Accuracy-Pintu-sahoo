@@ -3,12 +3,26 @@
 -- 1. Create the profiles table
 CREATE TABLE IF NOT EXISTS public.profiles (
   id uuid references auth.users on delete cascade not null primary key,
+  email text,
+  full_name text,
   role text check (role in ('student', 'admin')),
   class text,
   board text,
+  school_name text,
+  batch text DEFAULT 'Unassigned',
+  aspiration text,
+  phone text,
   is_initialized boolean default false,
   updated_at timestamp with time zone default timezone('utc'::text, now())
 );
+
+-- Ensure all columns exist for existing tables
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS email text;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS full_name text;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS school_name text;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS batch text DEFAULT 'Unassigned';
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS aspiration text;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS phone text;
 
 -- 2. Enable Row Level Security (RLS)
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
