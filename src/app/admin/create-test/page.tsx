@@ -364,7 +364,7 @@ export default function TestCreationEngine() {
         for (let i = 0; i < count; i++) {
           slots.push({
             questionNumber: qNum++,
-            subject: "Other",
+            subject: "Physics",
             section: sectionVal,
             questionText: "",
             options: {
