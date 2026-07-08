@@ -441,11 +441,17 @@ function QuestionReviewSection({ questions, loading }: { questions: any[]; loadi
       
       <div className="space-y-4 max-h-[450px] overflow-y-auto pr-2 scrollbar-thin">
         {questions.map((q, idx) => {
+          const isSubjectiveOrObjective = ["Objective", "Subjective2M", "Subjective3M", "Subjective5M", "CaseStudy"].includes(q.questionType);
+          
           let borderGlow = "border-white/5 bg-slate-900";
           if (q.hasResponded) {
-            borderGlow = q.isCorrect 
-              ? "border-green-500/30 bg-slate-900/60 shadow-[0_0_15px_rgba(34,197,94,0.02)]" 
-              : "border-red-500/30 bg-slate-900/60 shadow-[0_0_15px_rgba(239,68,68,0.02)]";
+            if (isSubjectiveOrObjective) {
+              borderGlow = "border-cyan-500/30 bg-slate-900/60 shadow-[0_0_15px_rgba(6,182,212,0.02)]";
+            } else {
+              borderGlow = q.isCorrect 
+                ? "border-green-500/30 bg-slate-900/60 shadow-[0_0_15px_rgba(34,197,94,0.02)]" 
+                : "border-red-500/30 bg-slate-900/60 shadow-[0_0_15px_rgba(239,68,68,0.02)]";
+            }
           }
 
           return (
@@ -456,7 +462,11 @@ function QuestionReviewSection({ questions, loading }: { questions: any[]; loadi
                 </span>
                 
                 {q.hasResponded ? (
-                  q.isCorrect ? (
+                  isSubjectiveOrObjective ? (
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-cyan-500/10 text-cyan-400 flex items-center gap-1 border border-cyan-500/20">
+                      <CheckCircle className="w-3 h-3" /> Answer Submitted
+                    </span>
+                  ) : q.isCorrect ? (
                     <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-green-500/10 text-green-400 flex items-center gap-1 border border-green-500/20">
                       <CheckCircle className="w-3 h-3" /> Correct
                     </span>
@@ -476,57 +486,70 @@ function QuestionReviewSection({ questions, loading }: { questions: any[]; loadi
                 {q.text}
               </p>
 
-              {/* Options Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
-                {q.options.map((opt: any, optIdx: number) => {
-                  const isSelected = opt.id === q.selectedOptionId;
-                  const isCorrectOpt = opt.is_correct;
+              {/* Options Grid or Written Response */}
+              {isSubjectiveOrObjective ? (
+                <div className="p-4 rounded-xl bg-slate-950 border border-white/5 space-y-2 mt-2">
+                  <span className="text-[10px] font-bold text-white/40 uppercase block">Student Response:</span>
+                  {q.textResponse ? (
+                    <p className="text-xs text-white/85 whitespace-pre-wrap leading-relaxed font-mono">
+                      {q.textResponse}
+                    </p>
+                  ) : (
+                    <p className="text-xs text-white/30 italic">No response written.</p>
+                  )}
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
+                  {q.options.map((opt: any, optIdx: number) => {
+                    const isSelected = opt.id === q.selectedOptionId;
+                    const isCorrectOpt = opt.is_correct;
 
-                  let cardStyles = "bg-slate-950/40 border-white/5 text-white/60";
-                  let indicator = null;
+                    let cardStyles = "bg-slate-950/40 border-white/5 text-white/60";
+                    let indicator = null;
 
-                  if (isSelected) {
-                    if (isCorrectOpt) {
-                      cardStyles = "bg-green-500/10 border-green-500/30 text-green-400 font-bold shadow-[0_0_10px_rgba(34,197,94,0.1)]";
+                    if (isSelected) {
+                      if (isCorrectOpt) {
+                        cardStyles = "bg-green-500/10 border-green-500/30 text-green-400 font-bold shadow-[0_0_10px_rgba(34,197,94,0.1)]";
+                        indicator = (
+                          <span className="text-[9px] font-extrabold uppercase text-green-400 bg-green-500/15 px-2 py-0.5 rounded-full border border-green-500/20">
+                            Selected Correct
+                          </span>
+                        );
+                      } else {
+                        cardStyles = "bg-red-500/10 border-red-500/30 text-red-400 font-bold shadow-[0_0_10px_rgba(239,68,68,0.1)]";
+                        indicator = (
+                          <span className="text-[9px] font-extrabold uppercase text-red-400 bg-red-500/15 px-2 py-0.5 rounded-full border border-red-500/20">
+                            Selected Wrong
+                          </span>
+                        );
+                      }
+                    } else if (isCorrectOpt) {
+                      cardStyles = "bg-green-500/5 border-green-500/20 text-green-400/80 font-bold";
                       indicator = (
-                        <span className="text-[9px] font-extrabold uppercase text-green-400 bg-green-500/15 px-2 py-0.5 rounded-full border border-green-500/20">
-                          Selected Correct
-                        </span>
-                      );
-                    } else {
-                      cardStyles = "bg-red-500/10 border-red-500/30 text-red-400 font-bold shadow-[0_0_10px_rgba(239,68,68,0.1)]";
-                      indicator = (
-                        <span className="text-[9px] font-extrabold uppercase text-red-400 bg-red-500/15 px-2 py-0.5 rounded-full border border-red-500/20">
-                          Selected Wrong
+                        <span className="text-[9px] font-extrabold uppercase text-green-400/80 bg-green-500/10 px-2 py-0.5 rounded-full border border-green-500/10">
+                          Correct Answer
                         </span>
                       );
                     }
-                  } else if (isCorrectOpt) {
-                    cardStyles = "bg-green-500/5 border-green-500/20 text-green-400/80 font-bold";
-                    indicator = (
-                      <span className="text-[9px] font-extrabold uppercase text-green-400/80 bg-green-500/10 px-2 py-0.5 rounded-full border border-green-500/10">
-                        Correct Answer
-                      </span>
-                    );
-                  }
 
-                  return (
-                    <div key={opt.id} className={`flex items-center justify-between p-3 rounded-xl border text-xs transition-all ${cardStyles}`}>
-                      <div className="flex items-center gap-3 min-w-0">
-                        <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${
-                          isSelected 
-                            ? isCorrectOpt ? 'bg-green-500 text-slate-950' : 'bg-red-500 text-slate-950'
-                            : isCorrectOpt ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'bg-white/5 text-white/40 border border-white/10'
-                        }`}>
-                          {String.fromCharCode(65 + optIdx)}
-                        </span>
-                        <span className="truncate" title={opt.text}>{opt.text}</span>
+                    return (
+                      <div key={opt.id} className={`flex items-center justify-between p-3 rounded-xl border text-xs transition-all ${cardStyles}`}>
+                        <div className="flex items-center gap-3 min-w-0">
+                          <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${
+                            isSelected 
+                              ? isCorrectOpt ? 'bg-green-500 text-slate-950' : 'bg-red-500 text-slate-950'
+                              : isCorrectOpt ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'bg-white/5 text-white/40 border border-white/10'
+                          }`}>
+                            {String.fromCharCode(65 + optIdx)}
+                          </span>
+                          <span className="truncate" title={opt.text}>{opt.text}</span>
+                        </div>
+                        {indicator && <div className="shrink-0 ml-2">{indicator}</div>}
                       </div>
-                      {indicator && <div className="shrink-0 ml-2">{indicator}</div>}
-                    </div>
-                  );
-                })}
-              </div>
+                    );
+                  })}
+                </div>
+              )}
 
               {/* Add Explanation content in Admin View if available */}
               {q.explanation && (
@@ -682,7 +705,7 @@ function StudentManagementView() {
       // 1. Fetch questions and options for this test
       const { data: questionsData, error: qError } = await supabase
         .from('questions')
-        .select('id, text, explanation, options(id, text, is_correct)')
+        .select('id, text, explanation, question_type, options(id, text, is_correct)')
         .eq('test_id', testId)
         .order('created_at', { ascending: true });
         
@@ -691,7 +714,7 @@ function StudentManagementView() {
       // 2. Fetch student user responses for this test
       const { data: responsesData, error: rError } = await supabase
         .from('user_responses')
-        .select('question_id, selected_option_id, is_correct')
+        .select('question_id, selected_option_id, text_response, is_correct')
         .eq('user_id', studentId)
         .eq('test_id', testId);
         
@@ -704,8 +727,10 @@ function StudentManagementView() {
           id: q.id,
           text: q.text,
           explanation: q.explanation,
+          questionType: q.question_type || "MCQ",
           options: q.options || [],
           selectedOptionId: userResp?.selected_option_id || null,
+          textResponse: userResp?.text_response || null,
           isCorrect: userResp?.is_correct || false,
           hasResponded: !!userResp
         };

@@ -88,7 +88,7 @@ function SecureExamHallContent() {
         // Fetch Questions with Options
         const { data: qData, error: qError } = await supabase
           .from('questions')
-          .select(`id, text, image_url, subject, section, explanation, marks, negative_marks, question_number, options(id, text, is_correct, option_letter)`)
+          .select(`id, text, image_url, subject, section, explanation, marks, negative_marks, question_type, question_number, options(id, text, is_correct, option_letter)`)
           .eq('test_id', testData.id)
           .order('question_number', { ascending: true });
 
@@ -629,6 +629,42 @@ function SecureExamHallContent() {
     }
   };
 
+  const handleTextResponseChange = async (textVal: string) => {
+    const q = questions[currentQuestionIndex];
+    if (!q) return;
+    const qId = q.id;
+
+    // Save to responses state and localStorage immediately
+    setResponses(prev => {
+      const nextResponses = { ...prev, [qId]: textVal };
+      if (userId && testDetails) {
+        const savedKey = `exam_responses_${userId}_${testDetails.id}_attempt_${attemptNumber}`;
+        localStorage.setItem(savedKey, JSON.stringify(nextResponses));
+      }
+      return nextResponses;
+    });
+
+    if (!isAdmin && userId && testDetails) {
+      // Delete existing response for this question/attempt to avoid duplicate rows
+      await supabase.from('user_responses')
+        .delete()
+        .eq('user_id', userId)
+        .eq('test_id', testDetails.id)
+        .eq('question_id', qId)
+        .eq('attempt_number', attemptNumber);
+
+      // Insert new response
+      await supabase.from('user_responses').insert({
+        user_id: userId,
+        test_id: testDetails.id,
+        question_id: qId,
+        text_response: textVal,
+        is_correct: null,
+        attempt_number: attemptNumber
+      });
+    }
+  };
+
   const handleClearResponse = async () => {
     const q = questions[currentQuestionIndex];
     if (!q) return;
@@ -756,42 +792,57 @@ function SecureExamHallContent() {
         subjectStats[sub].total++;
       });
 
-      const recordsToInsert = Object.entries(responses).map(([qId, optId]) => {
+      const recordsToInsert = Object.entries(responses).map(([qId, val]) => {
         const q = questions.find(x => x.id === qId);
-        const opt = q?.options.find((o: any) => o.id === optId);
-        const isCorrect = opt?.is_correct || false;
-        
-        const qMarks = q?.marks !== undefined && q?.marks !== null ? q.marks : 4;
-        const qNeg = q?.negative_marks !== undefined && q?.negative_marks !== null ? q.negative_marks : 1;
         const sub = q?.subject || "Physics";
+        const qType = q?.question_type || "MCQ";
+        const isMCQOrAR = qType === "MCQ" || qType === "AssertionReason";
 
         if (subjectStats[sub]) {
           subjectStats[sub].attempted++;
         }
 
-        if (isCorrect) {
-          score += qMarks;
-          correctCount++;
-          if (subjectStats[sub]) {
-            subjectStats[sub].score += qMarks;
-            subjectStats[sub].correct++;
-          }
-        } else {
-          score -= qNeg;
-          incorrectCount++;
-          if (subjectStats[sub]) {
-            subjectStats[sub].score -= qNeg;
-            subjectStats[sub].incorrect++;
-          }
-        }
+        if (isMCQOrAR) {
+          const opt = q?.options.find((o: any) => o.id === val);
+          const isCorrect = opt?.is_correct || false;
+          const qMarks = q?.marks !== undefined && q?.marks !== null ? q.marks : 4;
+          const qNeg = q?.negative_marks !== undefined && q?.negative_marks !== null ? q.negative_marks : 1;
 
-        return {
-          user_id: userId,
-          test_id: testDetails.id,
-          question_id: qId,
-          selected_option_id: optId,
-          is_correct: isCorrect
-        };
+          if (isCorrect) {
+            score += qMarks;
+            correctCount++;
+            if (subjectStats[sub]) {
+              subjectStats[sub].score += qMarks;
+              subjectStats[sub].correct++;
+            }
+          } else {
+            score -= qNeg;
+            incorrectCount++;
+            if (subjectStats[sub]) {
+              subjectStats[sub].score -= qNeg;
+              subjectStats[sub].incorrect++;
+            }
+          }
+
+          return {
+            user_id: userId,
+            test_id: testDetails.id,
+            question_id: qId,
+            selected_option_id: val,
+            text_response: null,
+            is_correct: isCorrect
+          };
+        } else {
+          // Subjective / Objective text responses (graded manually)
+          return {
+            user_id: userId,
+            test_id: testDetails.id,
+            question_id: qId,
+            selected_option_id: null,
+            text_response: val,
+            is_correct: null
+          };
+        }
       });
 
       const insertResultsPromise = !isAdmin ? supabase.from('test_results').insert([{
@@ -1474,79 +1525,92 @@ function SecureExamHallContent() {
 
                   {/* Options Grid */}
                   <div className="space-y-4">
-                    {currentQ.options.map((opt: any, optIdx: number) => {
-                      const isSelected = selectedOptionId === opt.id;
-                      const isCorrectAnswer = opt.is_correct;
-                      
-                      let optionClasses = "bg-white/5 border-white/10 hover:border-cyan-500/50";
-                      let textColor = "text-white/80";
-                      let suffix = null;
+                    {currentQ.question_type && ["Objective", "Subjective2M", "Subjective3M", "Subjective5M", "CaseStudy"].includes(currentQ.question_type) ? (
+                      <div className="space-y-3">
+                        <label className="text-xs font-bold text-white/50 uppercase ml-1 block">Write your response here</label>
+                        <textarea
+                          value={responses[currentQ.id] || ""}
+                          disabled={showSolutions}
+                          onChange={e => handleTextResponseChange(e.target.value)}
+                          className="w-full bg-slate-900/60 border border-white/10 hover:border-cyan-500/50 rounded-2xl p-5 text-white text-base md:text-lg focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all font-medium resize-y h-44 placeholder-white/20"
+                          placeholder="Type your explanation, calculation, or final answer here..."
+                        />
+                      </div>
+                    ) : (
+                      currentQ.options.map((opt: any, optIdx: number) => {
+                        const isSelected = selectedOptionId === opt.id;
+                        const isCorrectAnswer = opt.is_correct;
+                        
+                        let optionClasses = "bg-white/5 border-white/10 hover:border-cyan-500/50";
+                        let textColor = "text-white/80";
+                        let suffix = null;
 
-                      if (showSolutions) {
-                        if (isCorrectAnswer) {
-                          optionClasses = "bg-emerald-500/10 border-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.15)]";
-                          textColor = "text-emerald-400 font-bold";
-                          suffix = (
-                            <span className="px-2.5 py-0.5 rounded-full text-xs bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 font-bold flex items-center gap-1 shrink-0">
-                              <CheckCircle2 className="w-4 h-4" /> Correct Answer
-                            </span>
-                          );
-                        } else if (isSelected && !isCorrectAnswer) {
-                          optionClasses = "bg-rose-500/10 border-rose-500 shadow-[0_0_20px_rgba(244,63,94,0.15)]";
-                          textColor = "text-rose-400 font-bold";
-                          suffix = (
-                            <span className="px-2.5 py-0.5 rounded-full text-xs bg-rose-500/20 border border-rose-500/30 text-rose-400 font-bold flex items-center gap-1 shrink-0">
-                              <XCircle className="w-4 h-4" /> Your Choice (Incorrect)
-                            </span>
-                          );
-                        } else {
-                          optionClasses = "bg-slate-900/30 border-white/5 opacity-40 text-white/40 cursor-not-allowed";
-                          textColor = "text-white/50";
+                        if (showSolutions) {
+                          if (isCorrectAnswer) {
+                            optionClasses = "bg-emerald-500/10 border-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.15)]";
+                            textColor = "text-emerald-400 font-bold";
+                            suffix = (
+                              <span className="px-2.5 py-0.5 rounded-full text-xs bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 font-bold flex items-center gap-1 shrink-0">
+                                <CheckCircle2 className="w-4 h-4" /> Correct Answer
+                              </span>
+                            );
+                          } else if (isSelected && !isCorrectAnswer) {
+                            optionClasses = "bg-rose-500/10 border-rose-500 shadow-[0_0_20px_rgba(244,63,94,0.15)]";
+                            textColor = "text-rose-400 font-bold";
+                            suffix = (
+                              <span className="px-2.5 py-0.5 rounded-full text-xs bg-rose-500/20 border border-rose-500/30 text-rose-400 font-bold flex items-center gap-1 shrink-0">
+                                <XCircle className="w-4 h-4" /> Your Choice (Incorrect)
+                              </span>
+                            );
+                          } else {
+                            optionClasses = "bg-slate-900/30 border-white/5 opacity-40 text-white/40 cursor-not-allowed";
+                            textColor = "text-white/50";
+                          }
+                        } else if (isSelected) {
+                          optionClasses = "bg-cyan-500/10 border-cyan-500 shadow-[0_0_15px_rgba(34,211,238,0.2)]";
+                          textColor = "text-cyan-400 font-semibold";
                         }
-                      } else if (isSelected) {
-                        optionClasses = "bg-cyan-500/10 border-cyan-500 shadow-[0_0_15px_rgba(34,211,238,0.2)]";
-                        textColor = "text-cyan-400 font-semibold";
-                      }
 
-                      const letter = opt.option_letter || String.fromCharCode(65 + optIdx);
+                        const letter = opt.option_letter || String.fromCharCode(65 + optIdx);
 
-                      return (
-                        <label
-                          key={opt.id}
-                          className={`flex items-center p-4 md:p-5 rounded-2xl border transition-all duration-200 group ${showSolutions ? 'cursor-default' : 'cursor-pointer'} ${optionClasses}`}
-                        >
-                          <input
-                            type="radio"
-                            name={`question-${currentQ.id}`}
-                            className="hidden"
-                            checked={isSelected}
-                            disabled={showSolutions}
-                            onChange={() => handleSelectOption(opt.id)}
-                          />
-                          <div className={`w-8 h-8 rounded-full border flex items-center justify-center flex-shrink-0 text-xs font-bold transition-all mr-4 ${
-                            showSolutions
-                              ? isSelected
-                                ? isCorrectAnswer
-                                  ? 'bg-emerald-500 border-emerald-500 text-slate-950 shadow-[0_0_10px_rgba(16,185,129,0.4)]'
-                                  : 'bg-rose-500 border-rose-500 text-slate-950 shadow-[0_0_10px_rgba(244,63,94,0.4)]'
-                                : isCorrectAnswer
-                                  ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400'
+                        return (
+                          <label
+                            key={opt.id}
+                            className={`flex items-center p-4 md:p-5 rounded-2xl border transition-all duration-200 group ${showSolutions ? 'cursor-default' : 'cursor-pointer'} ${optionClasses}`}
+                          >
+                            <input
+                              type="radio"
+                              name={`question-${currentQ.id}`}
+                              className="hidden"
+                              checked={isSelected}
+                              disabled={showSolutions}
+                              onChange={() => handleSelectOption(opt.id)}
+                            />
+                            <div className={`w-8 h-8 rounded-full border flex items-center justify-center flex-shrink-0 text-xs font-bold transition-all mr-4 ${
+                              showSolutions
+                                ? isSelected
+                                  ? isCorrectAnswer
+                                    ? 'bg-emerald-500 border-emerald-500 text-slate-950 shadow-[0_0_10px_rgba(16,185,129,0.4)]'
+                                    : 'bg-rose-500 border-rose-500 text-slate-950 shadow-[0_0_10px_rgba(244,63,94,0.4)]'
+                                  : isCorrectAnswer
+                                    ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400'
+                                    : 'bg-white/5 border-white/10 text-white/45'
+                                : isSelected
+                                  ? 'bg-cyan-500 border-cyan-500 text-slate-950 shadow-[0_0_10px_rgba(34,211,238,0.4)]'
                                   : 'bg-white/5 border-white/10 text-white/45'
-                              : isSelected
-                                ? 'bg-cyan-500 border-cyan-500 text-slate-950 shadow-[0_0_10px_rgba(34,211,238,0.4)]'
-                                : 'bg-white/5 border-white/10 text-white/45'
-                          }`}>
-                            {letter}
-                          </div>
-                          <div className="flex-1 flex flex-col sm:flex-row sm:items-center justify-between gap-3 min-w-0">
-                            <span className={`text-base md:text-lg font-medium truncate ${textColor}`} title={opt.text}>
-                              {opt.text}
-                            </span>
-                            {suffix}
-                          </div>
-                        </label>
-                      );
-                    })}
+                            }`}>
+                              {letter}
+                            </div>
+                            <div className="flex-1 flex flex-col sm:flex-row sm:items-center justify-between gap-3 min-w-0">
+                              <span className={`text-base md:text-lg font-medium truncate ${textColor}`} title={opt.text}>
+                                {opt.text}
+                              </span>
+                              {suffix}
+                            </div>
+                          </label>
+                        );
+                      })
+                    )}
                   </div>
 
                   {/* Explanation Section */}

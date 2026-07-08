@@ -29,9 +29,11 @@ interface ParsedQuestion {
   negativeMarks: number;
   imageUrl?: string;
   imageFile?: File | null;
-  section?: "Section A" | "Section B";
+  section?: string;
   finalImageUrl?: string;
+  questionType?: "MCQ" | "AssertionReason" | "Objective" | "Subjective2M" | "Subjective3M" | "Subjective5M" | "CaseStudy";
 }
+
 
 export default function TestCreationEngine() {
   const router = useRouter();
@@ -45,6 +47,7 @@ export default function TestCreationEngine() {
 
   const [selectedBoard, setSelectedBoard] = useState<"WB" | "CBSE_ISC" | null>(null);
   const [selectedClass, setSelectedClass] = useState<"11" | "12" | null>(null);
+  const [selectedSetType, setSelectedSetType] = useState<"35" | "70">("35");
   const [showClassDropdown, setShowClassDropdown] = useState(false);
 
   // Manual Question Distributions
@@ -52,6 +55,7 @@ export default function TestCreationEngine() {
   const [count2Mark, setCount2Mark] = useState(0);
   const [count3Mark, setCount3Mark] = useState(0);
   const [count5Mark, setCount5Mark] = useState(0);
+
 
   const [creationMode, setCreationMode] = useState<"upload" | "manual">("upload");
 
@@ -113,20 +117,21 @@ export default function TestCreationEngine() {
   useEffect(() => {
     if (examType === "Boards") {
       if (selectedBoard === "WB") {
-        setCount1Mark(35);
-        setCount2Mark(0);
-        setCount3Mark(0);
-        setCount5Mark(0);
-        setNumberOfQuestions(35);
+        if (selectedSetType === "35") {
+          setNumberOfQuestions(22);
+        } else {
+          setNumberOfQuestions(35);
+        }
       } else if (selectedBoard === "CBSE_ISC") {
-        setCount1Mark(20);
-        setCount2Mark(0);
-        setCount3Mark(0);
-        setCount5Mark(0);
-        setNumberOfQuestions(20);
+        if (selectedSetType === "35") {
+          setNumberOfQuestions(21);
+        } else {
+          setNumberOfQuestions(33);
+        }
       }
     }
-  }, [examType, selectedBoard]);
+  }, [examType, selectedBoard, selectedSetType]);
+
 
   // Handle Class dropdown animation trigger
   useEffect(() => {
@@ -267,7 +272,7 @@ export default function TestCreationEngine() {
         const response = await fetch("/api/parse-test", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ text: chunk, type: "questions" })
+          body: JSON.stringify({ text: chunk, type: "questions", examType })
         });
 
         if (!response.ok) {
@@ -355,12 +360,12 @@ export default function TestCreationEngine() {
       let slots: ParsedQuestion[] = [];
       let qNum = 1;
 
-      const addSlots = (count: number, marksVal: number) => {
+      const addBoardSlots = (count: number, marksVal: number, typeVal: ParsedQuestion["questionType"], sectionVal: string) => {
         for (let i = 0; i < count; i++) {
           slots.push({
             questionNumber: qNum++,
             subject: "Other",
-            section: "Section A",
+            section: sectionVal,
             questionText: "",
             options: {
               A: "",
@@ -370,15 +375,43 @@ export default function TestCreationEngine() {
             },
             correctOption: "",
             marks: marksVal,
-            negativeMarks: 0
+            negativeMarks: 0,
+            questionType: typeVal
           });
         }
       };
 
-      addSlots(count1Mark, 1);
-      addSlots(count2Mark, 2);
-      addSlots(count3Mark, 3);
-      addSlots(count5Mark, 5);
+      if (selectedBoard === "CBSE_ISC") {
+        if (selectedSetType === "35") {
+          addBoardSlots(10, 1, "MCQ", "Section A (MCQ)");
+          addBoardSlots(4, 1, "AssertionReason", "Section A (Assertion-Reason)");
+          addBoardSlots(3, 2, "Subjective2M", "Section B (Very Short)");
+          addBoardSlots(2, 3, "Subjective3M", "Section C (Short Answer)");
+          addBoardSlots(1, 4, "CaseStudy", "Section D (Case Study)");
+          addBoardSlots(1, 5, "Subjective5M", "Section E (Long Answer)");
+        } else {
+          addBoardSlots(12, 1, "MCQ", "Section A (MCQ)");
+          addBoardSlots(4, 1, "AssertionReason", "Section A (Assertion-Reason)");
+          addBoardSlots(5, 2, "Subjective2M", "Section B (Very Short)");
+          addBoardSlots(7, 3, "Subjective3M", "Section C (Short Answer)");
+          addBoardSlots(2, 4, "CaseStudy", "Section D (Case Study)");
+          addBoardSlots(3, 5, "Subjective5M", "Section E (Long Answer)");
+        }
+      } else {
+        if (selectedSetType === "35") {
+          addBoardSlots(10, 1, "MCQ", "Section I (MCQ)");
+          addBoardSlots(5, 1, "Objective", "Section II (Very Short / Objective)");
+          addBoardSlots(3, 2, "Subjective2M", "Section III (Short Answer I)");
+          addBoardSlots(3, 3, "Subjective3M", "Section IV (Short Answer II)");
+          addBoardSlots(1, 5, "Subjective5M", "Section V (Long Answer)");
+        } else {
+          addBoardSlots(14, 1, "MCQ", "Section I (MCQ)");
+          addBoardSlots(4, 1, "Objective", "Section II (Very Short / Objective)");
+          addBoardSlots(5, 2, "Subjective2M", "Section III (Short Answer I)");
+          addBoardSlots(9, 3, "Subjective3M", "Section IV (Short Answer II)");
+          addBoardSlots(3, 5, "Subjective5M", "Section V (Long Answer)");
+        }
+      }
 
       if (slots.length > 0) {
         setParsedQuestions(slots);
@@ -612,7 +645,8 @@ export default function TestCreationEngine() {
         negative_marks: q.negativeMarks,
         question_number: q.questionNumber,
         image_url: q.finalImageUrl || "",
-        section: q.section || "Section A"
+        section: q.section || "Section A",
+        question_type: q.questionType || "MCQ"
       }));
 
       const { data: qRows, error: qError } = await supabase
@@ -624,22 +658,42 @@ export default function TestCreationEngine() {
 
       // 4. Map options and insert them in bulk
       const optionsToInsert: any[] = [];
-      parsedQuestions.forEach(q => {
+      questionsWithSections.forEach(q => {
         const matchingInsertedQuestion = qRows.find(row => row.question_number === q.questionNumber);
         if (!matchingInsertedQuestion) return;
 
-        Object.entries(q.options || { A: "", B: "", C: "", D: "" }).forEach(([letter, text]) => {
-          optionsToInsert.push({
-            question_id: matchingInsertedQuestion.id,
-            text: text || `Option ${letter}`,
-            is_correct: q.correctOption === letter,
-            option_letter: letter
+        const qType = q.questionType || "MCQ";
+        if (qType === "MCQ") {
+          Object.entries(q.options || { A: "", B: "", C: "", D: "" }).forEach(([letter, text]) => {
+            optionsToInsert.push({
+              question_id: matchingInsertedQuestion.id,
+              text: text || `Option ${letter}`,
+              is_correct: q.correctOption === letter,
+              option_letter: letter
+            });
           });
-        });
+        } else if (qType === "AssertionReason") {
+          const standardAROptions = {
+            A: "Both Assertion and Reason are true, and Reason is the correct explanation of Assertion.",
+            B: "Both Assertion and Reason are true, but Reason is NOT the correct explanation of Assertion.",
+            C: "Assertion is true, but Reason is false.",
+            D: "Assertion is false, but Reason is true."
+          };
+          Object.entries(standardAROptions).forEach(([letter, text]) => {
+            optionsToInsert.push({
+              question_id: matchingInsertedQuestion.id,
+              text: text,
+              is_correct: q.correctOption === letter,
+              option_letter: letter
+            });
+          });
+        }
       });
 
-      const { error: optError } = await supabase.from('options').insert(optionsToInsert);
-      if (optError) throw optError;
+      if (optionsToInsert.length > 0) {
+        const { error: optError } = await supabase.from('options').insert(optionsToInsert);
+        if (optError) throw optError;
+      }
 
       // 5. Create notification for students
       const testNotificationTitle = examType === "DPP Quiz" ? "New DPP Quiz Live" : "New Test Live";
@@ -698,7 +752,9 @@ export default function TestCreationEngine() {
             marks: q.marks || 4,
             negativeMarks: q.negativeMarks || 1,
             imageUrl: q.imageUrl || "",
-            imageFile: null
+            imageFile: null,
+            section: q.section || "Section A",
+            questionType: q.questionType || "MCQ"
           };
         });
 
@@ -825,7 +881,7 @@ export default function TestCreationEngine() {
           </div>
 
           {examType === "Boards" && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-white/5 animate-in fade-in duration-200">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 border-t border-white/5 animate-in fade-in duration-200">
               <div className="space-y-2">
                 <label className="text-xs font-bold text-white/50 uppercase ml-1">BOARD</label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -844,6 +900,29 @@ export default function TestCreationEngine() {
                       }`}
                     >
                       {boardOption.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-white/50 uppercase ml-1">SET TYPE</label>
+                <div className="grid grid-cols-2 gap-3">
+                  {[
+                    { id: "35", label: "35 Marks Set" },
+                    { id: "70", label: "70 Marks Set" }
+                  ].map((setOption) => (
+                    <button
+                      key={setOption.id}
+                      type="button"
+                      onClick={() => setSelectedSetType(setOption.id as any)}
+                      className={`py-2.5 px-3 rounded-xl border font-bold text-xs transition-all ${
+                        selectedSetType === setOption.id
+                          ? "bg-orange-500/20 border-orange-500 text-orange-400 font-extrabold"
+                          : "bg-slate-900/50 border-white/10 text-white/50 hover:bg-white/5"
+                      }`}
+                    >
+                      {setOption.label}
                     </button>
                   ))}
                 </div>
@@ -1040,61 +1119,87 @@ export default function TestCreationEngine() {
               
               {examType === "Boards" ? (
                 <div className="space-y-4 text-left border-t border-white/5 pt-4">
-                  <span className="text-xs font-bold text-white/50 uppercase ml-1 block">Question Marks Distribution</span>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-white/40 uppercase ml-1">1 Mark Qs (MCQ)</label>
-                      <input 
-                        type="number" 
-                        value={count1Mark} 
-                        onChange={e => {
-                          const val = Math.max(0, Number(e.target.value));
-                          setCount1Mark(val);
-                          setNumberOfQuestions(val + count2Mark + count3Mark + count5Mark);
-                        }}
-                        className="w-full bg-slate-900/50 border border-white/10 rounded-xl py-2.5 px-3 text-sm text-white focus:outline-none focus:border-orange-500"
-                      />
+                  <span className="text-xs font-bold text-white/50 uppercase ml-1 block">Template Summary</span>
+                  
+                  {!selectedBoard ? (
+                    <div className="p-4 rounded-xl bg-slate-900 border border-white/5 text-xs text-white/40 text-center">
+                      Please select a Board in the settings above to view the template details.
                     </div>
-                    <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-white/40 uppercase ml-1">2 Marks Qs</label>
-                      <input 
-                        type="number" 
-                        value={count2Mark} 
-                        onChange={e => {
-                          const val = Math.max(0, Number(e.target.value));
-                          setCount2Mark(val);
-                          setNumberOfQuestions(count1Mark + val + count3Mark + count5Mark);
-                        }}
-                        className="w-full bg-slate-900/50 border border-white/10 rounded-xl py-2.5 px-3 text-sm text-white focus:outline-none focus:border-orange-500"
-                      />
+                  ) : (
+                    <div className="rounded-xl overflow-hidden border border-white/10 bg-slate-900/50">
+                      <table className="w-full text-xs text-left border-collapse">
+                        <thead>
+                          <tr className="border-b border-white/10 bg-white/5 text-white/50">
+                            <th className="p-3 font-semibold uppercase">Question Type</th>
+                            <th className="p-3 font-semibold uppercase">Marks Each</th>
+                            <th className="p-3 font-semibold uppercase text-right">No. of Qs</th>
+                            <th className="p-3 font-semibold uppercase text-right">Total Marks</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-white/5 text-white/70">
+                          {selectedBoard === "CBSE_ISC" ? (
+                            selectedSetType === "35" ? (
+                              <>
+                                <tr><td className="p-3 font-medium">MCQ</td><td className="p-3">1 Mark</td><td className="p-3 text-right">10</td><td className="p-3 text-right font-bold text-cyan-400">10</td></tr>
+                                <tr><td className="p-3 font-medium">Assertion-Reason</td><td className="p-3">1 Mark</td><td className="p-3 text-right">4</td><td className="p-3 text-right font-bold text-cyan-400">4</td></tr>
+                                <tr><td className="p-3 font-medium">Very Short Answer</td><td className="p-3">2 Marks</td><td className="p-3 text-right">3</td><td className="p-3 text-right font-bold text-cyan-400">6</td></tr>
+                                <tr><td className="p-3 font-medium">Short Answer</td><td className="p-3">3 Marks</td><td className="p-3 text-right">2</td><td className="p-3 text-right font-bold text-cyan-400">6</td></tr>
+                                <tr><td className="p-3 font-medium">Case Study</td><td className="p-3">4 Marks</td><td className="p-3 text-right">1</td><td className="p-3 text-right font-bold text-cyan-400">4</td></tr>
+                                <tr><td className="p-3 font-medium">Long Answer</td><td className="p-3">5 Marks</td><td className="p-3 text-right">1</td><td className="p-3 text-right font-bold text-cyan-400">5</td></tr>
+                                <tr className="bg-white/5 text-white border-t border-white/10 font-bold">
+                                  <td className="p-3" colSpan={2}>Grand Total</td>
+                                  <td className="p-3 text-right">21</td>
+                                  <td className="p-3 text-right text-orange-500">35 Marks</td>
+                                </tr>
+                              </>
+                            ) : (
+                              <>
+                                <tr><td className="p-3 font-medium">MCQ</td><td className="p-3">1 Mark</td><td className="p-3 text-right">12</td><td className="p-3 text-right font-bold text-cyan-400">12</td></tr>
+                                <tr><td className="p-3 font-medium">Assertion-Reason</td><td className="p-3">1 Mark</td><td className="p-3 text-right">4</td><td className="p-3 text-right font-bold text-cyan-400">4</td></tr>
+                                <tr><td className="p-3 font-medium">Very Short Answer</td><td className="p-3">2 Marks</td><td className="p-3 text-right">5</td><td className="p-3 text-right font-bold text-cyan-400">10</td></tr>
+                                <tr><td className="p-3 font-medium">Short Answer</td><td className="p-3">3 Marks</td><td className="p-3 text-right">7</td><td className="p-3 text-right font-bold text-cyan-400">21</td></tr>
+                                <tr><td className="p-3 font-medium">Case Study</td><td className="p-3">4 Marks</td><td className="p-3 text-right">2</td><td className="p-3 text-right font-bold text-cyan-400">8</td></tr>
+                                <tr><td className="p-3 font-medium">Long Answer</td><td className="p-3">5 Marks</td><td className="p-3 text-right">3</td><td className="p-3 text-right font-bold text-cyan-400">15</td></tr>
+                                <tr className="bg-white/5 text-white border-t border-white/10 font-bold">
+                                  <td className="p-3" colSpan={2}>Grand Total</td>
+                                  <td className="p-3 text-right">33</td>
+                                  <td className="p-3 text-right text-orange-500">70 Marks</td>
+                                </tr>
+                              </>
+                            )
+                          ) : (
+                            selectedSetType === "35" ? (
+                              <>
+                                <tr><td className="p-3 font-medium">MCQ</td><td className="p-3">1 Mark</td><td className="p-3 text-right">10</td><td className="p-3 text-right font-bold text-cyan-400">10</td></tr>
+                                <tr><td className="p-3 font-medium">Very Short / Objective</td><td className="p-3">1 Mark</td><td className="p-3 text-right">5</td><td className="p-3 text-right font-bold text-cyan-400">5</td></tr>
+                                <tr><td className="p-3 font-medium">Short Answer I</td><td className="p-3">2 Marks</td><td className="p-3 text-right">3</td><td className="p-3 text-right font-bold text-cyan-400">6</td></tr>
+                                <tr><td className="p-3 font-medium">Short Answer II</td><td className="p-3">3 Marks</td><td className="p-3 text-right">3</td><td className="p-3 text-right font-bold text-cyan-400">9</td></tr>
+                                <tr><td className="p-3 font-medium">Long Answer</td><td className="p-3">5 Marks</td><td className="p-3 text-right">1</td><td className="p-3 text-right font-bold text-cyan-400">5</td></tr>
+                                <tr className="bg-white/5 text-white border-t border-white/10 font-bold">
+                                  <td className="p-3" colSpan={2}>Grand Total</td>
+                                  <td className="p-3 text-right">22</td>
+                                  <td className="p-3 text-right text-orange-500">35 Marks</td>
+                                </tr>
+                              </>
+                            ) : (
+                              <>
+                                <tr><td className="p-3 font-medium">MCQ</td><td className="p-3">1 Mark</td><td className="p-3 text-right">14</td><td className="p-3 text-right font-bold text-cyan-400">14</td></tr>
+                                <tr><td className="p-3 font-medium">Very Short / Objective</td><td className="p-3">1 Mark</td><td className="p-3 text-right">4</td><td className="p-3 text-right font-bold text-cyan-400">4</td></tr>
+                                <tr><td className="p-3 font-medium">Short Answer I</td><td className="p-3">2 Marks</td><td className="p-3 text-right">5</td><td className="p-3 text-right font-bold text-cyan-400">10</td></tr>
+                                <tr><td className="p-3 font-medium">Short Answer II</td><td className="p-3">3 Marks</td><td className="p-3 text-right">9</td><td className="p-3 text-right font-bold text-cyan-400">27</td></tr>
+                                <tr><td className="p-3 font-medium">Long Answer</td><td className="p-3">5 Marks</td><td className="p-3 text-right">3</td><td className="p-3 text-right font-bold text-cyan-400">15</td></tr>
+                                <tr className="bg-white/5 text-white border-t border-white/10 font-bold">
+                                  <td className="p-3" colSpan={2}>Grand Total</td>
+                                  <td className="p-3 text-right">35</td>
+                                  <td className="p-3 text-right text-orange-500">70 Marks</td>
+                                </tr>
+                              </>
+                            )
+                          )}
+                        </tbody>
+                      </table>
                     </div>
-                    <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-white/40 uppercase ml-1">3 Marks Qs</label>
-                      <input 
-                        type="number" 
-                        value={count3Mark} 
-                        onChange={e => {
-                          const val = Math.max(0, Number(e.target.value));
-                          setCount3Mark(val);
-                          setNumberOfQuestions(count1Mark + count2Mark + val + count5Mark);
-                        }}
-                        className="w-full bg-slate-900/50 border border-white/10 rounded-xl py-2.5 px-3 text-sm text-white focus:outline-none focus:border-orange-500"
-                      />
-                    </div>
-                    <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-white/40 uppercase ml-1">5 Marks Qs</label>
-                      <input 
-                        type="number" 
-                        value={count5Mark} 
-                        onChange={e => {
-                          const val = Math.max(0, Number(e.target.value));
-                          setCount5Mark(val);
-                          setNumberOfQuestions(count1Mark + count2Mark + count3Mark + val);
-                        }}
-                        className="w-full bg-slate-900/50 border border-white/10 rounded-xl py-2.5 px-3 text-sm text-white focus:outline-none focus:border-orange-500"
-                      />
-                    </div>
-                  </div>
+                  )}
                 </div>
               ) : (
                 <div className="space-y-2 text-left">
@@ -1213,7 +1318,8 @@ export default function TestCreationEngine() {
 
                 <div className="space-y-4">
                   {parsedQuestions.map((q, idx) => {
-                    const hasCorrectOption = !!q.correctOption;
+                    const isSubjectiveOrObjective = q.questionType && ["Objective", "Subjective2M", "Subjective3M", "Subjective5M", "CaseStudy"].includes(q.questionType);
+                    const hasCorrectOption = isSubjectiveOrObjective || !!q.correctOption;
                     const subjectColors = {
                       Physics: "bg-blue-500/10 text-blue-400 border-blue-500/20",
                       Chemistry: "bg-purple-500/10 text-purple-400 border-purple-500/20",
@@ -1221,6 +1327,16 @@ export default function TestCreationEngine() {
                       Zoology: "bg-orange-500/10 text-orange-400 border-orange-500/20",
                       Mathematics: "bg-rose-500/10 text-rose-400 border-rose-500/20",
                       Other: "bg-slate-500/10 text-slate-400 border-slate-500/20",
+                    };
+
+                    const typeLabels: Record<string, string> = {
+                      MCQ: "MCQ",
+                      AssertionReason: "Assertion-Reason",
+                      Objective: "Objective / VSA",
+                      Subjective2M: "Subjective (2M)",
+                      Subjective3M: "Subjective (3M)",
+                      Subjective5M: "Subjective (5M)",
+                      CaseStudy: "Case Study (4M)"
                     };
 
                     return (
@@ -1231,11 +1347,16 @@ export default function TestCreationEngine() {
                         }`}
                       >
                         <div className="flex justify-between items-start gap-4 mb-4">
-                          <div className="flex items-center gap-3">
+                          <div className="flex flex-wrap items-center gap-3">
                             <span className="font-extrabold text-orange-400 text-lg">Q.{q.questionNumber}</span>
                             <span className={`px-2.5 py-0.5 rounded-md border text-xs font-bold ${subjectColors[q.subject] || subjectColors.Other}`}>
                               {q.subject}
                             </span>
+                            {q.questionType && (
+                              <span className="px-2.5 py-0.5 rounded-md border border-cyan-500/30 bg-cyan-500/5 text-xs text-cyan-400 font-bold">
+                                {typeLabels[q.questionType] || q.questionType}
+                              </span>
+                            )}
                             {q.section && (
                               <span className="px-2.5 py-0.5 rounded-md border border-white/10 bg-white/5 text-xs text-white/60 font-medium">
                                 {q.section}
@@ -1271,35 +1392,50 @@ export default function TestCreationEngine() {
                           </div>
                         )}
 
-                        <p className="text-white/90 text-sm whitespace-pre-wrap leading-relaxed mb-5">
+                        <p className="text-white/90 text-sm whitespace-pre-wrap leading-relaxed mb-5 font-medium">
                           {q.questionText || <span className="text-red-400 italic">Empty question text</span>}
                         </p>
 
                         {/* Options */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
-                          {Object.entries(q.options || { A: "", B: "", C: "", D: "" }).map(([letter, text]) => {
-                            const isCorrect = q.correctOption === letter;
-                            return (
-                              <div 
-                                key={letter} 
-                                className={`p-3 rounded-xl border text-xs flex items-center gap-3 transition-colors ${
-                                  isCorrect 
-                                    ? "bg-green-500/10 border-green-500/30 text-green-400" 
-                                    : "bg-slate-950/40 border-white/5 text-white/70"
-                                }`}
-                              >
-                                <span className={`w-5 h-5 rounded-full flex items-center justify-center font-bold text-[10px] shrink-0 border ${
-                                  isCorrect 
-                                    ? "bg-green-500 text-slate-950 border-green-400" 
-                                    : "bg-white/5 border-white/10 text-white/50"
-                                }`}>
-                                  {letter}
-                                </span>
-                                <span className="truncate">{text || <span className="text-red-400 italic">Empty option</span>}</span>
-                              </div>
-                            );
-                          })}
-                        </div>
+                        {!isSubjectiveOrObjective ? (
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                            {Object.entries(
+                              q.questionType === "AssertionReason" 
+                              ? {
+                                  A: "Both Assertion and Reason are true, and Reason is the correct explanation of Assertion.",
+                                  B: "Both Assertion and Reason are true, but Reason is NOT the correct explanation of Assertion.",
+                                  C: "Assertion is true, but Reason is false.",
+                                  D: "Assertion is false, but Reason is true."
+                                }
+                              : (q.options || { A: "", B: "", C: "", D: "" })
+                            ).map(([letter, text]) => {
+                              const isCorrect = q.correctOption === letter;
+                              return (
+                                <div 
+                                  key={letter} 
+                                  className={`p-3 rounded-xl border text-xs flex items-center gap-3 transition-colors ${
+                                    isCorrect 
+                                      ? "bg-green-500/10 border-green-500/30 text-green-400" 
+                                      : "bg-slate-950/40 border-white/5 text-white/70"
+                                  }`}
+                                >
+                                  <span className={`w-5 h-5 rounded-full flex items-center justify-center font-bold text-[10px] shrink-0 border ${
+                                    isCorrect 
+                                      ? "bg-green-500 text-slate-950 border-green-400" 
+                                      : "bg-white/5 border-white/10 text-white/50"
+                                  }`}>
+                                    {letter}
+                                  </span>
+                                  <span className="truncate">{text || <span className="text-red-400 italic">Empty option</span>}</span>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        ) : (
+                          <div className="p-3 rounded-xl bg-slate-950/40 border border-white/5 text-xs text-white/40 italic mb-4">
+                            Subjective/Objective written question (answers submitted via text responses)
+                          </div>
+                        )}
 
                         {/* Explanation block */}
                         {q.explanation && (
@@ -1379,7 +1515,7 @@ export default function TestCreationEngine() {
               </button>
             </div>
 
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div>
                 <label className="text-xs font-bold text-white/40 uppercase block mb-1">Subject</label>
                 <select
@@ -1397,15 +1533,51 @@ export default function TestCreationEngine() {
               </div>
 
               <div>
-                <label className="text-xs font-bold text-white/40 uppercase block mb-1">Section</label>
+                <label className="text-xs font-bold text-white/40 uppercase block mb-1">Question Type</label>
                 <select
-                  value={editForm.section || "Section A"}
-                  onChange={e => setEditForm({ ...editForm, section: e.target.value as any })}
+                  value={editForm.questionType || "MCQ"}
+                  onChange={e => {
+                    const qType = e.target.value as any;
+                    let m = editForm.marks;
+                    if (qType === "MCQ" || qType === "AssertionReason" || qType === "Objective") m = 1;
+                    else if (qType === "Subjective2M") m = 2;
+                    else if (qType === "Subjective3M") m = 3;
+                    else if (qType === "CaseStudy") m = 4;
+                    else if (qType === "Subjective5M") m = 5;
+                    setEditForm({ ...editForm, questionType: qType, marks: m });
+                  }}
                   className="w-full bg-slate-950 border border-white/10 rounded-xl py-2.5 px-3 text-sm focus:border-orange-500 outline-none cursor-pointer"
                 >
-                  <option value="Section A">Section A</option>
-                  <option value="Section B">Section B</option>
+                  <option value="MCQ">MCQ</option>
+                  <option value="AssertionReason">Assertion-Reason</option>
+                  <option value="Objective">Objective / VSA (1M)</option>
+                  <option value="Subjective2M">Subjective (2M)</option>
+                  <option value="Subjective3M">Subjective (3M)</option>
+                  <option value="CaseStudy">Case Study (4M)</option>
+                  <option value="Subjective5M">Subjective (5M)</option>
                 </select>
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-white/40 uppercase block mb-1">Section</label>
+                {examType === "Boards" ? (
+                  <input
+                    type="text"
+                    value={editForm.section || ""}
+                    onChange={e => setEditForm({ ...editForm, section: e.target.value })}
+                    className="w-full bg-slate-950 border border-white/10 rounded-xl py-2.5 px-3 text-sm focus:border-orange-500 outline-none"
+                    placeholder="e.g. Section A"
+                  />
+                ) : (
+                  <select
+                    value={editForm.section || "Section A"}
+                    onChange={e => setEditForm({ ...editForm, section: e.target.value as any })}
+                    className="w-full bg-slate-950 border border-white/10 rounded-xl py-2.5 px-3 text-sm focus:border-orange-500 outline-none cursor-pointer"
+                  >
+                    <option value="Section A">Section A</option>
+                    <option value="Section B">Section B</option>
+                  </select>
+                )}
               </div>
               
               <div className="grid grid-cols-2 gap-2">
@@ -1461,6 +1633,7 @@ export default function TestCreationEngine() {
                 </label>
                 {editForm.imageUrl && (
                   <button 
+                    type="button"
                     onClick={() => setEditForm({ ...editForm, imageUrl: "", imageFile: null })}
                     className="text-xs text-red-400 hover:text-red-300 font-bold"
                   >
@@ -1471,46 +1644,73 @@ export default function TestCreationEngine() {
             </div>
 
             {/* Options Input and correct radio selection */}
-            <div className="space-y-3">
-              <label className="text-xs font-bold text-white/40 uppercase block">Options & Correct Answer Choice</label>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {["A", "B", "C", "D"].map((letter) => {
-                  const isCorrect = editForm.correctOption === letter;
-                  return (
-                    <div key={letter} className="flex items-center gap-3">
-                      <button
-                        onClick={() => setEditForm({ ...editForm, correctOption: letter as any })}
-                        className={`w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${
-                          isCorrect ? 'border-green-500 bg-green-500/20' : 'border-white/10 hover:border-white/30'
-                        }`}
-                        title={`Mark option ${letter} as correct`}
-                      >
-                        {isCorrect && <div className="w-3 h-3 bg-green-500 rounded-full" />}
-                      </button>
-                      
-                      <div className="flex-1 flex gap-2">
-                        <span className="text-xs font-bold text-white/40 shrink-0 self-center">{letter}</span>
-                        <input
-                          type="text"
-                          // @ts-ignore
-                          value={editForm.options?.[letter] || ""}
-                          // @ts-ignore
-                          onChange={e => setEditForm({
-                            ...editForm,
-                            options: {
-                              ...(editForm.options || { A: "", B: "", C: "", D: "" }),
-                              [letter]: e.target.value
-                            }
-                          })}
-                          placeholder={`Option ${letter} details...`}
-                          className="w-full bg-slate-950 border border-white/10 rounded-xl py-2 px-3 text-xs text-white/80 focus:border-orange-500 outline-none"
-                        />
+            {!(editForm.questionType && ["Objective", "Subjective2M", "Subjective3M", "Subjective5M", "CaseStudy"].includes(editForm.questionType)) ? (
+              <div className="space-y-3">
+                <label className="text-xs font-bold text-white/40 uppercase block">Options & Correct Answer Choice</label>
+                
+                {editForm.questionType === "AssertionReason" && (
+                  <div className="p-3 rounded-xl bg-cyan-500/5 border border-cyan-500/10 text-xs text-white/60 space-y-1 mb-2">
+                    <span className="font-bold text-cyan-400 block">Standard Assertion-Reason Choices:</span>
+                    <p><strong>A.</strong> Both Assertion & Reason are true, and Reason is the correct explanation.</p>
+                    <p><strong>B.</strong> Both Assertion & Reason are true, but Reason is NOT the correct explanation.</p>
+                    <p><strong>C.</strong> Assertion is true, but Reason is false.</p>
+                    <p><strong>D.</strong> Assertion is false, but Reason is true.</p>
+                  </div>
+                )}
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {["A", "B", "C", "D"].map((letter) => {
+                    const isCorrect = editForm.correctOption === letter;
+                    return (
+                      <div key={letter} className="flex items-center gap-3">
+                        <button
+                          type="button"
+                          onClick={() => setEditForm({ ...editForm, correctOption: letter as any })}
+                          className={`w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${
+                            isCorrect ? 'border-green-500 bg-green-500/20' : 'border-white/10 hover:border-white/30'
+                          }`}
+                          title={`Mark option ${letter} as correct`}
+                        >
+                          {isCorrect && <div className="w-3 h-3 bg-green-500 rounded-full" />}
+                        </button>
+                        
+                        <div className="flex-1 flex gap-2">
+                          <span className="text-xs font-bold text-white/40 shrink-0 self-center">{letter}</span>
+                          {editForm.questionType === "AssertionReason" ? (
+                            <span className="text-xs text-white/60 self-center py-2 truncate">
+                              {letter === "A" && "Both Assertion & Reason are true, and Reason is correct..."}
+                              {letter === "B" && "Both Assertion & Reason are true, but Reason is not correct..."}
+                              {letter === "C" && "Assertion is true, but Reason is false."}
+                              {letter === "D" && "Assertion is false, but Reason is true."}
+                            </span>
+                          ) : (
+                            <input
+                              type="text"
+                              // @ts-ignore
+                              value={editForm.options?.[letter] || ""}
+                              // @ts-ignore
+                              onChange={e => setEditForm({
+                                ...editForm,
+                                options: {
+                                  ...(editForm.options || { A: "", B: "", C: "", D: "" }),
+                                  [letter]: e.target.value
+                                }
+                              })}
+                              placeholder={`Option ${letter} details...`}
+                              className="w-full bg-slate-950 border border-white/10 rounded-xl py-2 px-3 text-xs text-white/80 focus:border-orange-500 outline-none"
+                            />
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className="p-4 rounded-xl bg-slate-950/40 border border-white/5 text-xs text-white/50 italic">
+                ℹ️ This question is configured as <strong>written subjective / short answer</strong>. Students will write their responses in a text block in the Exam Hall. No multiple choice options are required.
+              </div>
+            )}
 
             {/* Explanation */}
             <div className="space-y-1">
