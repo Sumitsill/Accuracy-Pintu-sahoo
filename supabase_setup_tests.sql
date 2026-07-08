@@ -50,19 +50,48 @@ ALTER TABLE public.options ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.user_responses ENABLE ROW LEVEL SECURITY;
 
 -- Admins can do everything
-CREATE POLICY "Admins full access tests" ON public.tests USING (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin');
-CREATE POLICY "Admins full access questions" ON public.questions USING (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin');
-CREATE POLICY "Admins full access options" ON public.options USING (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin');
+DROP POLICY IF EXISTS "Admins full access tests" ON public.tests;
+CREATE POLICY "Admins full access tests" ON public.tests 
+USING (
+  (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin') OR
+  ((SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin')
+);
+
+DROP POLICY IF EXISTS "Admins full access questions" ON public.questions;
+CREATE POLICY "Admins full access questions" ON public.questions 
+USING (
+  (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin') OR
+  ((SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin')
+);
+
+DROP POLICY IF EXISTS "Admins full access options" ON public.options;
+CREATE POLICY "Admins full access options" ON public.options 
+USING (
+  (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin') OR
+  ((SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin')
+);
 
 -- Students can read exams
+DROP POLICY IF EXISTS "Students read tests" ON public.tests;
 CREATE POLICY "Students read tests" ON public.tests FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Students read questions" ON public.questions;
 CREATE POLICY "Students read questions" ON public.questions FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Students read options" ON public.options;
 CREATE POLICY "Students read options" ON public.options FOR SELECT USING (true);
 
 -- Students can insert/read/update/delete their own responses
+DROP POLICY IF EXISTS "Students insert responses" ON public.user_responses;
 CREATE POLICY "Students insert responses" ON public.user_responses FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "Students select responses" ON public.user_responses;
 CREATE POLICY "Students select responses" ON public.user_responses FOR SELECT USING (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "Students update responses" ON public.user_responses;
 CREATE POLICY "Students update responses" ON public.user_responses FOR UPDATE USING (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "Students delete responses" ON public.user_responses;
 CREATE POLICY "Students delete responses" ON public.user_responses FOR DELETE USING (auth.uid() = user_id);
 
 -- Create Indexes for faster responses lookup/updates
