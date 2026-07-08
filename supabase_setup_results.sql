@@ -12,8 +12,14 @@ CREATE TABLE IF NOT EXISTS public.test_results (
   incorrect_count integer not null,
   exam_type text,
   title text,
+  answer_sheet_url text,
+  is_graded boolean default true,
   created_at timestamp with time zone default timezone('utc'::text, now())
 );
+
+-- Ensure test_results has answer_sheet_url and is_graded columns if it already exists
+ALTER TABLE public.test_results ADD COLUMN IF NOT EXISTS answer_sheet_url text;
+ALTER TABLE public.test_results ADD COLUMN IF NOT EXISTS is_graded boolean DEFAULT true;
 
 -- Ensure profiles table has email, full_name, school_name, batch, aspiration, phone columns
 -- (These are usually created by Next.js client integrations, but this ensures they exist)

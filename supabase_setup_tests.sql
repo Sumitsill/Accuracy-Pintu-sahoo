@@ -7,30 +7,51 @@ CREATE TABLE IF NOT EXISTS public.tests (
   difficulty integer,
   duration integer,
   target_batch text default 'All Students',
+  exam_board text,
+  target_class text,
+  status text default 'live',
   created_at timestamp with time zone default timezone('utc'::text, now())
 );
 
--- If the table already exists, just add the target_batch column
-DO $$
-BEGIN
-  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='tests' AND column_name='target_batch') THEN
-    ALTER TABLE public.tests ADD COLUMN target_batch text DEFAULT 'All Students';
-  END IF;
-END $$;
+-- Ensure all tests columns exist
+ALTER TABLE public.tests ADD COLUMN IF NOT EXISTS target_batch text DEFAULT 'All Students';
+ALTER TABLE public.tests ADD COLUMN IF NOT EXISTS exam_board text;
+ALTER TABLE public.tests ADD COLUMN IF NOT EXISTS target_class text;
+ALTER TABLE public.tests ADD COLUMN IF NOT EXISTS status text DEFAULT 'live';
 
 CREATE TABLE IF NOT EXISTS public.questions (
   id uuid default gen_random_uuid() primary key,
   test_id uuid references public.tests(id) on delete cascade,
   text text not null,
+  question_type text default 'MCQ',
+  subject text,
+  explanation text,
+  marks integer default 4,
+  negative_marks integer default 1,
+  question_number integer,
+  image_url text,
   created_at timestamp with time zone default timezone('utc'::text, now())
 );
+
+-- Ensure all questions columns exist
+ALTER TABLE public.questions ADD COLUMN IF NOT EXISTS question_type text DEFAULT 'MCQ';
+ALTER TABLE public.questions ADD COLUMN IF NOT EXISTS subject text;
+ALTER TABLE public.questions ADD COLUMN IF NOT EXISTS explanation text;
+ALTER TABLE public.questions ADD COLUMN IF NOT EXISTS marks integer DEFAULT 4;
+ALTER TABLE public.questions ADD COLUMN IF NOT EXISTS negative_marks integer DEFAULT 1;
+ALTER TABLE public.questions ADD COLUMN IF NOT EXISTS question_number integer;
+ALTER TABLE public.questions ADD COLUMN IF NOT EXISTS image_url text;
 
 CREATE TABLE IF NOT EXISTS public.options (
   id uuid default gen_random_uuid() primary key,
   question_id uuid references public.questions(id) on delete cascade,
   text text not null,
+  option_letter text,
   is_correct boolean default false
 );
+
+-- Ensure all options columns exist
+ALTER TABLE public.options ADD COLUMN IF NOT EXISTS option_letter text;
 
 CREATE TABLE IF NOT EXISTS public.user_responses (
   id uuid default gen_random_uuid() primary key,
@@ -38,10 +59,14 @@ CREATE TABLE IF NOT EXISTS public.user_responses (
   test_id uuid references public.tests(id),
   question_id uuid references public.questions(id),
   selected_option_id uuid references public.options(id),
+  text_response text,
   is_correct boolean,
   attempt_number integer default 1,
   answered_at timestamp with time zone default timezone('utc'::text, now())
 );
+
+-- Ensure all user_responses columns exist
+ALTER TABLE public.user_responses ADD COLUMN IF NOT EXISTS text_response text;
 
 -- RLS Policies
 ALTER TABLE public.tests ENABLE ROW LEVEL SECURITY;
