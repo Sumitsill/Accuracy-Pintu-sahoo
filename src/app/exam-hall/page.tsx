@@ -1651,8 +1651,14 @@ function SecureExamHallContent() {
                   <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-3 border-b border-white/5 pb-4 mb-8">
                     <h2 className="text-xl md:text-2xl font-bold text-white">Question {currentQuestionIndex + 1}</h2>
                     <div className="flex gap-3 text-xs md:text-sm font-bold">
-                      <span className="text-green-400 bg-green-400/10 px-2.5 py-1 rounded-md">+4 Marks</span>
-                      <span className="text-red-400 bg-red-400/10 px-2.5 py-1 rounded-md">-1 Mark</span>
+                      <span className="text-green-400 bg-green-400/10 px-2.5 py-1 rounded-md text-center">
+                        +{currentQ.marks !== undefined ? currentQ.marks : 4} Marks
+                      </span>
+                      {testDetails?.exam_type !== 'Boards' && (
+                        <span className="text-red-400 bg-red-400/10 px-2.5 py-1 rounded-md text-center">
+                          -{currentQ.negative_marks !== undefined ? currentQ.negative_marks : 1} Mark
+                        </span>
+                      )}
                     </div>
                   </div>
 
@@ -1665,7 +1671,11 @@ function SecureExamHallContent() {
                         </span>
                       )}
                       <span className="text-xs text-white/40 font-mono">
-                        +{currentQ.marks !== undefined ? currentQ.marks : 4} / -{currentQ.negative_marks !== undefined ? currentQ.negative_marks : 1} Marks
+                        {testDetails?.exam_type === 'Boards' ? (
+                          `Marks: ${currentQ.marks !== undefined ? currentQ.marks : 4}`
+                        ) : (
+                          `+${currentQ.marks !== undefined ? currentQ.marks : 4} / -${currentQ.negative_marks !== undefined ? currentQ.negative_marks : 1} Marks`
+                        )}
                       </span>
                     </div>
                     {currentQ.image_url && (
