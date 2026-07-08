@@ -13,7 +13,7 @@ WITH CHECK (
   bucket_id = 'resources' AND 
   (
     (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin') OR
-    ((SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin')
+    public.is_admin()
   )
 );
 
@@ -25,7 +25,7 @@ USING (
   bucket_id = 'resources' AND 
   (
     (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin') OR
-    ((SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin')
+    public.is_admin()
   )
 );
 
@@ -36,7 +36,7 @@ USING (
   bucket_id = 'resources' AND 
   (
     (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin') OR
-    ((SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin')
+    public.is_admin()
   )
 );
 

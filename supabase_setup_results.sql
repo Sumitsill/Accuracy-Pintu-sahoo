@@ -44,7 +44,7 @@ CREATE POLICY "Admins can view all test results"
 ON public.test_results FOR SELECT
 USING (
   (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin') OR
-  ((SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin')
+  public.is_admin()
 );
 
 
@@ -55,7 +55,7 @@ CREATE POLICY "Admins can view all profiles"
 ON public.profiles FOR SELECT
 USING (
   (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin') OR
-  ((SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin')
+  public.is_admin()
 );
 
 
@@ -66,7 +66,7 @@ CREATE POLICY "Admins can view all user responses"
 ON public.user_responses FOR SELECT
 USING (
   (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin') OR
-  ((SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin')
+  public.is_admin()
 );
 
 
@@ -78,14 +78,14 @@ CREATE POLICY "Admins can view all violations"
 ON public.exam_violations FOR SELECT
 USING (
   (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin') OR
-  ((SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin')
+  public.is_admin()
 );
 
 CREATE POLICY "Admins can view all integrity reports"
 ON public.exam_integrity_reports FOR SELECT
 USING (
   (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin') OR
-  ((SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin')
+  public.is_admin()
 );
 
 
@@ -95,7 +95,7 @@ CREATE POLICY "Admins can delete all test results"
 ON public.test_results FOR DELETE
 USING (
   (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin') OR
-  ((SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin')
+  public.is_admin()
 );
 
 DROP POLICY IF EXISTS "Admins can delete all violations" ON public.exam_violations;
@@ -103,7 +103,7 @@ CREATE POLICY "Admins can delete all violations"
 ON public.exam_violations FOR DELETE
 USING (
   (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin') OR
-  ((SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin')
+  public.is_admin()
 );
 
 DROP POLICY IF EXISTS "Admins can delete all integrity reports" ON public.exam_integrity_reports;
@@ -111,7 +111,7 @@ CREATE POLICY "Admins can delete all integrity reports"
 ON public.exam_integrity_reports FOR DELETE
 USING (
   (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin') OR
-  ((SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin')
+  public.is_admin()
 );
 
 DROP POLICY IF EXISTS "Admins can delete all user responses" ON public.user_responses;
@@ -119,7 +119,7 @@ CREATE POLICY "Admins can delete all user responses"
 ON public.user_responses FOR DELETE
 USING (
   (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin') OR
-  ((SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin')
+  public.is_admin()
 );
 
 -- 8. Create Indexes for faster rank, percentile, and leaderboard queries

@@ -27,6 +27,18 @@ ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS phone text;
 -- 2. Enable Row Level Security (RLS)
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 
+-- Helper function to check if the current user is an admin without triggering RLS recursion
+CREATE OR REPLACE FUNCTION public.is_admin()
+RETURNS boolean SECURITY DEFINER AS $$
+BEGIN
+  RETURN EXISTS (
+    SELECT 1 FROM public.profiles
+    WHERE id = auth.uid()
+    AND role = 'admin'
+  );
+END;
+$$ LANGUAGE plpgsql;
+
 -- 3. Create RLS Policies
 -- Allow users to read their own profile
 DROP POLICY IF EXISTS "Users can view own profile" ON public.profiles;

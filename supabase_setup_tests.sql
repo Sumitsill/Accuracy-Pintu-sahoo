@@ -54,21 +54,21 @@ DROP POLICY IF EXISTS "Admins full access tests" ON public.tests;
 CREATE POLICY "Admins full access tests" ON public.tests 
 USING (
   (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin') OR
-  ((SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin')
+  public.is_admin()
 );
 
 DROP POLICY IF EXISTS "Admins full access questions" ON public.questions;
 CREATE POLICY "Admins full access questions" ON public.questions 
 USING (
   (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin') OR
-  ((SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin')
+  public.is_admin()
 );
 
 DROP POLICY IF EXISTS "Admins full access options" ON public.options;
 CREATE POLICY "Admins full access options" ON public.options 
 USING (
   (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin') OR
-  ((SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin')
+  public.is_admin()
 );
 
 -- Students can read exams
