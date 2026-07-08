@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback, Suspense, useRef } from "react
 import {
   AlertTriangle, Clock, ChevronRight, CheckCircle2,
   AlertCircle, XCircle, SkipForward, Loader2, Target,
-  LayoutGrid, ShieldAlert, Lock, Monitor, Check
+  LayoutGrid, ShieldAlert, Lock, Monitor, Check, UploadCloud
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -36,6 +36,11 @@ function SecureExamHallContent() {
   const [testCompleted, setTestCompleted] = useState(false);
   const [showSolutions, setShowSolutions] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  
+  // PDF Answer Sheet Upload States for Boards
+  const [pdfFile, setPdfFile] = useState<File | null>(null);
+  const [pdfUploading, setPdfUploading] = useState(false);
+  const [pdfUploadStep, setPdfUploadStep] = useState(false);
   const [scoreResult, setScoreResult] = useState<any>({
     score: 0,
     total: 0,
@@ -772,7 +777,7 @@ function SecureExamHallContent() {
     }
   };
 
-  const finalSubmitToDB = async (isViolationSubmit = false) => {
+  const finalSubmitToDB = async (isViolationSubmit = false, answerSheetUrl?: string) => {
     try {
       if (!userId || !testDetails) return;
 
@@ -845,15 +850,18 @@ function SecureExamHallContent() {
         }
       });
 
+      const isBoard = testDetails.exam_type === 'Boards';
       const insertResultsPromise = !isAdmin ? supabase.from('test_results').insert([{
          user_id: userId,
          test_id: testDetails.id,
-         score,
+         score: isBoard ? 0 : score,
          total_questions: questions.length,
-         correct_count: correctCount,
-         incorrect_count: incorrectCount,
+         correct_count: isBoard ? 0 : correctCount,
+         incorrect_count: isBoard ? 0 : incorrectCount,
          exam_type: testDetails.exam_type,
-         title: testDetails.title
+         title: testDetails.title,
+         answer_sheet_url: answerSheetUrl || null,
+         is_graded: !isBoard
       }]) : Promise.resolve(null);
 
       const reportStatus = isViolationSubmit 
@@ -889,7 +897,9 @@ function SecureExamHallContent() {
       const insertNotificationPromise = !isAdmin ? supabase.from('notifications').insert([{
          recipient_role: 'admin',
          title: testDetails.exam_type === "DPP Quiz" ? "New DPP Quiz Submission" : "New Test Submission",
-         message: `${userProfile?.full_name || userProfile?.email || "Student"} (${userProfile?.batch || "Unassigned"}) completed "${testDetails.title || "Exam"}" with a score of ${score}.`,
+         message: isBoard
+           ? `${userProfile?.full_name || userProfile?.email || "Student"} (${userProfile?.batch || "Unassigned"}) submitted Board Exam "${testDetails.title || "Exam"}" (Pending Grading).`
+           : `${userProfile?.full_name || userProfile?.email || "Student"} (${userProfile?.batch || "Unassigned"}) completed "${testDetails.title || "Exam"}" with a score of ${score}.`,
          type: testDetails.exam_type === "DPP Quiz" ? "dpp_submit" : "test_submit",
          target_batch: userProfile?.batch || "Unassigned"
       }]) : Promise.resolve(null);
@@ -927,15 +937,17 @@ function SecureExamHallContent() {
       })();
 
       setScoreResult({
-        score,
+        score: isBoard ? 0 : score,
         total: questions.length,
         attempted: recordsToInsert.length,
-        correct: correctCount,
-        incorrect: incorrectCount,
+        correct: isBoard ? 0 : correctCount,
+        incorrect: isBoard ? 0 : incorrectCount,
         rank: rankInfo?.rank || 1,
         percentile: rankInfo?.percentile || "100.0",
         totalStudents: rankInfo?.totalStudents || 1,
-        subjectStats
+        subjectStats,
+        answer_sheet_url: answerSheetUrl || null,
+        is_graded: !isBoard
       });
 
       // Clear localStorage autosaved answers and remaining time
@@ -949,17 +961,23 @@ function SecureExamHallContent() {
   };
 
   const manualSubmit = async () => {
-    if (!confirm("Are you sure you want to submit your test?")) return;
-    setSubmitting(true);
-    setExamActive(false);
-    try {
-      await finalSubmitToDB();
-      setTestCompleted(true);
-    } catch (err) {
-      console.error(err);
-      alert("Submission failed. Please try again.");
-    } finally {
-      setSubmitting(false);
+    if (testDetails?.exam_type === 'Boards') {
+      if (!confirm("Are you sure you want to submit? You will be directed to upload your handwritten answer sheet PDF.")) return;
+      setExamActive(false);
+      setPdfUploadStep(true);
+    } else {
+      if (!confirm("Are you sure you want to submit your test?")) return;
+      setSubmitting(true);
+      setExamActive(false);
+      try {
+        await finalSubmitToDB();
+        setTestCompleted(true);
+      } catch (err) {
+        console.error(err);
+        alert("Submission failed. Please try again.");
+      } finally {
+        setSubmitting(false);
+      }
     }
   };
 
@@ -1006,6 +1024,111 @@ function SecureExamHallContent() {
   // -------------------------------------------------------------
   if (loading) {
     return <div className="min-h-screen bg-slate-950 flex items-center justify-center"><Loader2 className="w-10 h-10 animate-spin text-cyan-400" /></div>;
+  }
+
+  if (pdfUploadStep) {
+    const handlePdfFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (e.target.files && e.target.files.length > 0) {
+        const file = e.target.files[0];
+        if (file.type !== "application/pdf") {
+          alert("Please select a valid PDF file.");
+          return;
+        }
+        setPdfFile(file);
+      }
+    };
+
+    const handleUploadAndSubmit = async () => {
+      if (!pdfFile) {
+        alert("Please select your PDF answer sheet first.");
+        return;
+      }
+      setPdfUploading(true);
+      try {
+        const fileName = `answers/${userId}_${testDetails.id}_${Date.now()}.pdf`;
+        const { error: uploadError } = await supabase.storage
+          .from('resources')
+          .upload(fileName, pdfFile);
+
+        if (uploadError) throw uploadError;
+
+        const { data: { publicUrl } } = supabase.storage
+          .from('resources')
+          .getPublicUrl(fileName);
+
+        // Submit the exam with the publicUrl
+        setSubmitting(true);
+        setPdfUploadStep(false);
+        await finalSubmitToDB(false, publicUrl);
+        setTestCompleted(true);
+      } catch (err: any) {
+        console.error("Error uploading PDF answer sheet:", err);
+        alert("Failed to upload PDF answer sheet: " + err.message);
+      } finally {
+        setPdfUploading(false);
+        setSubmitting(false);
+      }
+    };
+
+    return (
+      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-6 text-white font-body animate-in fade-in">
+        <div className="max-w-md w-full bg-slate-900 border border-white/10 rounded-3xl p-8 shadow-2xl relative overflow-hidden text-center space-y-6">
+          <div className="absolute top-[-20%] right-[-10%] w-64 h-64 bg-cyan-500/10 rounded-full blur-[80px]" />
+          
+          <div className="w-20 h-20 bg-cyan-500/10 rounded-full flex items-center justify-center mb-2 mx-auto border border-cyan-500/30">
+            <UploadCloud className="w-10 h-10 text-cyan-400" />
+          </div>
+          
+          <h2 className="text-2xl font-bold text-white">Upload Answer Sheet</h2>
+          <p className="text-white/60 text-xs md:text-sm leading-relaxed">
+            Please upload your handwritten or typed answer key sheet as a <strong>PDF file</strong> to complete your exam submission.
+          </p>
+
+          <div className="space-y-4">
+            <label className="flex flex-col items-center justify-center py-6 border border-dashed border-white/20 hover:border-cyan-500/50 rounded-2xl cursor-pointer bg-slate-950/60 text-center text-xs text-white/50 hover:text-white transition-colors relative">
+              {pdfFile ? (
+                <div className="space-y-2 p-2">
+                  <p className="text-cyan-400 font-bold truncate max-w-[280px]">📄 {pdfFile.name}</p>
+                  <p className="text-[10px] text-white/30">{(pdfFile.size / (1024 * 1024)).toFixed(2)} MB</p>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <p className="font-medium text-white/70">Click to select PDF answer key</p>
+                  <p className="text-[10px] text-white/30">File must be in PDF format</p>
+                </div>
+              )}
+              <input 
+                type="file" 
+                accept="application/pdf" 
+                onChange={handlePdfFileChange} 
+                className="hidden" 
+                disabled={pdfUploading}
+              />
+            </label>
+
+            <button
+              onClick={handleUploadAndSubmit}
+              disabled={pdfUploading || !pdfFile}
+              className={`w-full py-4 rounded-xl font-bold text-base transition-colors flex items-center justify-center gap-2 ${
+                pdfUploading || !pdfFile
+                  ? "bg-white/5 text-white/20 border border-white/5 cursor-not-allowed"
+                  : "bg-cyan-500 text-slate-950 hover:bg-cyan-400 shadow-[0_0_20px_rgba(34,211,238,0.3)]"
+              }`}
+            >
+              {pdfUploading ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" /> Uploading Sheet...
+                </>
+              ) : (
+                <>
+                  <CheckCircle2 className="w-5 h-5" /> Upload & Submit Exam
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   if (submitting) {
@@ -1229,9 +1352,10 @@ function SecureExamHallContent() {
     const skipped = scoreResult.total - scoreResult.attempted;
     const maxScore = questions.reduce((sum, q) => sum + (q.marks !== undefined && q.marks !== null ? q.marks : 4), 0);
     const percentage = maxScore > 0 ? ((scoreResult.score / maxScore) * 100).toFixed(1) : "0.0";
+    const isBoard = testDetails?.exam_type === 'Boards';
     
     return (
-      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-4 md:p-6 text-white font-body">
+      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-4 md:p-6 text-white font-body animate-in fade-in">
         <div className="max-w-2xl w-full bg-slate-900 border border-white/10 rounded-3xl p-6 md:p-8 shadow-2xl relative overflow-hidden text-left space-y-6">
            <div className="absolute top-[-20%] right-[-10%] w-64 h-64 bg-green-500/10 rounded-full blur-[80px] pointer-events-none" />
            
@@ -1240,8 +1364,12 @@ function SecureExamHallContent() {
                <CheckCircle2 className="w-7 h-7 md:w-8 md:h-8 text-green-400" />
              </div>
              <div>
-               <h2 className="text-2xl md:text-3xl font-bold text-white mb-1">Result Summary Card</h2>
-               <p className="text-white/50 text-xs md:text-sm font-medium tracking-wide">Test Submitted Successfully!</p>
+               <h2 className="text-2xl md:text-3xl font-bold text-white mb-1">
+                 {isBoard ? "Exam Submitted Successfully" : "Result Summary Card"}
+               </h2>
+               <p className="text-white/50 text-xs md:text-sm font-medium tracking-wide">
+                 {isBoard ? "Your answer sheet PDF has been uploaded." : "Test Submitted Successfully!"}
+               </p>
              </div>
            </div>
            
@@ -1257,97 +1385,124 @@ function SecureExamHallContent() {
                </div>
              </div>
 
-             {/* Rank and Percentile Block */}
-             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-               <div className="bg-gradient-to-tr from-cyan-500/10 to-blue-600/10 p-4 rounded-xl border border-cyan-500/20 flex flex-col items-center justify-center text-center">
-                 <p className="text-cyan-400 text-[10px] md:text-xs font-bold uppercase mb-1">Your Rank</p>
-                 <p className="text-xl md:text-2xl font-black text-white">#{scoreResult.rank} <span className="text-xs text-white/40">out of {scoreResult.totalStudents}</span></p>
+             {isBoard ? (
+               <div className="bg-slate-950/60 p-6 rounded-2xl border border-white/5 text-center space-y-3">
+                 <p className="text-white/80 text-sm leading-relaxed font-medium">
+                   Thank you! Since this is a <strong>Board Level Examination</strong>, your score is not calculated automatically.
+                 </p>
+                 <p className="text-white/50 text-xs leading-relaxed">
+                   Your uploaded PDF answer sheet has been stored securely in your attempt record. Your teacher/administrator will evaluate your answers manually and assign your final grade.
+                 </p>
+                 {scoreResult.answer_sheet_url && (
+                   <div className="pt-2">
+                     <a 
+                       href={scoreResult.answer_sheet_url} 
+                       target="_blank" 
+                       rel="noopener noreferrer" 
+                       className="inline-flex items-center gap-1.5 text-xs font-bold text-cyan-400 hover:text-cyan-300 underline"
+                     >
+                       📄 View Uploaded Answer Sheet
+                     </a>
+                   </div>
+                 )}
                </div>
-               <div className="bg-gradient-to-tr from-purple-500/10 to-pink-600/10 p-4 rounded-xl border border-purple-500/20 flex flex-col items-center justify-center text-center">
-                 <p className="text-purple-400 text-[10px] md:text-xs font-bold uppercase mb-1">Percentile Score</p>
-                 <p className="text-xl md:text-2xl font-black text-white">{scoreResult.percentile}%</p>
-               </div>
-             </div>
-
-             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4">
-               <div className="bg-white/5 p-4 rounded-xl border border-white/10 flex flex-col items-center justify-center text-center">
-                 <p className="text-white/50 text-[10px] md:text-xs font-bold uppercase mb-1">Attempted</p>
-                 <p className="text-lg md:text-xl font-bold text-white">{scoreResult.attempted} <span className="text-xs text-white/30">/ {scoreResult.total}</span></p>
-               </div>
-               <div className="bg-green-500/5 p-4 rounded-xl border border-green-500/20 flex flex-col items-center justify-center text-center">
-                 <p className="text-green-500/50 text-[10px] md:text-xs font-bold uppercase mb-1">Correct</p>
-                 <p className="text-lg md:text-xl font-bold text-green-400">{scoreResult.correct}</p>
-               </div>
-               <div className="bg-red-500/5 p-4 rounded-xl border border-red-500/20 flex flex-col items-center justify-center text-center">
-                 <p className="text-red-500/50 text-[10px] md:text-xs font-bold uppercase mb-1">Wrong</p>
-                 <p className="text-lg md:text-xl font-bold text-red-400">{scoreResult.incorrect}</p>
-               </div>
-               <div className="bg-white/5 p-4 rounded-xl border border-white/10 flex flex-col items-center justify-center text-center">
-                 <p className="text-white/50 text-[10px] md:text-xs font-bold uppercase mb-1">Skipped</p>
-                 <p className="text-lg md:text-xl font-bold text-white/50">{skipped}</p>
-               </div>
-             </div>
-
-             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4">
-               <div className="bg-orange-500/5 p-4 rounded-xl border border-orange-500/20 flex flex-col items-center justify-center text-center">
-                 <p className="text-orange-500/50 text-[10px] md:text-xs font-bold uppercase mb-1">Final Score</p>
-                 <p className="text-lg md:text-xl font-bold text-orange-400">{scoreResult.score} <span className="text-xs text-orange-400/50">/ {maxScore}</span></p>
-               </div>
-               <div className="bg-cyan-500/5 p-4 rounded-xl border border-cyan-500/20 flex flex-col items-center justify-center text-center">
-                 <p className="text-cyan-500/50 text-[10px] md:text-xs font-bold uppercase mb-1">Percentage</p>
-                 <p className="text-lg md:text-xl font-bold text-cyan-400">{percentage}%</p>
-               </div>
-               <div className="bg-slate-950 p-4 rounded-xl border border-white/5 flex flex-col items-center justify-center text-center">
-                 <p className="text-white/40 text-[10px] md:text-xs font-bold uppercase mb-1">Date Attempted</p>
-                 <p className="text-sm md:text-base font-bold text-white/85">{new Date().toLocaleDateString()}</p>
-               </div>
-             </div>
-
-             {/* Subject Wise breakdown visualizer */}
-             {scoreResult.subjectStats && Object.keys(scoreResult.subjectStats).length > 0 && (
-               <div className="space-y-3 pt-4 border-t border-white/10">
-                 <p className="text-white/40 text-[10px] md:text-xs font-bold uppercase tracking-wider mb-2">Subject-wise Breakdown</p>
-                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                   {Object.entries(scoreResult.subjectStats).map(([sub, stat]: any) => {
-                     const subColors: Record<string, string> = {
-                       Physics: "from-blue-500/10 to-cyan-500/5 border-blue-500/25 text-blue-400",
-                       Chemistry: "from-purple-500/10 to-indigo-500/5 border-purple-500/25 text-purple-400",
-                       Botany: "from-green-500/10 to-emerald-500/5 border-green-500/25 text-green-400",
-                       Zoology: "from-orange-500/10 to-amber-500/5 border-orange-500/25 text-orange-400"
-                     };
-                     const col = subColors[sub] || "from-slate-500/10 to-slate-500/5 border-slate-500/25 text-slate-400";
-                     return (
-                       <div key={sub} className={`bg-gradient-to-br ${col} p-3 rounded-xl border flex flex-col justify-between`}>
-                         <div className="flex justify-between items-center mb-1">
-                           <span className="font-bold text-xs text-white">{sub}</span>
-                           <span className="text-xs font-mono font-bold text-white/80">{stat.score} Marks</span>
-                         </div>
-                         <div className="grid grid-cols-3 gap-1 text-[9px] text-white/50 text-center font-mono">
-                           <div>
-                             <span className="block text-[8px] uppercase font-bold text-white/30">Correct</span>
-                             <span className="text-green-400 font-bold">{stat.correct}</span>
-                           </div>
-                           <div>
-                             <span className="block text-[8px] uppercase font-bold text-white/30">Wrong</span>
-                             <span className="text-red-400 font-bold">{stat.incorrect}</span>
-                           </div>
-                           <div>
-                             <span className="block text-[8px] uppercase font-bold text-white/30">Accuracy</span>
-                             <span className="text-white font-bold">{stat.attempted > 0 ? ((stat.correct / stat.attempted) * 100).toFixed(0) : "0"}%</span>
-                           </div>
-                         </div>
-                       </div>
-                     );
-                   })}
+             ) : (
+               <>
+                 {/* Rank and Percentile Block */}
+                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                   <div className="bg-gradient-to-tr from-cyan-500/10 to-blue-600/10 p-4 rounded-xl border border-cyan-500/20 flex flex-col items-center justify-center text-center">
+                     <p className="text-cyan-400 text-[10px] md:text-xs font-bold uppercase mb-1">Your Rank</p>
+                     <p className="text-xl md:text-2xl font-black text-white">#{scoreResult.rank} <span className="text-xs text-white/40">out of {scoreResult.totalStudents}</span></p>
+                   </div>
+                   <div className="bg-gradient-to-tr from-purple-500/10 to-pink-600/10 p-4 rounded-xl border border-purple-500/20 flex flex-col items-center justify-center text-center">
+                     <p className="text-purple-400 text-[10px] md:text-xs font-bold uppercase mb-1">Percentile Score</p>
+                     <p className="text-xl md:text-2xl font-black text-white">{scoreResult.percentile}%</p>
+                   </div>
                  </div>
-               </div>
+
+                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4">
+                   <div className="bg-white/5 p-4 rounded-xl border border-white/10 flex flex-col items-center justify-center text-center">
+                     <p className="text-white/50 text-[10px] md:text-xs font-bold uppercase mb-1">Attempted</p>
+                     <p className="text-lg md:text-xl font-bold text-white">{scoreResult.attempted} <span className="text-xs text-white/30">/ {scoreResult.total}</span></p>
+                   </div>
+                   <div className="bg-green-500/5 p-4 rounded-xl border border-green-500/20 flex flex-col items-center justify-center text-center">
+                     <p className="text-green-500/50 text-[10px] md:text-xs font-bold uppercase mb-1">Correct</p>
+                     <p className="text-lg md:text-xl font-bold text-green-400">{scoreResult.correct}</p>
+                   </div>
+                   <div className="bg-red-500/5 p-4 rounded-xl border border-red-500/20 flex flex-col items-center justify-center text-center">
+                     <p className="text-red-500/50 text-[10px] md:text-xs font-bold uppercase mb-1">Wrong</p>
+                     <p className="text-lg md:text-xl font-bold text-red-400">{scoreResult.incorrect}</p>
+                   </div>
+                   <div className="bg-white/5 p-4 rounded-xl border border-white/10 flex flex-col items-center justify-center text-center">
+                     <p className="text-white/50 text-[10px] md:text-xs font-bold uppercase mb-1">Skipped</p>
+                     <p className="text-lg md:text-xl font-bold text-white/50">{skipped}</p>
+                   </div>
+                 </div>
+
+                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4">
+                   <div className="bg-orange-500/5 p-4 rounded-xl border border-orange-500/20 flex flex-col items-center justify-center text-center">
+                     <p className="text-orange-500/50 text-[10px] md:text-xs font-bold uppercase mb-1">Final Score</p>
+                     <p className="text-lg md:text-xl font-bold text-orange-400">{scoreResult.score} <span className="text-xs text-orange-400/50">/ {maxScore}</span></p>
+                   </div>
+                   <div className="bg-cyan-500/5 p-4 rounded-xl border border-cyan-500/20 flex flex-col items-center justify-center text-center">
+                     <p className="text-cyan-500/50 text-[10px] md:text-xs font-bold uppercase mb-1">Percentage</p>
+                     <p className="text-lg md:text-xl font-bold text-cyan-400">{percentage}%</p>
+                   </div>
+                   <div className="bg-slate-950 p-4 rounded-xl border border-white/5 flex flex-col items-center justify-center text-center">
+                     <p className="text-white/40 text-[10px] md:text-xs font-bold uppercase mb-1">Date Attempted</p>
+                     <p className="text-sm md:text-base font-bold text-white/85">{new Date().toLocaleDateString()}</p>
+                   </div>
+                 </div>
+
+                 {/* Subject Wise breakdown visualizer */}
+                 {scoreResult.subjectStats && Object.keys(scoreResult.subjectStats).length > 0 && (
+                   <div className="space-y-3 pt-4 border-t border-white/10">
+                     <p className="text-white/40 text-[10px] md:text-xs font-bold uppercase tracking-wider mb-2">Subject-wise Breakdown</p>
+                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                       {Object.entries(scoreResult.subjectStats).map(([sub, stat]: any) => {
+                         const subColors: Record<string, string> = {
+                           Physics: "from-blue-500/10 to-cyan-500/5 border-blue-500/25 text-blue-400",
+                           Chemistry: "from-purple-500/10 to-indigo-500/5 border-purple-500/25 text-purple-400",
+                           Botany: "from-green-500/10 to-emerald-500/5 border-green-500/25 text-green-400",
+                           Zoology: "from-orange-500/10 to-amber-500/5 border-orange-500/25 text-orange-400"
+                         };
+                         const col = subColors[sub] || "from-slate-500/10 to-slate-500/5 border-slate-500/25 text-slate-400";
+                         return (
+                           <div key={sub} className={`bg-gradient-to-br ${col} p-3 rounded-xl border flex flex-col justify-between`}>
+                             <div className="flex justify-between items-center mb-1">
+                               <span className="font-bold text-xs text-white">{sub}</span>
+                               <span className="text-xs font-mono font-bold text-white/80">{stat.score} Marks</span>
+                             </div>
+                             <div className="grid grid-cols-3 gap-1 text-[9px] text-white/50 text-center font-mono">
+                               <div>
+                                 <span className="block text-[8px] uppercase font-bold text-white/30">Correct</span>
+                                 <span className="text-green-400 font-bold">{stat.correct}</span>
+                               </div>
+                               <div>
+                                 <span className="block text-[8px] uppercase font-bold text-white/30">Wrong</span>
+                                 <span className="text-red-400 font-bold">{stat.incorrect}</span>
+                               </div>
+                               <div>
+                                 <span className="block text-[8px] uppercase font-bold text-white/30">Accuracy</span>
+                                 <span className="text-white font-bold">{stat.attempted > 0 ? ((stat.correct / stat.attempted) * 100).toFixed(0) : "0"}%</span>
+                               </div>
+                             </div>
+                           </div>
+                         );
+                       })}
+                     </div>
+                   </div>
+                 )}
+               </>
              )}
            </div>
-
+ 
            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 border-t border-white/10 pt-6">
-             <button onClick={() => setShowSolutions(true)} className="w-full sm:flex-1 py-3.5 md:py-4 rounded-xl bg-white/10 text-white font-bold text-base md:text-lg hover:bg-white/20 transition-colors border border-white/10">
-               Review Answers
-             </button>
+             {!isBoard && (
+               <button onClick={() => setShowSolutions(true)} className="w-full sm:flex-1 py-3.5 md:py-4 rounded-xl bg-white/10 text-white font-bold text-base md:text-lg hover:bg-white/20 transition-colors border border-white/10">
+                 Review Answers
+               </button>
+             )}
              <Link href="/dashboard" className="w-full sm:flex-1 py-3.5 md:py-4 flex items-center justify-center rounded-xl bg-cyan-500 text-slate-950 font-bold text-base md:text-lg hover:bg-cyan-400 transition-colors shadow-[0_0_20px_rgba(34,211,238,0.4)]">
                Back to Dashboard
              </Link>

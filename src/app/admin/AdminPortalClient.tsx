@@ -571,6 +571,84 @@ function QuestionReviewSection({ questions, loading }: { questions: any[]; loadi
 // -------------------------------------------------------------------
 function StudentManagementView() {
   const supabase = createClient();
+
+  const renderBoardEvaluationForm = (test: any) => {
+    if (test.exam_type !== 'Boards') return null;
+
+    const handleSaveGrade = async (testId: string) => {
+      const scoreInput = document.getElementById(`score-input-${testId}`) as HTMLInputElement;
+      if (!scoreInput) return;
+      const scoreVal = Number(scoreInput.value || 0);
+
+      try {
+        const { error } = await supabase
+          .from('test_results')
+          .update({ score: scoreVal, is_graded: true })
+          .eq('id', testId);
+
+        if (error) throw error;
+        alert("Grade updated successfully!");
+
+        // Update selectedStudent state
+        setSelectedStudent((prev: any) => {
+          if (!prev) return prev;
+          const updatedHistory = prev.test_history.map((t: any) => {
+            if (t.id === testId) {
+              return { ...t, score: scoreVal, is_graded: true };
+            }
+            return t;
+          });
+          return { ...prev, test_history: updatedHistory };
+        });
+      } catch (err: any) {
+        console.error("Error saving board exam grade:", err);
+        alert("Failed to save grade: " + err.message);
+      }
+    };
+
+    return (
+      <div className="bg-[#1e293b]/60 p-5 rounded-2xl border border-white/10 space-y-4 mb-4 text-left">
+        <h4 className="text-xs font-black uppercase tracking-wider text-cyan-400">Board Exam Answer Sheet Evaluation</h4>
+        {test.answer_sheet_url ? (
+          <div className="space-y-4">
+            <div className="flex flex-wrap items-center gap-3">
+              <a 
+                href={test.answer_sheet_url} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 hover:opacity-90 text-slate-950 rounded-xl font-bold text-xs flex items-center gap-1.5 transition-all"
+              >
+                📄 View Answer Sheet PDF
+              </a>
+            </div>
+            
+            <div className="flex items-center gap-3 max-w-sm pt-2">
+              <div className="flex-1">
+                <label className="block text-[10px] font-bold text-white/40 uppercase mb-1">Enter Manual Score</label>
+                <input 
+                  type="number" 
+                  id={`score-input-${test.id}`}
+                  defaultValue={test.score || 0}
+                  className="w-full bg-slate-950 border border-white/10 rounded-xl py-2 px-3 text-xs text-white outline-none focus:border-cyan-500"
+                  placeholder="e.g. 28"
+                />
+              </div>
+              <button
+                type="button"
+                onClick={() => handleSaveGrade(test.id)}
+                className="py-2.5 px-4 rounded-xl bg-green-500 hover:bg-green-400 text-slate-950 font-bold text-xs self-end transition-colors"
+              >
+                Save Grade
+              </button>
+            </div>
+          </div>
+        ) : (
+          <p className="text-xs text-white/40 italic">No PDF answer key sheet uploaded by student.</p>
+        )}
+      </div>
+    );
+  };
+
   const [students, setStudents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedStudent, setSelectedStudent] = useState<any>(null);
@@ -1425,7 +1503,22 @@ function StudentManagementView() {
                                   ))}
                                 </div>
                               </td>
-                              <td className="p-4 text-center font-black text-cyan-400 text-lg">{test.score}</td>
+                              <td className="p-4 text-center">
+                                {test.exam_type === 'Boards' ? (
+                                  test.is_graded ? (
+                                    <div className="flex flex-col items-center">
+                                      <span className="font-black text-green-400 text-lg">{test.score}</span>
+                                      <span className="text-[9px] font-bold text-green-400/80 bg-green-500/10 px-1.5 py-0.5 rounded border border-green-500/20 uppercase tracking-wider">Graded</span>
+                                    </div>
+                                  ) : (
+                                    <div className="flex flex-col items-center">
+                                      <span className="font-bold text-orange-400 text-xs bg-orange-500/10 px-2 py-0.5 rounded border border-orange-500/20 uppercase tracking-wider">Pending</span>
+                                    </div>
+                                  )
+                                ) : (
+                                  <span className="font-black text-cyan-400 text-lg">{test.score}</span>
+                                )}
+                              </td>
                               <td className="p-4 text-center text-white/60 font-semibold">{test.correct_count} / {test.total_questions}</td>
                               <td className="p-4 text-center text-white/50 font-medium">{new Date(test.created_at).toLocaleDateString()}</td>
                               <td className="p-4 text-right">
@@ -1496,6 +1589,7 @@ function StudentManagementView() {
                                       </div>
                                     </div>
                                   )}
+                                  {renderBoardEvaluationForm(test)}
                                   <QuestionReviewSection 
                                     questions={expandedTestQuestions} 
                                     loading={loadingReview} 
@@ -1535,7 +1629,15 @@ function StudentManagementView() {
                         <div className="grid grid-cols-2 gap-3 text-xs bg-slate-950/40 p-3 rounded-xl border border-white/5 text-center">
                           <div>
                             <span className="text-white/40 block mb-0.5 uppercase font-bold text-[9px] tracking-wider">Score</span>
-                            <span className="text-cyan-400 font-extrabold text-base">{test.score}</span>
+                            {test.exam_type === 'Boards' ? (
+                              test.is_graded ? (
+                                <span className="text-green-400 font-extrabold text-base">{test.score} (Graded)</span>
+                              ) : (
+                                <span className="text-orange-400 font-bold text-xs uppercase tracking-wider">Pending Grade</span>
+                              )
+                            ) : (
+                              <span className="text-cyan-400 font-extrabold text-base">{test.score}</span>
+                            )}
                           </div>
                           <div>
                             <span className="text-white/40 block mb-0.5 uppercase font-bold text-[9px] tracking-wider">Correct/Total</span>
@@ -1619,6 +1721,7 @@ function StudentManagementView() {
                                 </div>
                               </div>
                             )}
+                            {renderBoardEvaluationForm(test)}
                             <QuestionReviewSection 
                               questions={expandedTestQuestions} 
                               loading={loadingReview} 
