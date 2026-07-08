@@ -41,6 +41,7 @@ USING (
 );
 
 -- 4. Allow Everyone (Students) to read and download the PDFs
+DROP POLICY IF EXISTS "Anyone can download PDFs" ON storage.objects;
 CREATE POLICY "Anyone can download PDFs" 
 ON storage.objects FOR SELECT 
 USING (
