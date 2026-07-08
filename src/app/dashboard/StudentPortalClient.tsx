@@ -26,6 +26,7 @@ export default function StudentPortalClient({ user, profile }: { user: any, prof
   const isProfileComplete = Boolean(
     profile?.full_name && 
     profile?.class && 
+    profile?.board && 
     profile?.school_name && 
     profile?.batch && 
     profile?.aspiration && 
@@ -658,6 +659,7 @@ function ProfileView({ email, userId, profile, avatarUrl, handleLogout, isProfil
   const [formData, setFormData] = useState({
     full_name: profile?.full_name || "",
     class: profile?.class || "",
+    board: profile?.board || "",
     school_name: profile?.school_name || "",
     batch: profile?.batch || "",
     aspiration: profile?.aspiration || "",
@@ -669,7 +671,7 @@ function ProfileView({ email, userId, profile, avatarUrl, handleLogout, isProfil
   };
 
   const handleSave = async () => {
-    if (!formData.full_name || !formData.class || !formData.school_name || !formData.batch || !formData.aspiration || !formData.phone) {
+    if (!formData.full_name || !formData.class || !formData.board || !formData.school_name || !formData.batch || !formData.aspiration || !formData.phone) {
       alert("Please fill in all the details.");
       return;
     }
@@ -677,6 +679,7 @@ function ProfileView({ email, userId, profile, avatarUrl, handleLogout, isProfil
     const { error } = await supabase.from('profiles').update({
       full_name: formData.full_name,
       class: formData.class,
+      board: formData.board,
       school_name: formData.school_name,
       batch: formData.batch,
       aspiration: formData.aspiration,
@@ -698,7 +701,7 @@ function ProfileView({ email, userId, profile, avatarUrl, handleLogout, isProfil
       {!isProfileComplete && (
         <div className="bg-orange-500/10 border border-orange-500/50 text-orange-400 p-4 rounded-xl flex items-start gap-3">
           <Target className="w-6 h-6 flex-shrink-0 mt-0.5" />
-          <p className="text-sm font-medium">Please complete all profile details (Name, Class, School, Target, Batch, Phone) below to unlock the dashboard and other features.</p>
+          <p className="text-sm font-medium">Please complete all profile details (Name, Class, Board, School, Target, Batch, Phone) below to unlock the dashboard and other features.</p>
         </div>
       )}
 
@@ -768,6 +771,22 @@ function ProfileView({ email, userId, profile, avatarUrl, handleLogout, isProfil
               <option value="11">Class 11</option>
               <option value="12">Class 12</option>
               <option value="Dropper">Dropper</option>
+            </select>
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-xs font-bold tracking-widest text-white/50 uppercase ml-1">Educational Board *</label>
+            <select 
+              name="board"
+              value={formData.board}
+              onChange={handleChange}
+              className="w-full bg-slate-900/50 border border-white/10 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-cyan-500 transition-all shadow-inner cursor-pointer"
+            >
+              <option value="">Select Board</option>
+              <option value="CBSE">CBSE (Central Board)</option>
+              <option value="ISC">ISC (Indian School Certificate)</option>
+              <option value="WB">WB Board (State Board)</option>
+              <option value="Other">Other</option>
             </select>
           </div>
 
