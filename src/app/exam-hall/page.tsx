@@ -850,7 +850,7 @@ function SecureExamHallContent() {
         }
       });
 
-      const isBoard = testDetails.exam_type === 'Boards';
+      const isBoard = testDetails.exam_type === 'Boards' && testDetails.exam_board !== 'WB';
       const insertResultsPromise = !isAdmin ? supabase.from('test_results').insert([{
          user_id: userId,
          test_id: testDetails.id,
@@ -961,7 +961,7 @@ function SecureExamHallContent() {
   };
 
   const manualSubmit = async () => {
-    if (testDetails?.exam_type === 'Boards') {
+    if (testDetails?.exam_type === 'Boards' && testDetails?.exam_board !== 'WB') {
       if (!confirm("Are you sure you want to submit? You will be directed to upload your handwritten answer sheet PDF.")) return;
       setExamActive(false);
       setPdfUploadStep(true);
@@ -1352,7 +1352,7 @@ function SecureExamHallContent() {
     const skipped = scoreResult.total - scoreResult.attempted;
     const maxScore = questions.reduce((sum, q) => sum + (q.marks !== undefined && q.marks !== null ? q.marks : 4), 0);
     const percentage = maxScore > 0 ? ((scoreResult.score / maxScore) * 100).toFixed(1) : "0.0";
-    const isBoard = testDetails?.exam_type === 'Boards';
+    const isBoard = testDetails?.exam_type === 'Boards' && testDetails?.exam_board !== 'WB';
     
     return (
       <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-4 md:p-6 text-white font-body animate-in fade-in">
