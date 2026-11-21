@@ -331,15 +331,21 @@ html_content = """<!DOCTYPE html>
       font-weight: 800;
     }
 
+    .table-responsive {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin-bottom: 20px;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      background: white;
+    }
     .data-table {
       width: 100%;
+      min-width: 550px;
       border-collapse: collapse;
       font-size: 12px;
-      margin-bottom: 20px;
       background: white;
-      border: 1px solid #e2e8f0;
-      border-radius: 8px;
-      overflow: hidden;
     }
     .data-table th {
       background: #0f172a;
@@ -560,24 +566,26 @@ for idx, s in enumerate(students, 1):
             </tr>
             """
         appeared_table_html = f"""
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Test Title</th>
-              <th>Type</th>
-              <th>Score</th>
-              <th>Correct</th>
-              <th>Wrong</th>
-              <th>Left</th>
-              <th>Accuracy</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows}
-          </tbody>
-        </table>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Test Title</th>
+                <th>Type</th>
+                <th>Score</th>
+                <th>Correct</th>
+                <th>Wrong</th>
+                <th>Left</th>
+                <th>Accuracy</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows}
+            </tbody>
+          </table>
+        </div>
         """
 
     # Pending table HTML
@@ -603,20 +611,22 @@ for idx, s in enumerate(students, 1):
             </tr>
             """
         pending_table_html = f"""
-        <table class="data-table pending-table">
-          <thead>
-            <tr>
-              <th style="width: 30px; text-align: center;">#</th>
-              <th>Assessment Title</th>
-              <th>Category</th>
-              <th>Target Batch</th>
-              <th>Action Required</th>
-            </tr>
-          </thead>
-          <tbody>
-            {p_rows}
-          </tbody>
-        </table>
+        <div class="table-responsive">
+          <table class="data-table pending-table">
+            <thead>
+              <tr>
+                <th style="width: 30px; text-align: center;">#</th>
+                <th>Assessment Title</th>
+                <th>Category</th>
+                <th>Target Batch</th>
+                <th>Action Required</th>
+              </tr>
+            </thead>
+            <tbody>
+              {p_rows}
+            </tbody>
+          </table>
+        </div>
         """
 
     # Counseling remarks

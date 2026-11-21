@@ -1356,19 +1356,16 @@ function StudentManagementView() {
                 <h2 className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight text-white mb-2 leading-tight truncate">
                   {selectedStudent.full_name || "Roster Student"}
                 </h2>
-                <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 text-xs text-white/50">
-                  <span className="font-mono bg-white/5 px-2 py-0.5 rounded-md border border-white/10">
+                <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 text-xs">
+                  <span className="font-mono bg-white/5 px-2 py-0.5 rounded-md border border-white/10 text-white/60">
                     ID: {selectedStudent.id.substring(0,8)}
                   </span>
-                  <span className="text-white/30">•</span>
                   <span className="bg-white/5 px-2.5 py-0.5 rounded-md border border-white/10 font-semibold text-white/70">
                     Class {selectedStudent.class}
                   </span>
-                  <span className="text-white/30">•</span>
                   <span className="text-cyan-400 font-bold bg-cyan-500/10 px-2.5 py-0.5 rounded-md border border-cyan-500/20">
                     {selectedStudent.aspiration}
                   </span>
-                  <span className="text-white/30">•</span>
                   <span className="text-orange-400 font-medium bg-orange-500/10 px-2.5 py-0.5 rounded-md border border-orange-500/20">
                     {selectedStudent.batch}
                   </span>
@@ -1495,41 +1492,93 @@ function StudentManagementView() {
                     <span>100% Up to Date! Student has attempted all assigned tests and DPP quizzes. No pending backlog.</span>
                   </div>
                 ) : (
-                  <div className="bg-slate-950/60 rounded-2xl border border-white/10 overflow-hidden">
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-left text-xs sm:text-sm">
-                        <thead className="bg-white/5 border-b border-white/10 text-white/50 text-xs uppercase tracking-wider">
-                          <tr>
-                            <th className="p-3 sm:p-4 font-bold">Assessment Title</th>
-                            <th className="p-3 sm:p-4 font-bold">Category</th>
-                            <th className="p-3 sm:p-4 font-bold">Target Batch</th>
-                            <th className="p-3 sm:p-4 font-bold text-right">Guardian Action</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {selectedStudent.pending_tests.map((pt: any) => (
-                            <tr key={pt.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                              <td className="p-3 sm:p-4">
-                                <span className="font-bold text-white block">{pt.title}</span>
-                                <span className="text-[10px] text-white/40 font-mono">ID: {pt.id.substring(0,8)}</span>
-                              </td>
-                              <td className="p-3 sm:p-4">
-                                <span className="px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-orange-500/15 text-orange-400 border border-orange-500/25">
-                                  {pt.exam_type || 'Quiz'}
-                                </span>
-                              </td>
-                              <td className="p-3 sm:p-4 text-xs text-white/60 font-medium">
+                  <div className="space-y-3">
+                    {/* Mobile Responsive Cards View */}
+                    <div className="space-y-2.5 sm:hidden">
+                      {selectedStudent.pending_tests.map((pt: any, index: number) => (
+                        <div 
+                          key={pt.id} 
+                          className="p-3.5 rounded-2xl bg-slate-900/80 border border-white/10 hover:border-red-500/30 transition-all space-y-2.5 shadow-sm"
+                        >
+                          <div className="flex items-start justify-between gap-2.5">
+                            <div className="flex items-start gap-2.5 min-w-0 flex-1">
+                              <span className="w-6 h-6 rounded-lg bg-red-500/15 text-red-400 border border-red-500/25 text-xs font-black flex items-center justify-center shrink-0 mt-0.5">
+                                {index + 1}
+                              </span>
+                              <div className="min-w-0 flex-1">
+                                <h4 className="text-xs sm:text-sm font-bold text-white leading-snug break-words">
+                                  {pt.title}
+                                </h4>
+                                <div className="text-[10px] text-white/40 font-mono mt-0.5">
+                                  ID: {pt.id.substring(0, 8)}
+                                </div>
+                              </div>
+                            </div>
+                            <span className="px-2 py-0.5 rounded-md text-[10px] font-extrabold uppercase tracking-wider bg-red-500/20 text-red-400 border border-red-500/30 shrink-0 whitespace-nowrap">
+                              Pending
+                            </span>
+                          </div>
+
+                          <div className="flex items-center justify-between gap-2 pt-2 border-t border-white/5 text-[10px]">
+                            <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                              <span className="px-2 py-0.5 rounded bg-orange-500/10 text-orange-400 font-bold border border-orange-500/20 uppercase tracking-wider whitespace-nowrap">
+                                {pt.exam_type || 'DPP Quiz'}
+                              </span>
+                              <span className="text-white/40 truncate">
                                 {pt.target_batch || 'All Students'}
-                              </td>
-                              <td className="p-3 sm:p-4 text-right">
-                                <span className="px-2.5 py-1 rounded-md text-[10px] font-extrabold uppercase tracking-wider bg-red-500/20 text-red-400 border border-red-500/30">
-                                  Must Attempt
-                                </span>
-                              </td>
+                              </span>
+                            </div>
+                            <span className="text-red-400 font-bold shrink-0 flex items-center gap-1">
+                              <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" />
+                              Must Attempt
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Desktop / Tablet Table View */}
+                    <div className="hidden sm:block bg-slate-950/60 rounded-2xl border border-white/10 overflow-hidden">
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-left text-xs sm:text-sm">
+                          <thead className="bg-white/5 border-b border-white/10 text-white/50 text-xs uppercase tracking-wider">
+                            <tr>
+                              <th className="p-3 sm:p-4 font-bold w-12 text-center">#</th>
+                              <th className="p-3 sm:p-4 font-bold">Assessment Title</th>
+                              <th className="p-3 sm:p-4 font-bold">Category</th>
+                              <th className="p-3 sm:p-4 font-bold">Target Batch</th>
+                              <th className="p-3 sm:p-4 font-bold text-right">Guardian Action</th>
                             </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                          </thead>
+                          <tbody>
+                            {selectedStudent.pending_tests.map((pt: any, index: number) => (
+                              <tr key={pt.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                                <td className="p-3 sm:p-4 text-center font-mono text-white/40 font-bold">
+                                  {index + 1}
+                                </td>
+                                <td className="p-3 sm:p-4">
+                                  <span className="font-bold text-white block text-sm">{pt.title}</span>
+                                  <span className="text-[10px] text-white/40 font-mono">ID: {pt.id.substring(0,8)}</span>
+                                </td>
+                                <td className="p-3 sm:p-4">
+                                  <span className="px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-orange-500/15 text-orange-400 border border-orange-500/25 whitespace-nowrap inline-block">
+                                    {pt.exam_type || 'Quiz'}
+                                  </span>
+                                </td>
+                                <td className="p-3 sm:p-4 text-xs text-white/60 font-medium">
+                                  {pt.target_batch || 'All Students'}
+                                </td>
+                                <td className="p-3 sm:p-4 text-right">
+                                  <span className="px-2.5 py-1 rounded-md text-[10px] font-extrabold uppercase tracking-wider bg-red-500/20 text-red-400 border border-red-500/30 whitespace-nowrap inline-flex items-center gap-1.5">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" />
+                                    Must Attempt
+                                  </span>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
                   </div>
                 )}

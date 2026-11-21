@@ -325,15 +325,21 @@
       font-weight: 800;
     }
 
+    .table-responsive {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin-bottom: 20px;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      background: white;
+    }
     .data-table {
       width: 100%;
+      min-width: 550px;
       border-collapse: collapse;
       font-size: 12px;
-      margin-bottom: 20px;
       background: white;
-      border: 1px solid #e2e8f0;
-      border-radius: 8px;
-      overflow: hidden;
     }
     .data-table th {
       background: #0f172a;
@@ -550,22 +556,23 @@
           <span class="badge-count" style="background: #e0f2fe; color: #0369a1;">6 Attempts</span>
         </div>
         
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Test Title</th>
-              <th>Type</th>
-              <th>Score</th>
-              <th>Correct</th>
-              <th>Wrong</th>
-              <th>Left</th>
-              <th>Accuracy</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Test Title</th>
+                <th>Type</th>
+                <th>Score</th>
+                <th>Correct</th>
+                <th>Wrong</th>
+                <th>Left</th>
+                <th>Accuracy</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td>2026-07-10</td>
               <td><b>JEE MAIN -- PART TEST 01</b></td>
@@ -638,8 +645,9 @@
               <td style="font-size: 11px; color: #64748b;">Graded</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="section-title" style="color: #991b1b; margin-top: 24px;">
@@ -647,18 +655,19 @@
           <span class="badge-count" style="background: #fee2e2; color: #991b1b;">8 Pending</span>
         </div>
         
-        <table class="data-table pending-table">
-          <thead>
-            <tr>
-              <th style="width: 30px; text-align: center;">#</th>
-              <th>Assessment Title</th>
-              <th>Category</th>
-              <th>Target Batch</th>
-              <th>Action Required</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table pending-table">
+            <thead>
+              <tr>
+                <th style="width: 30px; text-align: center;">#</th>
+                <th>Assessment Title</th>
+                <th>Category</th>
+                <th>Target Batch</th>
+                <th>Action Required</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td style="text-align: center;">1</td>
               <td><b>CIRCULAR MOTION--DPP</b></td>
@@ -723,8 +732,9 @@
               <td style="color: #dc2626; font-weight: 800;">Pending - Must Attempt</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="remark-card">
@@ -786,22 +796,23 @@
           <span class="badge-count" style="background: #e0f2fe; color: #0369a1;">3 Attempts</span>
         </div>
         
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Test Title</th>
-              <th>Type</th>
-              <th>Score</th>
-              <th>Correct</th>
-              <th>Wrong</th>
-              <th>Left</th>
-              <th>Accuracy</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Test Title</th>
+                <th>Type</th>
+                <th>Score</th>
+                <th>Correct</th>
+                <th>Wrong</th>
+                <th>Left</th>
+                <th>Accuracy</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td>2026-11-10</td>
               <td><b>Work Power Energy</b></td>
@@ -838,8 +849,9 @@
               <td style="font-size: 11px; color: #64748b;">Graded</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="section-title" style="color: #991b1b; margin-top: 24px;">
@@ -847,18 +859,19 @@
           <span class="badge-count" style="background: #fee2e2; color: #991b1b;">8 Pending</span>
         </div>
         
-        <table class="data-table pending-table">
-          <thead>
-            <tr>
-              <th style="width: 30px; text-align: center;">#</th>
-              <th>Assessment Title</th>
-              <th>Category</th>
-              <th>Target Batch</th>
-              <th>Action Required</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table pending-table">
+            <thead>
+              <tr>
+                <th style="width: 30px; text-align: center;">#</th>
+                <th>Assessment Title</th>
+                <th>Category</th>
+                <th>Target Batch</th>
+                <th>Action Required</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td style="text-align: center;">1</td>
               <td><b>CIRCULAR MOTION--DPP</b></td>
@@ -923,8 +936,9 @@
               <td style="color: #dc2626; font-weight: 800;">Pending - Must Attempt</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="remark-card">
@@ -986,22 +1000,23 @@
           <span class="badge-count" style="background: #e0f2fe; color: #0369a1;">6 Attempts</span>
         </div>
         
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Test Title</th>
-              <th>Type</th>
-              <th>Score</th>
-              <th>Correct</th>
-              <th>Wrong</th>
-              <th>Left</th>
-              <th>Accuracy</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Test Title</th>
+                <th>Type</th>
+                <th>Score</th>
+                <th>Correct</th>
+                <th>Wrong</th>
+                <th>Left</th>
+                <th>Accuracy</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td>2026-07-10</td>
               <td><b>Neet -PART TEST 01</b></td>
@@ -1074,8 +1089,9 @@
               <td style="font-size: 11px; color: #64748b;">Graded</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="section-title" style="color: #991b1b; margin-top: 24px;">
@@ -1083,18 +1099,19 @@
           <span class="badge-count" style="background: #fee2e2; color: #991b1b;">7 Pending</span>
         </div>
         
-        <table class="data-table pending-table">
-          <thead>
-            <tr>
-              <th style="width: 30px; text-align: center;">#</th>
-              <th>Assessment Title</th>
-              <th>Category</th>
-              <th>Target Batch</th>
-              <th>Action Required</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table pending-table">
+            <thead>
+              <tr>
+                <th style="width: 30px; text-align: center;">#</th>
+                <th>Assessment Title</th>
+                <th>Category</th>
+                <th>Target Batch</th>
+                <th>Action Required</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td style="text-align: center;">1</td>
               <td><b>CIRCULAR MOTION--DPP</b></td>
@@ -1151,8 +1168,9 @@
               <td style="color: #dc2626; font-weight: 800;">Pending - Must Attempt</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="remark-card">
@@ -1214,22 +1232,23 @@
           <span class="badge-count" style="background: #e0f2fe; color: #0369a1;">4 Attempts</span>
         </div>
         
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Test Title</th>
-              <th>Type</th>
-              <th>Score</th>
-              <th>Correct</th>
-              <th>Wrong</th>
-              <th>Left</th>
-              <th>Accuracy</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Test Title</th>
+                <th>Type</th>
+                <th>Score</th>
+                <th>Correct</th>
+                <th>Wrong</th>
+                <th>Left</th>
+                <th>Accuracy</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td>2026-08-13</td>
               <td><b>Current Electricity--Chapter Test</b></td>
@@ -1278,8 +1297,9 @@
               <td style="font-size: 11px; color: #64748b;">Graded</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="section-title" style="color: #991b1b; margin-top: 24px;">
@@ -1287,18 +1307,19 @@
           <span class="badge-count" style="background: #fee2e2; color: #991b1b;">8 Pending</span>
         </div>
         
-        <table class="data-table pending-table">
-          <thead>
-            <tr>
-              <th style="width: 30px; text-align: center;">#</th>
-              <th>Assessment Title</th>
-              <th>Category</th>
-              <th>Target Batch</th>
-              <th>Action Required</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table pending-table">
+            <thead>
+              <tr>
+                <th style="width: 30px; text-align: center;">#</th>
+                <th>Assessment Title</th>
+                <th>Category</th>
+                <th>Target Batch</th>
+                <th>Action Required</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td style="text-align: center;">1</td>
               <td><b>CIRCULAR MOTION--DPP</b></td>
@@ -1363,8 +1384,9 @@
               <td style="color: #dc2626; font-weight: 800;">Pending - Must Attempt</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="remark-card">
@@ -1426,22 +1448,23 @@
           <span class="badge-count" style="background: #e0f2fe; color: #0369a1;">3 Attempts</span>
         </div>
         
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Test Title</th>
-              <th>Type</th>
-              <th>Score</th>
-              <th>Correct</th>
-              <th>Wrong</th>
-              <th>Left</th>
-              <th>Accuracy</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Test Title</th>
+                <th>Type</th>
+                <th>Score</th>
+                <th>Correct</th>
+                <th>Wrong</th>
+                <th>Left</th>
+                <th>Accuracy</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td>2026-07-10</td>
               <td><b>JEE MAIN -- PART TEST 01</b></td>
@@ -1478,8 +1501,9 @@
               <td style="font-size: 11px; color: #64748b;">Graded</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="section-title" style="color: #991b1b; margin-top: 24px;">
@@ -1487,18 +1511,19 @@
           <span class="badge-count" style="background: #fee2e2; color: #991b1b;">9 Pending</span>
         </div>
         
-        <table class="data-table pending-table">
-          <thead>
-            <tr>
-              <th style="width: 30px; text-align: center;">#</th>
-              <th>Assessment Title</th>
-              <th>Category</th>
-              <th>Target Batch</th>
-              <th>Action Required</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table pending-table">
+            <thead>
+              <tr>
+                <th style="width: 30px; text-align: center;">#</th>
+                <th>Assessment Title</th>
+                <th>Category</th>
+                <th>Target Batch</th>
+                <th>Action Required</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td style="text-align: center;">1</td>
               <td><b>CIRCULAR MOTION--DPP</b></td>
@@ -1571,8 +1596,9 @@
               <td style="color: #dc2626; font-weight: 800;">Pending - Must Attempt</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="remark-card">
@@ -1634,22 +1660,23 @@
           <span class="badge-count" style="background: #e0f2fe; color: #0369a1;">3 Attempts</span>
         </div>
         
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Test Title</th>
-              <th>Type</th>
-              <th>Score</th>
-              <th>Correct</th>
-              <th>Wrong</th>
-              <th>Left</th>
-              <th>Accuracy</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Test Title</th>
+                <th>Type</th>
+                <th>Score</th>
+                <th>Correct</th>
+                <th>Wrong</th>
+                <th>Left</th>
+                <th>Accuracy</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td>2026-08-13</td>
               <td><b>Current Electricity--Chapter Test</b></td>
@@ -1686,8 +1713,9 @@
               <td style="font-size: 11px; color: #64748b;">Graded</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="section-title" style="color: #991b1b; margin-top: 24px;">
@@ -1695,18 +1723,19 @@
           <span class="badge-count" style="background: #fee2e2; color: #991b1b;">8 Pending</span>
         </div>
         
-        <table class="data-table pending-table">
-          <thead>
-            <tr>
-              <th style="width: 30px; text-align: center;">#</th>
-              <th>Assessment Title</th>
-              <th>Category</th>
-              <th>Target Batch</th>
-              <th>Action Required</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table pending-table">
+            <thead>
+              <tr>
+                <th style="width: 30px; text-align: center;">#</th>
+                <th>Assessment Title</th>
+                <th>Category</th>
+                <th>Target Batch</th>
+                <th>Action Required</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td style="text-align: center;">1</td>
               <td><b>CIRCULAR MOTION--DPP</b></td>
@@ -1771,8 +1800,9 @@
               <td style="color: #dc2626; font-weight: 800;">Pending - Must Attempt</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="remark-card">
@@ -1834,22 +1864,23 @@
           <span class="badge-count" style="background: #e0f2fe; color: #0369a1;">2 Attempts</span>
         </div>
         
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Test Title</th>
-              <th>Type</th>
-              <th>Score</th>
-              <th>Correct</th>
-              <th>Wrong</th>
-              <th>Left</th>
-              <th>Accuracy</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Test Title</th>
+                <th>Type</th>
+                <th>Score</th>
+                <th>Correct</th>
+                <th>Wrong</th>
+                <th>Left</th>
+                <th>Accuracy</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td>2026-07-10</td>
               <td><b>JEE MAIN -- PART TEST 01</b></td>
@@ -1874,8 +1905,9 @@
               <td style="font-size: 11px; color: #64748b;">Graded</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="section-title" style="color: #991b1b; margin-top: 24px;">
@@ -1883,18 +1915,19 @@
           <span class="badge-count" style="background: #fee2e2; color: #991b1b;">9 Pending</span>
         </div>
         
-        <table class="data-table pending-table">
-          <thead>
-            <tr>
-              <th style="width: 30px; text-align: center;">#</th>
-              <th>Assessment Title</th>
-              <th>Category</th>
-              <th>Target Batch</th>
-              <th>Action Required</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table pending-table">
+            <thead>
+              <tr>
+                <th style="width: 30px; text-align: center;">#</th>
+                <th>Assessment Title</th>
+                <th>Category</th>
+                <th>Target Batch</th>
+                <th>Action Required</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td style="text-align: center;">1</td>
               <td><b>CIRCULAR MOTION--DPP</b></td>
@@ -1967,8 +2000,9 @@
               <td style="color: #dc2626; font-weight: 800;">Pending - Must Attempt</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="remark-card">
@@ -2040,18 +2074,19 @@
           <span class="badge-count" style="background: #fee2e2; color: #991b1b;">10 Pending</span>
         </div>
         
-        <table class="data-table pending-table">
-          <thead>
-            <tr>
-              <th style="width: 30px; text-align: center;">#</th>
-              <th>Assessment Title</th>
-              <th>Category</th>
-              <th>Target Batch</th>
-              <th>Action Required</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table pending-table">
+            <thead>
+              <tr>
+                <th style="width: 30px; text-align: center;">#</th>
+                <th>Assessment Title</th>
+                <th>Category</th>
+                <th>Target Batch</th>
+                <th>Action Required</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td style="text-align: center;">1</td>
               <td><b>CIRCULAR MOTION--DPP</b></td>
@@ -2132,8 +2167,9 @@
               <td style="color: #dc2626; font-weight: 800;">Pending - Must Attempt</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="remark-card">
@@ -2195,22 +2231,23 @@
           <span class="badge-count" style="background: #e0f2fe; color: #0369a1;">3 Attempts</span>
         </div>
         
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Test Title</th>
-              <th>Type</th>
-              <th>Score</th>
-              <th>Correct</th>
-              <th>Wrong</th>
-              <th>Left</th>
-              <th>Accuracy</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Test Title</th>
+                <th>Type</th>
+                <th>Score</th>
+                <th>Correct</th>
+                <th>Wrong</th>
+                <th>Left</th>
+                <th>Accuracy</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td>2026-07-10</td>
               <td><b>JEE MAIN -- PART TEST 01</b></td>
@@ -2247,8 +2284,9 @@
               <td style="font-size: 11px; color: #64748b;">Graded</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="section-title" style="color: #991b1b; margin-top: 24px;">
@@ -2256,18 +2294,19 @@
           <span class="badge-count" style="background: #fee2e2; color: #991b1b;">9 Pending</span>
         </div>
         
-        <table class="data-table pending-table">
-          <thead>
-            <tr>
-              <th style="width: 30px; text-align: center;">#</th>
-              <th>Assessment Title</th>
-              <th>Category</th>
-              <th>Target Batch</th>
-              <th>Action Required</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table pending-table">
+            <thead>
+              <tr>
+                <th style="width: 30px; text-align: center;">#</th>
+                <th>Assessment Title</th>
+                <th>Category</th>
+                <th>Target Batch</th>
+                <th>Action Required</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td style="text-align: center;">1</td>
               <td><b>CIRCULAR MOTION--DPP</b></td>
@@ -2340,8 +2379,9 @@
               <td style="color: #dc2626; font-weight: 800;">Pending - Must Attempt</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="remark-card">
@@ -2403,22 +2443,23 @@
           <span class="badge-count" style="background: #e0f2fe; color: #0369a1;">5 Attempts</span>
         </div>
         
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Test Title</th>
-              <th>Type</th>
-              <th>Score</th>
-              <th>Correct</th>
-              <th>Wrong</th>
-              <th>Left</th>
-              <th>Accuracy</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Test Title</th>
+                <th>Type</th>
+                <th>Score</th>
+                <th>Correct</th>
+                <th>Wrong</th>
+                <th>Left</th>
+                <th>Accuracy</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td>2026-07-10</td>
               <td><b>JEE MAIN -- PART TEST 01</b></td>
@@ -2479,8 +2520,9 @@
               <td style="font-size: 11px; color: #64748b;">Graded</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="section-title" style="color: #991b1b; margin-top: 24px;">
@@ -2488,18 +2530,19 @@
           <span class="badge-count" style="background: #fee2e2; color: #991b1b;">8 Pending</span>
         </div>
         
-        <table class="data-table pending-table">
-          <thead>
-            <tr>
-              <th style="width: 30px; text-align: center;">#</th>
-              <th>Assessment Title</th>
-              <th>Category</th>
-              <th>Target Batch</th>
-              <th>Action Required</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table pending-table">
+            <thead>
+              <tr>
+                <th style="width: 30px; text-align: center;">#</th>
+                <th>Assessment Title</th>
+                <th>Category</th>
+                <th>Target Batch</th>
+                <th>Action Required</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td style="text-align: center;">1</td>
               <td><b>CIRCULAR MOTION--DPP</b></td>
@@ -2564,8 +2607,9 @@
               <td style="color: #dc2626; font-weight: 800;">Pending - Must Attempt</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="remark-card">
@@ -2627,22 +2671,23 @@
           <span class="badge-count" style="background: #e0f2fe; color: #0369a1;">5 Attempts</span>
         </div>
         
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Test Title</th>
-              <th>Type</th>
-              <th>Score</th>
-              <th>Correct</th>
-              <th>Wrong</th>
-              <th>Left</th>
-              <th>Accuracy</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Test Title</th>
+                <th>Type</th>
+                <th>Score</th>
+                <th>Correct</th>
+                <th>Wrong</th>
+                <th>Left</th>
+                <th>Accuracy</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td>2026-07-10</td>
               <td><b>JEE MAIN -- PART TEST 01</b></td>
@@ -2703,8 +2748,9 @@
               <td style="font-size: 11px; color: #64748b;">Graded</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="section-title" style="color: #991b1b; margin-top: 24px;">
@@ -2712,18 +2758,19 @@
           <span class="badge-count" style="background: #fee2e2; color: #991b1b;">7 Pending</span>
         </div>
         
-        <table class="data-table pending-table">
-          <thead>
-            <tr>
-              <th style="width: 30px; text-align: center;">#</th>
-              <th>Assessment Title</th>
-              <th>Category</th>
-              <th>Target Batch</th>
-              <th>Action Required</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table pending-table">
+            <thead>
+              <tr>
+                <th style="width: 30px; text-align: center;">#</th>
+                <th>Assessment Title</th>
+                <th>Category</th>
+                <th>Target Batch</th>
+                <th>Action Required</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td style="text-align: center;">1</td>
               <td><b>CIRCULAR MOTION--DPP</b></td>
@@ -2780,8 +2827,9 @@
               <td style="color: #dc2626; font-weight: 800;">Pending - Must Attempt</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="remark-card">
@@ -2843,22 +2891,23 @@
           <span class="badge-count" style="background: #e0f2fe; color: #0369a1;">1 Attempts</span>
         </div>
         
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Test Title</th>
-              <th>Type</th>
-              <th>Score</th>
-              <th>Correct</th>
-              <th>Wrong</th>
-              <th>Left</th>
-              <th>Accuracy</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Test Title</th>
+                <th>Type</th>
+                <th>Score</th>
+                <th>Correct</th>
+                <th>Wrong</th>
+                <th>Left</th>
+                <th>Accuracy</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td>2026-08-27</td>
               <td><b>Current Electricity--Chapter Test</b></td>
@@ -2871,8 +2920,9 @@
               <td style="font-size: 11px; color: #64748b;">Graded</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="section-title" style="color: #991b1b; margin-top: 24px;">
@@ -2880,18 +2930,19 @@
           <span class="badge-count" style="background: #fee2e2; color: #991b1b;">9 Pending</span>
         </div>
         
-        <table class="data-table pending-table">
-          <thead>
-            <tr>
-              <th style="width: 30px; text-align: center;">#</th>
-              <th>Assessment Title</th>
-              <th>Category</th>
-              <th>Target Batch</th>
-              <th>Action Required</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table pending-table">
+            <thead>
+              <tr>
+                <th style="width: 30px; text-align: center;">#</th>
+                <th>Assessment Title</th>
+                <th>Category</th>
+                <th>Target Batch</th>
+                <th>Action Required</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td style="text-align: center;">1</td>
               <td><b>CIRCULAR MOTION--DPP</b></td>
@@ -2964,8 +3015,9 @@
               <td style="color: #dc2626; font-weight: 800;">Pending - Must Attempt</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="remark-card">
@@ -3027,21 +3079,34 @@
           <span class="badge-count" style="background: #e0f2fe; color: #0369a1;">2 Attempts</span>
         </div>
         
-        <table class="data-table">
-          <thead>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Test Title</th>
+                <th>Type</th>
+                <th>Score</th>
+                <th>Correct</th>
+                <th>Wrong</th>
+                <th>Left</th>
+                <th>Accuracy</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
-              <th>Date</th>
-              <th>Test Title</th>
-              <th>Type</th>
-              <th>Score</th>
-              <th>Correct</th>
-              <th>Wrong</th>
-              <th>Left</th>
-              <th>Accuracy</th>
-              <th>Status</th>
+              <td>2026-07-02</td>
+              <td><b>Electrostatics - DPP QUIZ</b></td>
+              <td><span class="pill pill-cyan">DPP Quiz</span></td>
+              <td style="font-weight: 800; color: #0284c7;">19</td>
+              <td style="color: #16a34a; font-weight: 700;">6</td>
+              <td style="color: #dc2626; font-weight: 700;">0</td>
+              <td style="color: #d97706;">25</td>
+              <td><b>24.0%</b></td>
+              <td style="font-size: 11px; color: #64748b;">Graded</td>
             </tr>
-          </thead>
-          <tbody>
             
             <tr>
               <td>2026-07-02</td>
@@ -3055,20 +3120,9 @@
               <td style="font-size: 11px; color: #64748b;">Graded</td>
             </tr>
             
-            <tr>
-              <td>2026-07-02</td>
-              <td><b>Electrostatics - DPP QUIZ</b></td>
-              <td><span class="pill pill-cyan">DPP Quiz</span></td>
-              <td style="font-weight: 800; color: #0284c7;">19</td>
-              <td style="color: #16a34a; font-weight: 700;">6</td>
-              <td style="color: #dc2626; font-weight: 700;">0</td>
-              <td style="color: #d97706;">25</td>
-              <td><b>24.0%</b></td>
-              <td style="font-size: 11px; color: #64748b;">Graded</td>
-            </tr>
-            
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="section-title" style="color: #991b1b; margin-top: 24px;">
@@ -3076,18 +3130,19 @@
           <span class="badge-count" style="background: #fee2e2; color: #991b1b;">9 Pending</span>
         </div>
         
-        <table class="data-table pending-table">
-          <thead>
-            <tr>
-              <th style="width: 30px; text-align: center;">#</th>
-              <th>Assessment Title</th>
-              <th>Category</th>
-              <th>Target Batch</th>
-              <th>Action Required</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table pending-table">
+            <thead>
+              <tr>
+                <th style="width: 30px; text-align: center;">#</th>
+                <th>Assessment Title</th>
+                <th>Category</th>
+                <th>Target Batch</th>
+                <th>Action Required</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td style="text-align: center;">1</td>
               <td><b>CIRCULAR MOTION--DPP</b></td>
@@ -3160,8 +3215,9 @@
               <td style="color: #dc2626; font-weight: 800;">Pending - Must Attempt</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="remark-card">
@@ -3223,22 +3279,23 @@
           <span class="badge-count" style="background: #e0f2fe; color: #0369a1;">6 Attempts</span>
         </div>
         
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Test Title</th>
-              <th>Type</th>
-              <th>Score</th>
-              <th>Correct</th>
-              <th>Wrong</th>
-              <th>Left</th>
-              <th>Accuracy</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Test Title</th>
+                <th>Type</th>
+                <th>Score</th>
+                <th>Correct</th>
+                <th>Wrong</th>
+                <th>Left</th>
+                <th>Accuracy</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td>2026-07-05</td>
               <td><b>Electrostatics - DPP QUIZ</b></td>
@@ -3311,8 +3368,9 @@
               <td style="font-size: 11px; color: #64748b;">Graded</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="section-title" style="color: #991b1b; margin-top: 24px;">
@@ -3320,18 +3378,19 @@
           <span class="badge-count" style="background: #fee2e2; color: #991b1b;">7 Pending</span>
         </div>
         
-        <table class="data-table pending-table">
-          <thead>
-            <tr>
-              <th style="width: 30px; text-align: center;">#</th>
-              <th>Assessment Title</th>
-              <th>Category</th>
-              <th>Target Batch</th>
-              <th>Action Required</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table pending-table">
+            <thead>
+              <tr>
+                <th style="width: 30px; text-align: center;">#</th>
+                <th>Assessment Title</th>
+                <th>Category</th>
+                <th>Target Batch</th>
+                <th>Action Required</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td style="text-align: center;">1</td>
               <td><b>CIRCULAR MOTION--DPP</b></td>
@@ -3388,8 +3447,9 @@
               <td style="color: #dc2626; font-weight: 800;">Pending - Must Attempt</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="remark-card">
@@ -3451,22 +3511,23 @@
           <span class="badge-count" style="background: #e0f2fe; color: #0369a1;">5 Attempts</span>
         </div>
         
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Test Title</th>
-              <th>Type</th>
-              <th>Score</th>
-              <th>Correct</th>
-              <th>Wrong</th>
-              <th>Left</th>
-              <th>Accuracy</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Test Title</th>
+                <th>Type</th>
+                <th>Score</th>
+                <th>Correct</th>
+                <th>Wrong</th>
+                <th>Left</th>
+                <th>Accuracy</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td>2026-07-10</td>
               <td><b>JEE MAIN -- PART TEST 01</b></td>
@@ -3527,8 +3588,9 @@
               <td style="font-size: 11px; color: #64748b;">Graded</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="section-title" style="color: #991b1b; margin-top: 24px;">
@@ -3536,18 +3598,19 @@
           <span class="badge-count" style="background: #fee2e2; color: #991b1b;">8 Pending</span>
         </div>
         
-        <table class="data-table pending-table">
-          <thead>
-            <tr>
-              <th style="width: 30px; text-align: center;">#</th>
-              <th>Assessment Title</th>
-              <th>Category</th>
-              <th>Target Batch</th>
-              <th>Action Required</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table pending-table">
+            <thead>
+              <tr>
+                <th style="width: 30px; text-align: center;">#</th>
+                <th>Assessment Title</th>
+                <th>Category</th>
+                <th>Target Batch</th>
+                <th>Action Required</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td style="text-align: center;">1</td>
               <td><b>CIRCULAR MOTION--DPP</b></td>
@@ -3612,8 +3675,9 @@
               <td style="color: #dc2626; font-weight: 800;">Pending - Must Attempt</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="remark-card">
@@ -3675,22 +3739,23 @@
           <span class="badge-count" style="background: #e0f2fe; color: #0369a1;">1 Attempts</span>
         </div>
         
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Test Title</th>
-              <th>Type</th>
-              <th>Score</th>
-              <th>Correct</th>
-              <th>Wrong</th>
-              <th>Left</th>
-              <th>Accuracy</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Test Title</th>
+                <th>Type</th>
+                <th>Score</th>
+                <th>Correct</th>
+                <th>Wrong</th>
+                <th>Left</th>
+                <th>Accuracy</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td>2026-07-02</td>
               <td><b>Electrostatics - DPP QUIZ</b></td>
@@ -3703,8 +3768,9 @@
               <td style="font-size: 11px; color: #64748b;">Graded</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="section-title" style="color: #991b1b; margin-top: 24px;">
@@ -3712,18 +3778,19 @@
           <span class="badge-count" style="background: #fee2e2; color: #991b1b;">9 Pending</span>
         </div>
         
-        <table class="data-table pending-table">
-          <thead>
-            <tr>
-              <th style="width: 30px; text-align: center;">#</th>
-              <th>Assessment Title</th>
-              <th>Category</th>
-              <th>Target Batch</th>
-              <th>Action Required</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table pending-table">
+            <thead>
+              <tr>
+                <th style="width: 30px; text-align: center;">#</th>
+                <th>Assessment Title</th>
+                <th>Category</th>
+                <th>Target Batch</th>
+                <th>Action Required</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td style="text-align: center;">1</td>
               <td><b>CIRCULAR MOTION--DPP</b></td>
@@ -3796,8 +3863,9 @@
               <td style="color: #dc2626; font-weight: 800;">Pending - Must Attempt</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="remark-card">
@@ -3859,22 +3927,23 @@
           <span class="badge-count" style="background: #e0f2fe; color: #0369a1;">2 Attempts</span>
         </div>
         
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Test Title</th>
-              <th>Type</th>
-              <th>Score</th>
-              <th>Correct</th>
-              <th>Wrong</th>
-              <th>Left</th>
-              <th>Accuracy</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Test Title</th>
+                <th>Type</th>
+                <th>Score</th>
+                <th>Correct</th>
+                <th>Wrong</th>
+                <th>Left</th>
+                <th>Accuracy</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td>2026-07-10</td>
               <td><b>JEE MAIN -- PART TEST 01</b></td>
@@ -3899,8 +3968,9 @@
               <td style="font-size: 11px; color: #64748b;">Graded</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="section-title" style="color: #991b1b; margin-top: 24px;">
@@ -3908,18 +3978,19 @@
           <span class="badge-count" style="background: #fee2e2; color: #991b1b;">10 Pending</span>
         </div>
         
-        <table class="data-table pending-table">
-          <thead>
-            <tr>
-              <th style="width: 30px; text-align: center;">#</th>
-              <th>Assessment Title</th>
-              <th>Category</th>
-              <th>Target Batch</th>
-              <th>Action Required</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table pending-table">
+            <thead>
+              <tr>
+                <th style="width: 30px; text-align: center;">#</th>
+                <th>Assessment Title</th>
+                <th>Category</th>
+                <th>Target Batch</th>
+                <th>Action Required</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td style="text-align: center;">1</td>
               <td><b>CIRCULAR MOTION--DPP</b></td>
@@ -4000,8 +4071,9 @@
               <td style="color: #dc2626; font-weight: 800;">Pending - Must Attempt</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="remark-card">
@@ -4063,22 +4135,23 @@
           <span class="badge-count" style="background: #e0f2fe; color: #0369a1;">3 Attempts</span>
         </div>
         
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Test Title</th>
-              <th>Type</th>
-              <th>Score</th>
-              <th>Correct</th>
-              <th>Wrong</th>
-              <th>Left</th>
-              <th>Accuracy</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Test Title</th>
+                <th>Type</th>
+                <th>Score</th>
+                <th>Correct</th>
+                <th>Wrong</th>
+                <th>Left</th>
+                <th>Accuracy</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td>2026-06-27</td>
               <td><b>CIRCULAR MOTION--DPP</b></td>
@@ -4115,8 +4188,9 @@
               <td style="font-size: 11px; color: #64748b;">Graded</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="section-title" style="color: #991b1b; margin-top: 24px;">
@@ -4124,18 +4198,19 @@
           <span class="badge-count" style="background: #fee2e2; color: #991b1b;">7 Pending</span>
         </div>
         
-        <table class="data-table pending-table">
-          <thead>
-            <tr>
-              <th style="width: 30px; text-align: center;">#</th>
-              <th>Assessment Title</th>
-              <th>Category</th>
-              <th>Target Batch</th>
-              <th>Action Required</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table pending-table">
+            <thead>
+              <tr>
+                <th style="width: 30px; text-align: center;">#</th>
+                <th>Assessment Title</th>
+                <th>Category</th>
+                <th>Target Batch</th>
+                <th>Action Required</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td style="text-align: center;">1</td>
               <td><b>COM &Collision</b></td>
@@ -4192,8 +4267,9 @@
               <td style="color: #dc2626; font-weight: 800;">Pending - Must Attempt</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="remark-card">
@@ -4255,22 +4331,23 @@
           <span class="badge-count" style="background: #e0f2fe; color: #0369a1;">2 Attempts</span>
         </div>
         
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Test Title</th>
-              <th>Type</th>
-              <th>Score</th>
-              <th>Correct</th>
-              <th>Wrong</th>
-              <th>Left</th>
-              <th>Accuracy</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Test Title</th>
+                <th>Type</th>
+                <th>Score</th>
+                <th>Correct</th>
+                <th>Wrong</th>
+                <th>Left</th>
+                <th>Accuracy</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td>2026-08-13</td>
               <td><b>Current Electricity--Chapter Test</b></td>
@@ -4295,8 +4372,9 @@
               <td style="font-size: 11px; color: #64748b;">Graded</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="section-title" style="color: #991b1b; margin-top: 24px;">
@@ -4304,18 +4382,19 @@
           <span class="badge-count" style="background: #fee2e2; color: #991b1b;">9 Pending</span>
         </div>
         
-        <table class="data-table pending-table">
-          <thead>
-            <tr>
-              <th style="width: 30px; text-align: center;">#</th>
-              <th>Assessment Title</th>
-              <th>Category</th>
-              <th>Target Batch</th>
-              <th>Action Required</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table pending-table">
+            <thead>
+              <tr>
+                <th style="width: 30px; text-align: center;">#</th>
+                <th>Assessment Title</th>
+                <th>Category</th>
+                <th>Target Batch</th>
+                <th>Action Required</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td style="text-align: center;">1</td>
               <td><b>CIRCULAR MOTION--DPP</b></td>
@@ -4388,8 +4467,9 @@
               <td style="color: #dc2626; font-weight: 800;">Pending - Must Attempt</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="remark-card">
@@ -4451,22 +4531,23 @@
           <span class="badge-count" style="background: #e0f2fe; color: #0369a1;">4 Attempts</span>
         </div>
         
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Test Title</th>
-              <th>Type</th>
-              <th>Score</th>
-              <th>Correct</th>
-              <th>Wrong</th>
-              <th>Left</th>
-              <th>Accuracy</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Test Title</th>
+                <th>Type</th>
+                <th>Score</th>
+                <th>Correct</th>
+                <th>Wrong</th>
+                <th>Left</th>
+                <th>Accuracy</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td>2026-07-10</td>
               <td><b>JEE MAIN -- PART TEST 01</b></td>
@@ -4515,8 +4596,9 @@
               <td style="font-size: 11px; color: #64748b;">Graded</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="section-title" style="color: #991b1b; margin-top: 24px;">
@@ -4524,18 +4606,19 @@
           <span class="badge-count" style="background: #fee2e2; color: #991b1b;">8 Pending</span>
         </div>
         
-        <table class="data-table pending-table">
-          <thead>
-            <tr>
-              <th style="width: 30px; text-align: center;">#</th>
-              <th>Assessment Title</th>
-              <th>Category</th>
-              <th>Target Batch</th>
-              <th>Action Required</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table pending-table">
+            <thead>
+              <tr>
+                <th style="width: 30px; text-align: center;">#</th>
+                <th>Assessment Title</th>
+                <th>Category</th>
+                <th>Target Batch</th>
+                <th>Action Required</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td style="text-align: center;">1</td>
               <td><b>CIRCULAR MOTION--DPP</b></td>
@@ -4600,8 +4683,9 @@
               <td style="color: #dc2626; font-weight: 800;">Pending - Must Attempt</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="remark-card">
@@ -4673,18 +4757,19 @@
           <span class="badge-count" style="background: #fee2e2; color: #991b1b;">10 Pending</span>
         </div>
         
-        <table class="data-table pending-table">
-          <thead>
-            <tr>
-              <th style="width: 30px; text-align: center;">#</th>
-              <th>Assessment Title</th>
-              <th>Category</th>
-              <th>Target Batch</th>
-              <th>Action Required</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table pending-table">
+            <thead>
+              <tr>
+                <th style="width: 30px; text-align: center;">#</th>
+                <th>Assessment Title</th>
+                <th>Category</th>
+                <th>Target Batch</th>
+                <th>Action Required</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td style="text-align: center;">1</td>
               <td><b>CIRCULAR MOTION--DPP</b></td>
@@ -4765,8 +4850,9 @@
               <td style="color: #dc2626; font-weight: 800;">Pending - Must Attempt</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="remark-card">
@@ -4828,22 +4914,23 @@
           <span class="badge-count" style="background: #e0f2fe; color: #0369a1;">2 Attempts</span>
         </div>
         
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Test Title</th>
-              <th>Type</th>
-              <th>Score</th>
-              <th>Correct</th>
-              <th>Wrong</th>
-              <th>Left</th>
-              <th>Accuracy</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Test Title</th>
+                <th>Type</th>
+                <th>Score</th>
+                <th>Correct</th>
+                <th>Wrong</th>
+                <th>Left</th>
+                <th>Accuracy</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td>2026-08-26</td>
               <td><b>Current Electricity--Chapter Test</b></td>
@@ -4868,8 +4955,9 @@
               <td style="font-size: 11px; color: #64748b;">Graded</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="section-title" style="color: #991b1b; margin-top: 24px;">
@@ -4877,18 +4965,19 @@
           <span class="badge-count" style="background: #fee2e2; color: #991b1b;">9 Pending</span>
         </div>
         
-        <table class="data-table pending-table">
-          <thead>
-            <tr>
-              <th style="width: 30px; text-align: center;">#</th>
-              <th>Assessment Title</th>
-              <th>Category</th>
-              <th>Target Batch</th>
-              <th>Action Required</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table pending-table">
+            <thead>
+              <tr>
+                <th style="width: 30px; text-align: center;">#</th>
+                <th>Assessment Title</th>
+                <th>Category</th>
+                <th>Target Batch</th>
+                <th>Action Required</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td style="text-align: center;">1</td>
               <td><b>CIRCULAR MOTION--DPP</b></td>
@@ -4961,8 +5050,9 @@
               <td style="color: #dc2626; font-weight: 800;">Pending - Must Attempt</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="remark-card">
@@ -5034,18 +5124,19 @@
           <span class="badge-count" style="background: #fee2e2; color: #991b1b;">10 Pending</span>
         </div>
         
-        <table class="data-table pending-table">
-          <thead>
-            <tr>
-              <th style="width: 30px; text-align: center;">#</th>
-              <th>Assessment Title</th>
-              <th>Category</th>
-              <th>Target Batch</th>
-              <th>Action Required</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table pending-table">
+            <thead>
+              <tr>
+                <th style="width: 30px; text-align: center;">#</th>
+                <th>Assessment Title</th>
+                <th>Category</th>
+                <th>Target Batch</th>
+                <th>Action Required</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td style="text-align: center;">1</td>
               <td><b>CIRCULAR MOTION--DPP</b></td>
@@ -5126,8 +5217,9 @@
               <td style="color: #dc2626; font-weight: 800;">Pending - Must Attempt</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="remark-card">
@@ -5189,21 +5281,34 @@
           <span class="badge-count" style="background: #e0f2fe; color: #0369a1;">2 Attempts</span>
         </div>
         
-        <table class="data-table">
-          <thead>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Test Title</th>
+                <th>Type</th>
+                <th>Score</th>
+                <th>Correct</th>
+                <th>Wrong</th>
+                <th>Left</th>
+                <th>Accuracy</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
-              <th>Date</th>
-              <th>Test Title</th>
-              <th>Type</th>
-              <th>Score</th>
-              <th>Correct</th>
-              <th>Wrong</th>
-              <th>Left</th>
-              <th>Accuracy</th>
-              <th>Status</th>
+              <td>2026-08-10</td>
+              <td><b>Current Electricity(WB)</b></td>
+              <td><span class="pill pill-cyan">Boards</span></td>
+              <td style="font-weight: 800; color: #0284c7;">1</td>
+              <td style="color: #16a34a; font-weight: 700;">1</td>
+              <td style="color: #dc2626; font-weight: 700;">0</td>
+              <td style="color: #d97706;">35</td>
+              <td><b>2.9%</b></td>
+              <td style="font-size: 11px; color: #64748b;">Graded</td>
             </tr>
-          </thead>
-          <tbody>
             
             <tr>
               <td>2026-08-10</td>
@@ -5217,20 +5322,9 @@
               <td style="font-size: 11px; color: #64748b;">Graded</td>
             </tr>
             
-            <tr>
-              <td>2026-08-10</td>
-              <td><b>Current Electricity(WB)</b></td>
-              <td><span class="pill pill-cyan">Boards</span></td>
-              <td style="font-weight: 800; color: #0284c7;">1</td>
-              <td style="color: #16a34a; font-weight: 700;">1</td>
-              <td style="color: #dc2626; font-weight: 700;">0</td>
-              <td style="color: #d97706;">35</td>
-              <td><b>2.9%</b></td>
-              <td style="font-size: 11px; color: #64748b;">Graded</td>
-            </tr>
-            
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="section-title" style="color: #991b1b; margin-top: 24px;">
@@ -5238,18 +5332,19 @@
           <span class="badge-count" style="background: #fee2e2; color: #991b1b;">10 Pending</span>
         </div>
         
-        <table class="data-table pending-table">
-          <thead>
-            <tr>
-              <th style="width: 30px; text-align: center;">#</th>
-              <th>Assessment Title</th>
-              <th>Category</th>
-              <th>Target Batch</th>
-              <th>Action Required</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table pending-table">
+            <thead>
+              <tr>
+                <th style="width: 30px; text-align: center;">#</th>
+                <th>Assessment Title</th>
+                <th>Category</th>
+                <th>Target Batch</th>
+                <th>Action Required</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td style="text-align: center;">1</td>
               <td><b>CIRCULAR MOTION--DPP</b></td>
@@ -5330,8 +5425,9 @@
               <td style="color: #dc2626; font-weight: 800;">Pending - Must Attempt</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="remark-card">
@@ -5393,22 +5489,23 @@
           <span class="badge-count" style="background: #e0f2fe; color: #0369a1;">4 Attempts</span>
         </div>
         
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Test Title</th>
-              <th>Type</th>
-              <th>Score</th>
-              <th>Correct</th>
-              <th>Wrong</th>
-              <th>Left</th>
-              <th>Accuracy</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Test Title</th>
+                <th>Type</th>
+                <th>Score</th>
+                <th>Correct</th>
+                <th>Wrong</th>
+                <th>Left</th>
+                <th>Accuracy</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td>2026-07-05</td>
               <td><b>Electrostatics - DPP QUIZ</b></td>
@@ -5457,8 +5554,9 @@
               <td style="font-size: 11px; color: #64748b;">Graded</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="section-title" style="color: #991b1b; margin-top: 24px;">
@@ -5466,18 +5564,19 @@
           <span class="badge-count" style="background: #fee2e2; color: #991b1b;">8 Pending</span>
         </div>
         
-        <table class="data-table pending-table">
-          <thead>
-            <tr>
-              <th style="width: 30px; text-align: center;">#</th>
-              <th>Assessment Title</th>
-              <th>Category</th>
-              <th>Target Batch</th>
-              <th>Action Required</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table pending-table">
+            <thead>
+              <tr>
+                <th style="width: 30px; text-align: center;">#</th>
+                <th>Assessment Title</th>
+                <th>Category</th>
+                <th>Target Batch</th>
+                <th>Action Required</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td style="text-align: center;">1</td>
               <td><b>CIRCULAR MOTION--DPP</b></td>
@@ -5542,8 +5641,9 @@
               <td style="color: #dc2626; font-weight: 800;">Pending - Must Attempt</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="remark-card">
@@ -5605,22 +5705,23 @@
           <span class="badge-count" style="background: #e0f2fe; color: #0369a1;">3 Attempts</span>
         </div>
         
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Test Title</th>
-              <th>Type</th>
-              <th>Score</th>
-              <th>Correct</th>
-              <th>Wrong</th>
-              <th>Left</th>
-              <th>Accuracy</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Test Title</th>
+                <th>Type</th>
+                <th>Score</th>
+                <th>Correct</th>
+                <th>Wrong</th>
+                <th>Left</th>
+                <th>Accuracy</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td>2026-07-10</td>
               <td><b>JEE MAIN -- PART TEST 01</b></td>
@@ -5657,8 +5758,9 @@
               <td style="font-size: 11px; color: #64748b;">Graded</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="section-title" style="color: #991b1b; margin-top: 24px;">
@@ -5666,18 +5768,19 @@
           <span class="badge-count" style="background: #fee2e2; color: #991b1b;">9 Pending</span>
         </div>
         
-        <table class="data-table pending-table">
-          <thead>
-            <tr>
-              <th style="width: 30px; text-align: center;">#</th>
-              <th>Assessment Title</th>
-              <th>Category</th>
-              <th>Target Batch</th>
-              <th>Action Required</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table pending-table">
+            <thead>
+              <tr>
+                <th style="width: 30px; text-align: center;">#</th>
+                <th>Assessment Title</th>
+                <th>Category</th>
+                <th>Target Batch</th>
+                <th>Action Required</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td style="text-align: center;">1</td>
               <td><b>CIRCULAR MOTION--DPP</b></td>
@@ -5750,8 +5853,9 @@
               <td style="color: #dc2626; font-weight: 800;">Pending - Must Attempt</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="remark-card">
@@ -5823,18 +5927,19 @@
           <span class="badge-count" style="background: #fee2e2; color: #991b1b;">10 Pending</span>
         </div>
         
-        <table class="data-table pending-table">
-          <thead>
-            <tr>
-              <th style="width: 30px; text-align: center;">#</th>
-              <th>Assessment Title</th>
-              <th>Category</th>
-              <th>Target Batch</th>
-              <th>Action Required</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table pending-table">
+            <thead>
+              <tr>
+                <th style="width: 30px; text-align: center;">#</th>
+                <th>Assessment Title</th>
+                <th>Category</th>
+                <th>Target Batch</th>
+                <th>Action Required</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td style="text-align: center;">1</td>
               <td><b>CIRCULAR MOTION--DPP</b></td>
@@ -5915,8 +6020,9 @@
               <td style="color: #dc2626; font-weight: 800;">Pending - Must Attempt</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="remark-card">
@@ -5978,22 +6084,23 @@
           <span class="badge-count" style="background: #e0f2fe; color: #0369a1;">4 Attempts</span>
         </div>
         
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Test Title</th>
-              <th>Type</th>
-              <th>Score</th>
-              <th>Correct</th>
-              <th>Wrong</th>
-              <th>Left</th>
-              <th>Accuracy</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Test Title</th>
+                <th>Type</th>
+                <th>Score</th>
+                <th>Correct</th>
+                <th>Wrong</th>
+                <th>Left</th>
+                <th>Accuracy</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td>2026-07-10</td>
               <td><b>JEE MAIN -- PART TEST 01</b></td>
@@ -6042,8 +6149,9 @@
               <td style="font-size: 11px; color: #64748b;">Graded</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="section-title" style="color: #991b1b; margin-top: 24px;">
@@ -6051,18 +6159,19 @@
           <span class="badge-count" style="background: #fee2e2; color: #991b1b;">8 Pending</span>
         </div>
         
-        <table class="data-table pending-table">
-          <thead>
-            <tr>
-              <th style="width: 30px; text-align: center;">#</th>
-              <th>Assessment Title</th>
-              <th>Category</th>
-              <th>Target Batch</th>
-              <th>Action Required</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table pending-table">
+            <thead>
+              <tr>
+                <th style="width: 30px; text-align: center;">#</th>
+                <th>Assessment Title</th>
+                <th>Category</th>
+                <th>Target Batch</th>
+                <th>Action Required</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td style="text-align: center;">1</td>
               <td><b>CIRCULAR MOTION--DPP</b></td>
@@ -6127,8 +6236,9 @@
               <td style="color: #dc2626; font-weight: 800;">Pending - Must Attempt</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="remark-card">
@@ -6200,18 +6310,19 @@
           <span class="badge-count" style="background: #fee2e2; color: #991b1b;">10 Pending</span>
         </div>
         
-        <table class="data-table pending-table">
-          <thead>
-            <tr>
-              <th style="width: 30px; text-align: center;">#</th>
-              <th>Assessment Title</th>
-              <th>Category</th>
-              <th>Target Batch</th>
-              <th>Action Required</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table pending-table">
+            <thead>
+              <tr>
+                <th style="width: 30px; text-align: center;">#</th>
+                <th>Assessment Title</th>
+                <th>Category</th>
+                <th>Target Batch</th>
+                <th>Action Required</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td style="text-align: center;">1</td>
               <td><b>CIRCULAR MOTION--DPP</b></td>
@@ -6292,8 +6403,9 @@
               <td style="color: #dc2626; font-weight: 800;">Pending - Must Attempt</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="remark-card">
@@ -6355,22 +6467,23 @@
           <span class="badge-count" style="background: #e0f2fe; color: #0369a1;">3 Attempts</span>
         </div>
         
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Test Title</th>
-              <th>Type</th>
-              <th>Score</th>
-              <th>Correct</th>
-              <th>Wrong</th>
-              <th>Left</th>
-              <th>Accuracy</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Test Title</th>
+                <th>Type</th>
+                <th>Score</th>
+                <th>Correct</th>
+                <th>Wrong</th>
+                <th>Left</th>
+                <th>Accuracy</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td>2026-08-13</td>
               <td><b>Current Electricity--Chapter Test</b></td>
@@ -6407,8 +6520,9 @@
               <td style="font-size: 11px; color: #64748b;">Graded</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="section-title" style="color: #991b1b; margin-top: 24px;">
@@ -6416,18 +6530,19 @@
           <span class="badge-count" style="background: #fee2e2; color: #991b1b;">8 Pending</span>
         </div>
         
-        <table class="data-table pending-table">
-          <thead>
-            <tr>
-              <th style="width: 30px; text-align: center;">#</th>
-              <th>Assessment Title</th>
-              <th>Category</th>
-              <th>Target Batch</th>
-              <th>Action Required</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table pending-table">
+            <thead>
+              <tr>
+                <th style="width: 30px; text-align: center;">#</th>
+                <th>Assessment Title</th>
+                <th>Category</th>
+                <th>Target Batch</th>
+                <th>Action Required</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td style="text-align: center;">1</td>
               <td><b>CIRCULAR MOTION--DPP</b></td>
@@ -6492,8 +6607,9 @@
               <td style="color: #dc2626; font-weight: 800;">Pending - Must Attempt</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="remark-card">
@@ -6555,22 +6671,23 @@
           <span class="badge-count" style="background: #e0f2fe; color: #0369a1;">4 Attempts</span>
         </div>
         
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Test Title</th>
-              <th>Type</th>
-              <th>Score</th>
-              <th>Correct</th>
-              <th>Wrong</th>
-              <th>Left</th>
-              <th>Accuracy</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Test Title</th>
+                <th>Type</th>
+                <th>Score</th>
+                <th>Correct</th>
+                <th>Wrong</th>
+                <th>Left</th>
+                <th>Accuracy</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td>2026-07-04</td>
               <td><b>Electrostatics - DPP QUIZ</b></td>
@@ -6619,8 +6736,9 @@
               <td style="font-size: 11px; color: #64748b;">Graded</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="section-title" style="color: #991b1b; margin-top: 24px;">
@@ -6628,18 +6746,19 @@
           <span class="badge-count" style="background: #fee2e2; color: #991b1b;">7 Pending</span>
         </div>
         
-        <table class="data-table pending-table">
-          <thead>
-            <tr>
-              <th style="width: 30px; text-align: center;">#</th>
-              <th>Assessment Title</th>
-              <th>Category</th>
-              <th>Target Batch</th>
-              <th>Action Required</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table pending-table">
+            <thead>
+              <tr>
+                <th style="width: 30px; text-align: center;">#</th>
+                <th>Assessment Title</th>
+                <th>Category</th>
+                <th>Target Batch</th>
+                <th>Action Required</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td style="text-align: center;">1</td>
               <td><b>CIRCULAR MOTION--DPP</b></td>
@@ -6696,8 +6815,9 @@
               <td style="color: #dc2626; font-weight: 800;">Pending - Must Attempt</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="remark-card">
@@ -6769,18 +6889,19 @@
           <span class="badge-count" style="background: #fee2e2; color: #991b1b;">10 Pending</span>
         </div>
         
-        <table class="data-table pending-table">
-          <thead>
-            <tr>
-              <th style="width: 30px; text-align: center;">#</th>
-              <th>Assessment Title</th>
-              <th>Category</th>
-              <th>Target Batch</th>
-              <th>Action Required</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table pending-table">
+            <thead>
+              <tr>
+                <th style="width: 30px; text-align: center;">#</th>
+                <th>Assessment Title</th>
+                <th>Category</th>
+                <th>Target Batch</th>
+                <th>Action Required</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td style="text-align: center;">1</td>
               <td><b>CIRCULAR MOTION--DPP</b></td>
@@ -6861,8 +6982,9 @@
               <td style="color: #dc2626; font-weight: 800;">Pending - Must Attempt</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="remark-card">
@@ -6934,18 +7056,19 @@
           <span class="badge-count" style="background: #fee2e2; color: #991b1b;">10 Pending</span>
         </div>
         
-        <table class="data-table pending-table">
-          <thead>
-            <tr>
-              <th style="width: 30px; text-align: center;">#</th>
-              <th>Assessment Title</th>
-              <th>Category</th>
-              <th>Target Batch</th>
-              <th>Action Required</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table pending-table">
+            <thead>
+              <tr>
+                <th style="width: 30px; text-align: center;">#</th>
+                <th>Assessment Title</th>
+                <th>Category</th>
+                <th>Target Batch</th>
+                <th>Action Required</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td style="text-align: center;">1</td>
               <td><b>CIRCULAR MOTION--DPP</b></td>
@@ -7026,8 +7149,9 @@
               <td style="color: #dc2626; font-weight: 800;">Pending - Must Attempt</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="remark-card">
@@ -7089,22 +7213,23 @@
           <span class="badge-count" style="background: #e0f2fe; color: #0369a1;">1 Attempts</span>
         </div>
         
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Test Title</th>
-              <th>Type</th>
-              <th>Score</th>
-              <th>Correct</th>
-              <th>Wrong</th>
-              <th>Left</th>
-              <th>Accuracy</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Test Title</th>
+                <th>Type</th>
+                <th>Score</th>
+                <th>Correct</th>
+                <th>Wrong</th>
+                <th>Left</th>
+                <th>Accuracy</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td>2026-07-10</td>
               <td><b>JEE MAIN -- PART TEST 01</b></td>
@@ -7117,8 +7242,9 @@
               <td style="font-size: 11px; color: #64748b;">Graded</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="section-title" style="color: #991b1b; margin-top: 24px;">
@@ -7126,18 +7252,19 @@
           <span class="badge-count" style="background: #fee2e2; color: #991b1b;">10 Pending</span>
         </div>
         
-        <table class="data-table pending-table">
-          <thead>
-            <tr>
-              <th style="width: 30px; text-align: center;">#</th>
-              <th>Assessment Title</th>
-              <th>Category</th>
-              <th>Target Batch</th>
-              <th>Action Required</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table pending-table">
+            <thead>
+              <tr>
+                <th style="width: 30px; text-align: center;">#</th>
+                <th>Assessment Title</th>
+                <th>Category</th>
+                <th>Target Batch</th>
+                <th>Action Required</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td style="text-align: center;">1</td>
               <td><b>CIRCULAR MOTION--DPP</b></td>
@@ -7218,8 +7345,9 @@
               <td style="color: #dc2626; font-weight: 800;">Pending - Must Attempt</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="remark-card">
@@ -7281,22 +7409,23 @@
           <span class="badge-count" style="background: #e0f2fe; color: #0369a1;">1 Attempts</span>
         </div>
         
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Test Title</th>
-              <th>Type</th>
-              <th>Score</th>
-              <th>Correct</th>
-              <th>Wrong</th>
-              <th>Left</th>
-              <th>Accuracy</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Test Title</th>
+                <th>Type</th>
+                <th>Score</th>
+                <th>Correct</th>
+                <th>Wrong</th>
+                <th>Left</th>
+                <th>Accuracy</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td>2026-08-13</td>
               <td><b>Current Electricity--Chapter Test</b></td>
@@ -7309,8 +7438,9 @@
               <td style="font-size: 11px; color: #64748b;">Graded</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="section-title" style="color: #991b1b; margin-top: 24px;">
@@ -7318,18 +7448,19 @@
           <span class="badge-count" style="background: #fee2e2; color: #991b1b;">9 Pending</span>
         </div>
         
-        <table class="data-table pending-table">
-          <thead>
-            <tr>
-              <th style="width: 30px; text-align: center;">#</th>
-              <th>Assessment Title</th>
-              <th>Category</th>
-              <th>Target Batch</th>
-              <th>Action Required</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table pending-table">
+            <thead>
+              <tr>
+                <th style="width: 30px; text-align: center;">#</th>
+                <th>Assessment Title</th>
+                <th>Category</th>
+                <th>Target Batch</th>
+                <th>Action Required</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td style="text-align: center;">1</td>
               <td><b>CIRCULAR MOTION--DPP</b></td>
@@ -7402,8 +7533,9 @@
               <td style="color: #dc2626; font-weight: 800;">Pending - Must Attempt</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="remark-card">
@@ -7465,22 +7597,23 @@
           <span class="badge-count" style="background: #e0f2fe; color: #0369a1;">3 Attempts</span>
         </div>
         
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Test Title</th>
-              <th>Type</th>
-              <th>Score</th>
-              <th>Correct</th>
-              <th>Wrong</th>
-              <th>Left</th>
-              <th>Accuracy</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Test Title</th>
+                <th>Type</th>
+                <th>Score</th>
+                <th>Correct</th>
+                <th>Wrong</th>
+                <th>Left</th>
+                <th>Accuracy</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td>2026-07-10</td>
               <td><b>Neet -PART TEST 01</b></td>
@@ -7517,8 +7650,9 @@
               <td style="font-size: 11px; color: #64748b;">Graded</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="section-title" style="color: #991b1b; margin-top: 24px;">
@@ -7526,18 +7660,19 @@
           <span class="badge-count" style="background: #fee2e2; color: #991b1b;">9 Pending</span>
         </div>
         
-        <table class="data-table pending-table">
-          <thead>
-            <tr>
-              <th style="width: 30px; text-align: center;">#</th>
-              <th>Assessment Title</th>
-              <th>Category</th>
-              <th>Target Batch</th>
-              <th>Action Required</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table pending-table">
+            <thead>
+              <tr>
+                <th style="width: 30px; text-align: center;">#</th>
+                <th>Assessment Title</th>
+                <th>Category</th>
+                <th>Target Batch</th>
+                <th>Action Required</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td style="text-align: center;">1</td>
               <td><b>CIRCULAR MOTION--DPP</b></td>
@@ -7610,8 +7745,9 @@
               <td style="color: #dc2626; font-weight: 800;">Pending - Must Attempt</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="remark-card">
@@ -7673,22 +7809,23 @@
           <span class="badge-count" style="background: #e0f2fe; color: #0369a1;">6 Attempts</span>
         </div>
         
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Test Title</th>
-              <th>Type</th>
-              <th>Score</th>
-              <th>Correct</th>
-              <th>Wrong</th>
-              <th>Left</th>
-              <th>Accuracy</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Test Title</th>
+                <th>Type</th>
+                <th>Score</th>
+                <th>Correct</th>
+                <th>Wrong</th>
+                <th>Left</th>
+                <th>Accuracy</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td>2026-06-30</td>
               <td><b>CIRCULAR MOTION--DPP</b></td>
@@ -7761,8 +7898,9 @@
               <td style="font-size: 11px; color: #64748b;">Graded</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="section-title" style="color: #991b1b; margin-top: 24px;">
@@ -7770,18 +7908,19 @@
           <span class="badge-count" style="background: #fee2e2; color: #991b1b;">7 Pending</span>
         </div>
         
-        <table class="data-table pending-table">
-          <thead>
-            <tr>
-              <th style="width: 30px; text-align: center;">#</th>
-              <th>Assessment Title</th>
-              <th>Category</th>
-              <th>Target Batch</th>
-              <th>Action Required</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table pending-table">
+            <thead>
+              <tr>
+                <th style="width: 30px; text-align: center;">#</th>
+                <th>Assessment Title</th>
+                <th>Category</th>
+                <th>Target Batch</th>
+                <th>Action Required</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td style="text-align: center;">1</td>
               <td><b>COM &Collision</b></td>
@@ -7838,8 +7977,9 @@
               <td style="color: #dc2626; font-weight: 800;">Pending - Must Attempt</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="remark-card">
@@ -7901,22 +8041,23 @@
           <span class="badge-count" style="background: #e0f2fe; color: #0369a1;">6 Attempts</span>
         </div>
         
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Test Title</th>
-              <th>Type</th>
-              <th>Score</th>
-              <th>Correct</th>
-              <th>Wrong</th>
-              <th>Left</th>
-              <th>Accuracy</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Test Title</th>
+                <th>Type</th>
+                <th>Score</th>
+                <th>Correct</th>
+                <th>Wrong</th>
+                <th>Left</th>
+                <th>Accuracy</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td>2026-07-10</td>
               <td><b>Neet -PART TEST 01</b></td>
@@ -7989,8 +8130,9 @@
               <td style="font-size: 11px; color: #64748b;">Graded</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="section-title" style="color: #991b1b; margin-top: 24px;">
@@ -7998,18 +8140,19 @@
           <span class="badge-count" style="background: #fee2e2; color: #991b1b;">7 Pending</span>
         </div>
         
-        <table class="data-table pending-table">
-          <thead>
-            <tr>
-              <th style="width: 30px; text-align: center;">#</th>
-              <th>Assessment Title</th>
-              <th>Category</th>
-              <th>Target Batch</th>
-              <th>Action Required</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table pending-table">
+            <thead>
+              <tr>
+                <th style="width: 30px; text-align: center;">#</th>
+                <th>Assessment Title</th>
+                <th>Category</th>
+                <th>Target Batch</th>
+                <th>Action Required</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td style="text-align: center;">1</td>
               <td><b>CIRCULAR MOTION--DPP</b></td>
@@ -8066,8 +8209,9 @@
               <td style="color: #dc2626; font-weight: 800;">Pending - Must Attempt</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="remark-card">
@@ -8129,22 +8273,23 @@
           <span class="badge-count" style="background: #e0f2fe; color: #0369a1;">5 Attempts</span>
         </div>
         
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Test Title</th>
-              <th>Type</th>
-              <th>Score</th>
-              <th>Correct</th>
-              <th>Wrong</th>
-              <th>Left</th>
-              <th>Accuracy</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Test Title</th>
+                <th>Type</th>
+                <th>Score</th>
+                <th>Correct</th>
+                <th>Wrong</th>
+                <th>Left</th>
+                <th>Accuracy</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td>2026-06-30</td>
               <td><b>Electrostatics - DPP QUIZ</b></td>
@@ -8205,8 +8350,9 @@
               <td style="font-size: 11px; color: #64748b;">Graded</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="section-title" style="color: #991b1b; margin-top: 24px;">
@@ -8214,18 +8360,19 @@
           <span class="badge-count" style="background: #fee2e2; color: #991b1b;">7 Pending</span>
         </div>
         
-        <table class="data-table pending-table">
-          <thead>
-            <tr>
-              <th style="width: 30px; text-align: center;">#</th>
-              <th>Assessment Title</th>
-              <th>Category</th>
-              <th>Target Batch</th>
-              <th>Action Required</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table pending-table">
+            <thead>
+              <tr>
+                <th style="width: 30px; text-align: center;">#</th>
+                <th>Assessment Title</th>
+                <th>Category</th>
+                <th>Target Batch</th>
+                <th>Action Required</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td style="text-align: center;">1</td>
               <td><b>CIRCULAR MOTION--DPP</b></td>
@@ -8282,8 +8429,9 @@
               <td style="color: #dc2626; font-weight: 800;">Pending - Must Attempt</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="remark-card">
@@ -8345,22 +8493,23 @@
           <span class="badge-count" style="background: #e0f2fe; color: #0369a1;">1 Attempts</span>
         </div>
         
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Test Title</th>
-              <th>Type</th>
-              <th>Score</th>
-              <th>Correct</th>
-              <th>Wrong</th>
-              <th>Left</th>
-              <th>Accuracy</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Test Title</th>
+                <th>Type</th>
+                <th>Score</th>
+                <th>Correct</th>
+                <th>Wrong</th>
+                <th>Left</th>
+                <th>Accuracy</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td>2026-08-27</td>
               <td><b>Current Electricity--Chapter Test</b></td>
@@ -8373,8 +8522,9 @@
               <td style="font-size: 11px; color: #64748b;">Graded</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="section-title" style="color: #991b1b; margin-top: 24px;">
@@ -8382,18 +8532,19 @@
           <span class="badge-count" style="background: #fee2e2; color: #991b1b;">9 Pending</span>
         </div>
         
-        <table class="data-table pending-table">
-          <thead>
-            <tr>
-              <th style="width: 30px; text-align: center;">#</th>
-              <th>Assessment Title</th>
-              <th>Category</th>
-              <th>Target Batch</th>
-              <th>Action Required</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table pending-table">
+            <thead>
+              <tr>
+                <th style="width: 30px; text-align: center;">#</th>
+                <th>Assessment Title</th>
+                <th>Category</th>
+                <th>Target Batch</th>
+                <th>Action Required</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td style="text-align: center;">1</td>
               <td><b>CIRCULAR MOTION--DPP</b></td>
@@ -8466,8 +8617,9 @@
               <td style="color: #dc2626; font-weight: 800;">Pending - Must Attempt</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="remark-card">
@@ -8529,22 +8681,23 @@
           <span class="badge-count" style="background: #e0f2fe; color: #0369a1;">1 Attempts</span>
         </div>
         
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Test Title</th>
-              <th>Type</th>
-              <th>Score</th>
-              <th>Correct</th>
-              <th>Wrong</th>
-              <th>Left</th>
-              <th>Accuracy</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Test Title</th>
+                <th>Type</th>
+                <th>Score</th>
+                <th>Correct</th>
+                <th>Wrong</th>
+                <th>Left</th>
+                <th>Accuracy</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td>2026-08-10</td>
               <td><b>Current Electricity(WB)</b></td>
@@ -8557,8 +8710,9 @@
               <td style="font-size: 11px; color: #64748b;">Graded</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="section-title" style="color: #991b1b; margin-top: 24px;">
@@ -8566,18 +8720,19 @@
           <span class="badge-count" style="background: #fee2e2; color: #991b1b;">10 Pending</span>
         </div>
         
-        <table class="data-table pending-table">
-          <thead>
-            <tr>
-              <th style="width: 30px; text-align: center;">#</th>
-              <th>Assessment Title</th>
-              <th>Category</th>
-              <th>Target Batch</th>
-              <th>Action Required</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table pending-table">
+            <thead>
+              <tr>
+                <th style="width: 30px; text-align: center;">#</th>
+                <th>Assessment Title</th>
+                <th>Category</th>
+                <th>Target Batch</th>
+                <th>Action Required</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td style="text-align: center;">1</td>
               <td><b>CIRCULAR MOTION--DPP</b></td>
@@ -8658,8 +8813,9 @@
               <td style="color: #dc2626; font-weight: 800;">Pending - Must Attempt</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="remark-card">
@@ -8721,22 +8877,23 @@
           <span class="badge-count" style="background: #e0f2fe; color: #0369a1;">1 Attempts</span>
         </div>
         
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Test Title</th>
-              <th>Type</th>
-              <th>Score</th>
-              <th>Correct</th>
-              <th>Wrong</th>
-              <th>Left</th>
-              <th>Accuracy</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Test Title</th>
+                <th>Type</th>
+                <th>Score</th>
+                <th>Correct</th>
+                <th>Wrong</th>
+                <th>Left</th>
+                <th>Accuracy</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td>2026-09-01</td>
               <td><b>Electrostatics - DPP QUIZ</b></td>
@@ -8749,8 +8906,9 @@
               <td style="font-size: 11px; color: #64748b;">Graded</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="section-title" style="color: #991b1b; margin-top: 24px;">
@@ -8758,18 +8916,19 @@
           <span class="badge-count" style="background: #fee2e2; color: #991b1b;">9 Pending</span>
         </div>
         
-        <table class="data-table pending-table">
-          <thead>
-            <tr>
-              <th style="width: 30px; text-align: center;">#</th>
-              <th>Assessment Title</th>
-              <th>Category</th>
-              <th>Target Batch</th>
-              <th>Action Required</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table pending-table">
+            <thead>
+              <tr>
+                <th style="width: 30px; text-align: center;">#</th>
+                <th>Assessment Title</th>
+                <th>Category</th>
+                <th>Target Batch</th>
+                <th>Action Required</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td style="text-align: center;">1</td>
               <td><b>CIRCULAR MOTION--DPP</b></td>
@@ -8842,8 +9001,9 @@
               <td style="color: #dc2626; font-weight: 800;">Pending - Must Attempt</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="remark-card">
@@ -8905,22 +9065,23 @@
           <span class="badge-count" style="background: #e0f2fe; color: #0369a1;">4 Attempts</span>
         </div>
         
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Test Title</th>
-              <th>Type</th>
-              <th>Score</th>
-              <th>Correct</th>
-              <th>Wrong</th>
-              <th>Left</th>
-              <th>Accuracy</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Test Title</th>
+                <th>Type</th>
+                <th>Score</th>
+                <th>Correct</th>
+                <th>Wrong</th>
+                <th>Left</th>
+                <th>Accuracy</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td>2026-07-10</td>
               <td><b>JEE MAIN -- PART TEST 01</b></td>
@@ -8969,8 +9130,9 @@
               <td style="font-size: 11px; color: #64748b;">Graded</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="section-title" style="color: #991b1b; margin-top: 24px;">
@@ -8978,18 +9140,19 @@
           <span class="badge-count" style="background: #fee2e2; color: #991b1b;">8 Pending</span>
         </div>
         
-        <table class="data-table pending-table">
-          <thead>
-            <tr>
-              <th style="width: 30px; text-align: center;">#</th>
-              <th>Assessment Title</th>
-              <th>Category</th>
-              <th>Target Batch</th>
-              <th>Action Required</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div class="table-responsive">
+          <table class="data-table pending-table">
+            <thead>
+              <tr>
+                <th style="width: 30px; text-align: center;">#</th>
+                <th>Assessment Title</th>
+                <th>Category</th>
+                <th>Target Batch</th>
+                <th>Action Required</th>
+              </tr>
+            </thead>
+            <tbody>
+              
             <tr>
               <td style="text-align: center;">1</td>
               <td><b>CIRCULAR MOTION--DPP</b></td>
@@ -9054,8 +9217,9 @@
               <td style="color: #dc2626; font-weight: 800;">Pending - Must Attempt</td>
             </tr>
             
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         
 
         <div class="remark-card">
