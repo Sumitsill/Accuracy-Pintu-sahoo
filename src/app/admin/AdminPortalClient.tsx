@@ -5,7 +5,8 @@ import {
   LayoutDashboard, Users, BookOpen, PenTool, Target, 
   Bell, Zap, LogOut, ChevronDown, Menu,
   Search, Eye, Send, Upload, Plus, MoreVertical, X, Loader2, FileUp, Trash2,
-  ShieldAlert, AlertTriangle, CheckCircle, Mail, Phone, Award, GraduationCap
+  ShieldAlert, AlertTriangle, CheckCircle, Mail, Phone, Award, GraduationCap,
+  Printer, Clock, ClipboardList, CheckCircle2, FileText, Sparkles
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
@@ -655,6 +656,8 @@ function StudentManagementView() {
   const [selectedBatch, setSelectedBatch] = useState("All Batches");
   const [selectedClass, setSelectedClass] = useState("All Classes");
   const [selectedExam, setSelectedExam] = useState("All Exams");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [allAvailableTests, setAllAvailableTests] = useState<any[]>([]);
 
   // Subject-wise stats state
   const [subjectStatsByTest, setSubjectStatsByTest] = useState<Record<string, Record<string, any>>>({});
@@ -832,22 +835,54 @@ function StudentManagementView() {
         if (profilesData && profilesData.length > 0) {
           const studentIds = profilesData.map(p => p.id);
           
-          // 2. Fetch all test results, integrity reports, and violations for these students in parallel
-          const [resultsRes, integrityRes, violationsRes] = await Promise.all([
+          // 2. Fetch all test results, integrity reports, violations, and available tests in parallel
+          const [resultsRes, integrityRes, violationsRes, testsRes] = await Promise.all([
             supabase.from('test_results').select('*').in('user_id', studentIds),
             supabase.from('exam_integrity_reports').select('*').in('user_id', studentIds),
-            supabase.from('exam_violations').select('*').in('user_id', studentIds)
+            supabase.from('exam_violations').select('*').in('user_id', studentIds),
+            supabase.from('tests').select('*').order('created_at', { ascending: false })
           ]);
           
           const resultsData = resultsRes.data || [];
           const integrityData = integrityRes.data || [];
           const violationsData = violationsRes.data || [];
+          const allTestsData = testsRes.data || [];
+          setAllAvailableTests(allTestsData);
           
           const studentsWithDetails = profilesData.map(profile => {
              const rawStudentResults = resultsData.filter(r => r.user_id === profile.id);
              const studentIntegrity = integrityData.filter(r => r.user_id === profile.id);
              const studentViolations = violationsData.filter(r => r.user_id === profile.id);
              
+             // Determine allowed batches and applicable tests for this student
+             const allowedBatches = ['All Students'];
+             const pClass = String(profile.class || '').trim();
+             const pAsp = String(profile.aspiration || '').trim();
+             const pBatch = String(profile.batch || '').trim();
+             const pBoard = String(profile.board || '').trim();
+
+             if (pClass === '11') allowedBatches.push('Class 11');
+             if (pClass === '12' || pClass === 'Dropper') allowedBatches.push('Class 12');
+             if (pAsp === 'JEE') allowedBatches.push('IIT JEE Batch');
+             if (pAsp === 'NEET') allowedBatches.push('NEET Batch');
+             if (pBatch && pBatch !== 'Unassigned') allowedBatches.push(pBatch);
+
+             const applicableTests = allTestsData.filter((t: any) => {
+               if (t.status === 'draft') return false;
+               if (t.target_batch && !allowedBatches.includes(t.target_batch)) return false;
+               if (t.target_class) {
+                 const tClass = String(t.target_class).trim();
+                 if (tClass !== pClass && !(pClass === 'Dropper' && tClass === '12')) {
+                   return false;
+                 }
+               }
+               if (t.exam_type === 'Boards') {
+                 if (t.exam_board === 'WB' && pBoard !== 'WB') return false;
+                 if (t.exam_board === 'CBSE_ISC' && pBoard !== 'CBSE' && pBoard !== 'ISC') return false;
+               }
+               return true;
+             });
+
              // Sort chronologically to assign attempt numbers
              const resultsByTest: Record<string, any[]> = {};
              const chronological = [...rawStudentResults].sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
@@ -862,6 +897,18 @@ function StudentManagementView() {
              // Sort descending for display
              const studentResults = [...chronological].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
              
+             // Calculate pending tests
+             const attemptedTestIds = new Set(studentResults.map((r: any) => r.test_id));
+             const pendingTests = applicableTests.filter((t: any) => !attemptedTestIds.has(t.id));
+
+             // Calculate stats
+             const scores = studentResults.map((r: any) => Number(r.score) || 0);
+             const avgScore = scores.length > 0 ? (scores.reduce((a: number, b: number) => a + b, 0) / scores.length).toFixed(1) : "0.0";
+             const maxScore = scores.length > 0 ? Math.max(...scores) : 0;
+             const totalQ = studentResults.reduce((acc: number, r: any) => acc + (Number(r.total_questions) || 0), 0);
+             const correctQ = studentResults.reduce((acc: number, r: any) => acc + (Number(r.correct_count) || 0), 0);
+             const overallAcc = totalQ > 0 ? ((correctQ / totalQ) * 100).toFixed(0) : "0";
+
              let strengths: string[] = [];
              let weaknesses: string[] = [];
              let opportunities: string[] = ["Attempt more Mock Tests", "Review incorrect questions in detail"];
@@ -885,6 +932,13 @@ function StudentManagementView() {
                school_name: profile.school_name || 'Not Provided',
                phone: profile.phone || 'Not Provided',
                total_tests: studentResults.length,
+               unique_tests: attemptedTestIds.size,
+               total_applicable: applicableTests.length,
+               total_pending: pendingTests.length,
+               pending_tests: pendingTests,
+               avg_score: avgScore,
+               max_score: maxScore,
+               overall_accuracy: overallAcc,
                test_history: studentResults,
                integrity_reports: studentIntegrity,
                violations: studentViolations,
@@ -1027,21 +1081,55 @@ function StudentManagementView() {
     const matchesBatch = selectedBatch === "All Batches" || s.batch === selectedBatch;
     const matchesClass = selectedClass === "All Classes" || String(s.class) === selectedClass;
     const matchesExam = selectedExam === "All Exams" || s.aspiration === selectedExam;
-    return matchesBatch && matchesClass && matchesExam;
+    const q = searchQuery.toLowerCase().trim();
+    const matchesSearch = !q || 
+      (s.full_name && s.full_name.toLowerCase().includes(q)) ||
+      (s.email && s.email.toLowerCase().includes(q)) ||
+      (s.phone && s.phone.toLowerCase().includes(q)) ||
+      (s.school_name && s.school_name.toLowerCase().includes(q)) ||
+      (s.id && s.id.toLowerCase().includes(q));
+    return matchesBatch && matchesClass && matchesExam && matchesSearch;
   });
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="bg-white/5 p-6 rounded-3xl border border-white/10">
-        <div className="mb-6 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-          <h3 className="text-xl font-bold text-white flex items-center gap-2"><Users className="w-5 h-5 text-orange-500" /> Student Roster & Analytics</h3>
+      <div className="bg-white/5 p-4 sm:p-6 rounded-3xl border border-white/10">
+        <div className="mb-6 flex flex-col xl:flex-row xl:items-center justify-between gap-4">
+          <div>
+            <h3 className="text-xl font-bold text-white flex items-center gap-2">
+              <Users className="w-5 h-5 text-orange-500" /> Student Roster & Guardian Analytics
+            </h3>
+            <p className="text-xs text-white/40 mt-1">
+              Search by name, examine appeared exams, and track pending DPP quizzes for parent briefing.
+            </p>
+          </div>
           
-          <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-2.5 sm:gap-3 w-full lg:w-auto">
+          <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-2.5 sm:gap-3 w-full xl:w-auto">
+            {/* Search Input */}
+            <div className="relative flex-1 min-w-[200px] sm:min-w-[240px]">
+              <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none" />
+              <input
+                type="text"
+                placeholder="Search name, phone, school, email..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full bg-slate-900 border border-white/10 rounded-xl pl-9 pr-8 py-2 text-white text-xs sm:text-sm placeholder:text-white/30 focus:outline-none focus:border-orange-500 transition-all shadow-inner"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white text-xs font-bold"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+
             {/* Batch Filter */}
             <select
               value={selectedBatch}
               onChange={(e) => setSelectedBatch(e.target.value)}
-              className="bg-slate-900 border border-white/10 rounded-xl px-3 sm:px-4 py-2 text-white text-xs sm:text-sm focus:outline-none focus:border-orange-500 transition-all cursor-pointer shadow-inner w-full sm:w-auto min-w-0 sm:min-w-[150px]"
+              className="bg-slate-900 border border-white/10 rounded-xl px-3 sm:px-4 py-2 text-white text-xs sm:text-sm focus:outline-none focus:border-orange-500 transition-all cursor-pointer shadow-inner w-full sm:w-auto min-w-0 sm:min-w-[130px]"
             >
               <option value="All Batches">All Batches</option>
               {uniqueBatches.map(b => (
@@ -1053,7 +1141,7 @@ function StudentManagementView() {
             <select
               value={selectedClass}
               onChange={(e) => setSelectedClass(e.target.value)}
-              className="bg-slate-900 border border-white/10 rounded-xl px-3 sm:px-4 py-2 text-white text-xs sm:text-sm focus:outline-none focus:border-orange-500 transition-all cursor-pointer shadow-inner w-full sm:w-auto min-w-0 sm:min-w-[120px]"
+              className="bg-slate-900 border border-white/10 rounded-xl px-3 sm:px-4 py-2 text-white text-xs sm:text-sm focus:outline-none focus:border-orange-500 transition-all cursor-pointer shadow-inner w-full sm:w-auto min-w-0 sm:min-w-[110px]"
             >
               <option value="All Classes">All Classes</option>
               {uniqueClasses.map(c => (
@@ -1065,9 +1153,9 @@ function StudentManagementView() {
             <select
               value={selectedExam}
               onChange={(e) => setSelectedExam(e.target.value)}
-              className="bg-slate-900 border border-white/10 rounded-xl px-3 sm:px-4 py-2 text-white text-xs sm:text-sm focus:outline-none focus:border-orange-500 transition-all cursor-pointer shadow-inner w-full sm:w-auto min-w-0 sm:min-w-[120px]"
+              className="bg-slate-900 border border-white/10 rounded-xl px-3 sm:px-4 py-2 text-white text-xs sm:text-sm focus:outline-none focus:border-orange-500 transition-all cursor-pointer shadow-inner w-full sm:w-auto min-w-0 sm:min-w-[110px]"
             >
-              <option value="All Exams">All Exams</option>
+              <option value="All Exams">All Aspirations</option>
               {uniqueExams.map(e => (
                 <option key={String(e)} value={String(e)}>{String(e)}</option>
               ))}
@@ -1078,7 +1166,18 @@ function StudentManagementView() {
         {loading ? (
           <div className="flex justify-center p-12"><Loader2 className="w-8 h-8 animate-spin text-orange-500" /></div>
         ) : filteredStudents.length === 0 ? (
-          <div className="flex justify-center p-12 text-white/50">No students found matching the selected filters.</div>
+          <div className="flex flex-col items-center justify-center p-12 text-white/50 space-y-2">
+            <Users className="w-8 h-8 text-white/20" />
+            <p>No students found matching "{searchQuery}" or the selected filters.</p>
+            {searchQuery && (
+              <button 
+                onClick={() => setSearchQuery("")}
+                className="text-xs text-orange-400 hover:underline font-semibold"
+              >
+                Clear Search
+              </button>
+            )}
+          </div>
         ) : (
           <>
             {/* Desktop Table View */}
@@ -1088,94 +1187,152 @@ function StudentManagementView() {
                   <tr className="border-b border-white/10 text-white/50 text-xs uppercase tracking-widest">
                     <th className="p-4 font-bold">Student Details</th>
                     <th className="p-4 font-bold">Class & Aspiration</th>
-                    <th className="p-4 font-bold">Tests Taken</th>
-                    <th className="p-4 font-bold">Top Strengths</th>
-                    <th className="p-4 font-bold text-red-400">Weaknesses</th>
+                    <th className="p-4 font-bold text-center">Appeared</th>
+                    <th className="p-4 font-bold text-center">Pending DPPs</th>
+                    <th className="p-4 font-bold text-center">Accuracy & Avg</th>
+                    <th className="p-4 font-bold text-center">Guardian Status</th>
                     <th className="p-4 font-bold text-right">Action</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredStudents.map(s => (
-                    <tr key={s.id} onClick={() => handleSelectStudent(s)} className="border-b border-white/5 hover:bg-white/5 transition-colors cursor-pointer">
-                      <td className="p-4">
-                        <div className="font-medium text-white">{s.full_name || s.email}</div>
-                        <div className="text-xs text-white/50 font-mono mt-1">ID: {s.id.substring(0,8)}</div>
-                      </td>
-                      <td className="p-4">
-                        <div className="text-white/80 font-medium">Class {s.class}</div>
-                        <div className="text-xs text-cyan-400 font-bold tracking-wide mt-1">{s.aspiration}</div>
-                        <div className="text-[10px] text-orange-400 font-medium mt-1">{s.batch}</div>
-                      </td>
-                      <td className="p-4 text-orange-400 font-bold text-lg">{s.total_tests}</td>
-                      <td className="p-4 text-green-400/80 text-sm font-medium">{s.strengths.length > 0 ? s.strengths.join(', ') : '-'}</td>
-                      <td className="p-4 text-red-400/80 text-sm font-medium">{s.weaknesses.length > 0 ? s.weaknesses.join(', ') : '-'}</td>
-                      <td className="p-4 text-right">
-                        <button className="text-xs bg-white/5 hover:bg-white/10 text-white py-1.5 px-3 rounded-lg transition-colors border border-white/10">Details</button>
-                      </td>
-                    </tr>
-                  ))}
+                  {filteredStudents.map(s => {
+                    const appeared = s.total_tests || 0;
+                    const pending = s.total_pending ?? (s.pending_tests?.length || 0);
+                    const acc = Number(s.overall_accuracy) || 0;
+
+                    let statusBadge;
+                    if (appeared === 0) {
+                      statusBadge = <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-red-500/15 text-red-400 border border-red-500/30">0 Tests (Critical)</span>;
+                    } else if (pending >= 8) {
+                      statusBadge = <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-orange-500/15 text-orange-400 border border-orange-500/30">High Backlog</span>;
+                    } else if (acc >= 50) {
+                      statusBadge = <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-green-500/15 text-green-400 border border-green-500/30">Consistent</span>;
+                    } else {
+                      statusBadge = <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-500/15 text-amber-400 border border-amber-500/30">Needs Practice</span>;
+                    }
+
+                    return (
+                      <tr key={s.id} onClick={() => handleSelectStudent(s)} className="border-b border-white/5 hover:bg-white/5 transition-colors cursor-pointer group">
+                        <td className="p-4">
+                          <div className="font-bold text-white group-hover:text-orange-400 transition-colors">{s.full_name || s.email}</div>
+                          <div className="text-xs text-white/50 font-mono mt-0.5 flex items-center gap-1.5">
+                            <span>ID: {s.id.substring(0,8)}</span>
+                            {s.phone && s.phone !== 'Not Provided' && (
+                              <>
+                                <span className="text-white/20">•</span>
+                                <span>{s.phone}</span>
+                              </>
+                            )}
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          <div className="text-white/80 font-medium">Class {s.class} ({s.board})</div>
+                          <div className="text-xs text-cyan-400 font-bold tracking-wide mt-0.5">{s.aspiration}</div>
+                          <div className="text-[10px] text-orange-400/90 font-medium mt-0.5 truncate max-w-[140px]">{s.batch}</div>
+                        </td>
+                        <td className="p-4 text-center">
+                          <span className="font-extrabold text-cyan-400 text-base">{appeared}</span>
+                          <span className="text-[10px] text-white/40 block">Attempts</span>
+                        </td>
+                        <td className="p-4 text-center">
+                          {pending > 0 ? (
+                            <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-red-500/15 text-red-400 border border-red-500/25 inline-block">
+                              {pending} Pending
+                            </span>
+                          ) : (
+                            <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-green-500/15 text-green-400 border border-green-500/25 inline-block">
+                              All Clear
+                            </span>
+                          )}
+                        </td>
+                        <td className="p-4 text-center">
+                          <div className="font-bold text-white text-sm">{acc}%</div>
+                          <div className="text-[10px] text-white/40 font-mono mt-0.5">Avg: {s.avg_score || 0}m</div>
+                        </td>
+                        <td className="p-4 text-center">
+                          {statusBadge}
+                        </td>
+                        <td className="p-4 text-right">
+                          <button className="text-xs bg-white/5 group-hover:bg-orange-500 group-hover:text-white text-white/80 py-1.5 px-3 rounded-xl transition-all border border-white/10 group-hover:border-orange-500 font-semibold shadow-sm">
+                            Guardian Brief
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
 
             {/* Mobile Cards View */}
             <div className="grid grid-cols-1 gap-4 md:hidden">
-              {filteredStudents.map(s => (
-                <div 
-                  key={s.id} 
-                  onClick={() => handleSelectStudent(s)}
-                  className="p-5 rounded-2xl bg-white/5 border border-white/10 hover:border-orange-500/30 transition-all space-y-4 cursor-pointer"
-                >
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <div className="font-bold text-white text-base">{s.full_name || s.email}</div>
-                      <div className="text-xs text-white/40 font-mono mt-0.5">ID: {s.id.substring(0,8)}</div>
-                    </div>
-                    <div className="text-right">
-                      <span className="text-xs bg-orange-500/10 text-orange-400 px-2.5 py-1 rounded-md font-bold block">
-                        {s.total_tests} {s.total_tests === 1 ? 'Test' : 'Tests'}
-                      </span>
-                    </div>
-                  </div>
+              {filteredStudents.map(s => {
+                const appeared = s.total_tests || 0;
+                const pending = s.total_pending ?? (s.pending_tests?.length || 0);
+                const acc = Number(s.overall_accuracy) || 0;
 
-                  <div className="grid grid-cols-2 gap-3 text-xs bg-slate-950/40 p-3 rounded-xl border border-white/5">
-                    <div>
-                      <span className="text-white/40 block mb-0.5">Class</span>
-                      <span className="text-white/80 font-bold">Class {s.class}</span>
-                    </div>
-                    <div>
-                      <span className="text-white/40 block mb-0.5">Aspiration</span>
-                      <span className="text-cyan-400 font-bold">{s.aspiration}</span>
-                    </div>
-                    <div className="col-span-2">
-                      <span className="text-white/40 block mb-0.5">Batch</span>
-                      <span className="text-orange-400 font-medium">{s.batch}</span>
-                    </div>
-                  </div>
-
-                  <div className="space-y-1.5 text-xs">
-                    <div className="flex justify-between">
-                      <span className="text-white/40 font-semibold">Strengths:</span>
-                      <span className="text-green-400 font-medium text-right truncate max-w-[200px]" title={s.strengths.join(', ')}>
-                        {s.strengths.length > 0 ? s.strengths.join(', ') : '-'}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-white/40 font-semibold">Weaknesses:</span>
-                      <span className="text-red-400 font-medium text-right truncate max-w-[200px]" title={s.weaknesses.join(', ')}>
-                        {s.weaknesses.length > 0 ? s.weaknesses.join(', ') : '-'}
-                      </span>
-                    </div>
-                  </div>
-
-                  <button 
-                    onClick={(e) => { e.stopPropagation(); handleSelectStudent(s); }}
-                    className="w-full text-center py-2.5 bg-white/5 hover:bg-white/10 text-white font-bold text-sm rounded-xl transition-colors border border-white/10"
+                return (
+                  <div 
+                    key={s.id} 
+                    onClick={() => handleSelectStudent(s)}
+                    className="p-4 sm:p-5 rounded-2xl bg-white/5 border border-white/10 hover:border-orange-500/30 transition-all space-y-3.5 cursor-pointer"
                   >
-                    View Detailed Report Card
-                  </button>
-                </div>
-              ))}
+                    <div className="flex justify-between items-start gap-2">
+                      <div className="min-w-0">
+                        <div className="font-bold text-white text-base truncate">{s.full_name || s.email}</div>
+                        <div className="text-xs text-white/40 font-mono mt-0.5 flex flex-wrap items-center gap-1.5">
+                          <span>ID: {s.id.substring(0,8)}</span>
+                          {s.phone && s.phone !== 'Not Provided' && (
+                            <>
+                              <span>•</span>
+                              <span>{s.phone}</span>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                      <div className="text-right shrink-0">
+                        {pending > 0 ? (
+                          <span className="text-[10px] bg-red-500/15 text-red-400 border border-red-500/30 px-2 py-0.5 rounded-md font-bold block">
+                            {pending} Pending
+                          </span>
+                        ) : (
+                          <span className="text-[10px] bg-green-500/15 text-green-400 border border-green-500/30 px-2 py-0.5 rounded-md font-bold block">
+                            All Clear
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-2 text-xs bg-slate-950/40 p-2.5 rounded-xl border border-white/5 text-center">
+                      <div>
+                        <span className="text-white/40 block mb-0.5 text-[9px] uppercase font-bold">Appeared</span>
+                        <span className="text-cyan-400 font-extrabold text-sm">{appeared}</span>
+                      </div>
+                      <div>
+                        <span className="text-white/40 block mb-0.5 text-[9px] uppercase font-bold">Pending</span>
+                        <span className="text-red-400 font-extrabold text-sm">{pending}</span>
+                      </div>
+                      <div>
+                        <span className="text-white/40 block mb-0.5 text-[9px] uppercase font-bold">Accuracy</span>
+                        <span className="text-white font-extrabold text-sm">{acc}%</span>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-wrap gap-1.5 text-[10px]">
+                      <span className="bg-white/5 px-2 py-0.5 rounded text-white/70 font-semibold border border-white/10">Class {s.class}</span>
+                      <span className="bg-cyan-500/10 text-cyan-400 px-2 py-0.5 rounded font-bold border border-cyan-500/20">{s.aspiration}</span>
+                      <span className="bg-orange-500/10 text-orange-400 px-2 py-0.5 rounded font-medium border border-orange-500/20 truncate max-w-[150px]">{s.batch}</span>
+                    </div>
+
+                    <button 
+                      onClick={(e) => { e.stopPropagation(); handleSelectStudent(s); }}
+                      className="w-full text-center py-2 bg-white/5 hover:bg-orange-500 hover:text-white text-white font-bold text-xs rounded-xl transition-all border border-white/10"
+                    >
+                      Open Guardian Diagnostic Report
+                    </button>
+                  </div>
+                );
+              })}
             </div>
           </>
         )}
@@ -1194,7 +1351,7 @@ function StudentManagementView() {
             <div className="p-4 sm:p-5 md:p-6 pb-3 sm:pb-4 border-b border-white/10 flex justify-between items-start gap-2 shrink-0 relative z-10 bg-slate-900/40 backdrop-blur-md">
               <div className="min-w-0 flex-1 pr-2">
                 <span className="px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/30 text-orange-500 text-[10px] font-bold uppercase tracking-wider mb-2 inline-block">
-                  Student Profile Report
+                  Student Guardian Diagnostic Report
                 </span>
                 <h2 className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight text-white mb-2 leading-tight truncate">
                   {selectedStudent.full_name || "Roster Student"}
@@ -1217,12 +1374,22 @@ function StudentManagementView() {
                   </span>
                 </div>
               </div>
-              <button 
-                onClick={() => { handleSelectStudent(null); }}
-                className="p-2 sm:p-2.5 rounded-xl bg-white/5 border border-white/10 text-white/50 hover:text-white hover:bg-white/10 hover:border-white/20 transition-all cursor-pointer shrink-0"
-              >
-                <X className="w-5 h-5" />
-              </button>
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  onClick={() => window.print()}
+                  className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl bg-orange-500/15 hover:bg-orange-500/25 text-orange-400 border border-orange-500/30 text-xs font-bold transition-all cursor-pointer shadow-sm"
+                  title="Print Guardian Report Card"
+                >
+                  <Printer className="w-4 h-4" />
+                  <span>Print Report</span>
+                </button>
+                <button 
+                  onClick={() => { handleSelectStudent(null); }}
+                  className="p-2 sm:p-2.5 rounded-xl bg-white/5 border border-white/10 text-white/50 hover:text-white hover:bg-white/10 hover:border-white/20 transition-all cursor-pointer shrink-0"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
             </div>
 
             {/* Modal Body (Scrollable) */}
@@ -1231,7 +1398,7 @@ function StudentManagementView() {
               {/* Student Personal details Section */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                 <div className="bg-white/5 border border-white/10 rounded-2xl p-3.5 sm:p-4 flex flex-col justify-between hover:border-white/20 transition-colors min-w-0">
-                  <span className="text-white/40 text-[10px] font-bold uppercase tracking-wider block mb-1.5 flex items-center gap-1"><Mail className="w-3.5 h-3.5 shrink-0" /> Email Address</span>
+                  <span className="text-white/40 text-[10px] font-bold uppercase tracking-wider mb-1.5 flex items-center gap-1"><Mail className="w-3.5 h-3.5 shrink-0" /> Email Address</span>
                   <span className="text-white text-xs sm:text-sm font-semibold truncate block" title={selectedStudent.email}>{selectedStudent.email}</span>
                 </div>
                 <div className="bg-white/5 border border-white/10 rounded-2xl p-3.5 sm:p-4 flex flex-col justify-between hover:border-white/20 transition-colors min-w-0">
@@ -1248,6 +1415,126 @@ function StudentManagementView() {
                 </div>
               </div>
 
+              {/* Guardian Counseling KPI Cards */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm sm:text-base font-extrabold text-white flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-orange-400" />
+                    <span>Guardian Briefing & Performance Overview</span>
+                  </h3>
+                  <span className="text-xs text-white/40">Class 12 Parent Counseling</span>
+                </div>
+
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                  <div className="bg-gradient-to-br from-cyan-500/15 to-cyan-500/5 border border-cyan-500/30 rounded-2xl p-4 text-center">
+                    <span className="text-white/40 text-[10px] font-bold uppercase tracking-wider block mb-1">Tests Appeared</span>
+                    <span className="text-2xl font-black text-cyan-400">{selectedStudent.total_tests || 0}</span>
+                    <span className="text-[10px] text-white/40 block mt-0.5">{selectedStudent.unique_tests || 0} Unique Tests</span>
+                  </div>
+                  <div className="bg-gradient-to-br from-red-500/15 to-red-500/5 border border-red-500/30 rounded-2xl p-4 text-center">
+                    <span className="text-white/40 text-[10px] font-bold uppercase tracking-wider block mb-1">Tests & DPPs Pending</span>
+                    <span className="text-2xl font-black text-red-400">{selectedStudent.total_pending ?? (selectedStudent.pending_tests?.length || 0)}</span>
+                    <span className="text-[10px] text-red-400/80 font-medium block mt-0.5">Unattempted Backlog</span>
+                  </div>
+                  <div className="bg-gradient-to-br from-orange-500/15 to-orange-500/5 border border-orange-500/30 rounded-2xl p-4 text-center">
+                    <span className="text-white/40 text-[10px] font-bold uppercase tracking-wider block mb-1">Average Score</span>
+                    <span className="text-2xl font-black text-orange-400">{selectedStudent.avg_score || 0}</span>
+                    <span className="text-[10px] text-white/40 block mt-0.5">Highest: {selectedStudent.max_score || 0}</span>
+                  </div>
+                  <div className="bg-gradient-to-br from-green-500/15 to-green-500/5 border border-green-500/30 rounded-2xl p-4 text-center">
+                    <span className="text-white/40 text-[10px] font-bold uppercase tracking-wider block mb-1">Overall Accuracy</span>
+                    <span className="text-2xl font-black text-green-400">{selectedStudent.overall_accuracy || 0}%</span>
+                    <span className="text-[10px] text-white/40 block mt-0.5">Correctness Ratio</span>
+                  </div>
+                </div>
+
+                {/* Alert advice banner for Guardian */}
+                <div className={`p-4 rounded-2xl border text-xs leading-relaxed flex items-start gap-3 ${
+                  (selectedStudent.total_tests || 0) === 0
+                    ? 'bg-red-500/10 border-red-500/30 text-red-200'
+                    : (selectedStudent.total_pending ?? 0) >= 8
+                      ? 'bg-orange-500/10 border-orange-500/30 text-orange-200'
+                      : Number(selectedStudent.overall_accuracy) >= 50
+                        ? 'bg-green-500/10 border-green-500/30 text-green-200'
+                        : 'bg-amber-500/10 border-amber-500/30 text-amber-200'
+                }`}>
+                  <AlertTriangle className="w-5 h-5 shrink-0 text-orange-400 mt-0.5" />
+                  <div>
+                    <span className="font-bold block uppercase tracking-wider text-[10px] mb-0.5">
+                      Counseling Guidance for Guardian:
+                    </span>
+                    {(selectedStudent.total_tests || 0) === 0 ? (
+                      <span><b>CRITICAL INTERVENTION:</b> Student has zero test attempts recorded on the portal. Guardian is requested to check app installation, verify login credentials, and supervise test attendance.</span>
+                    ) : (selectedStudent.total_pending ?? 0) >= 8 ? (
+                      <span><b>HIGH BACKLOG:</b> Student has <b>{selectedStudent.total_pending} pending DPP quizzes/tests</b>. Please direct the student to clear these pending assessments daily to prevent falling behind.</span>
+                    ) : Number(selectedStudent.overall_accuracy) >= 50 ? (
+                      <span><b>STRONG DISCIPLINE:</b> Student is maintaining good accuracy ({selectedStudent.overall_accuracy}%). Encourage them to finish the remaining {selectedStudent.total_pending || 0} pending DPPs for full syllabus coverage.</span>
+                    ) : (
+                      <span><b>PRACTICE NEEDED:</b> Student has regular attempts but needs accuracy improvement. Recommend formula revision and careful review of incorrect answers.</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Pending Tests & DPP Quizzes Section */}
+              <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <h3 className="text-base font-extrabold text-white flex items-center gap-2">
+                    <Clock className="w-5 h-5 text-red-400" />
+                    <span>Pending Tests & DPP Quizzes</span>
+                    <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-500/20 text-red-400 border border-red-500/30">
+                      {selectedStudent.total_pending ?? (selectedStudent.pending_tests?.length || 0)} Pending
+                    </span>
+                  </h3>
+                  <span className="text-xs text-white/40">Assigned assessments not yet attempted by student</span>
+                </div>
+
+                {(!selectedStudent.pending_tests || selectedStudent.pending_tests.length === 0) ? (
+                  <div className="p-6 rounded-2xl bg-green-500/10 border border-green-500/20 text-green-400 flex items-center gap-3 text-sm font-semibold">
+                    <CheckCircle2 className="w-5 h-5 shrink-0" />
+                    <span>100% Up to Date! Student has attempted all assigned tests and DPP quizzes. No pending backlog.</span>
+                  </div>
+                ) : (
+                  <div className="bg-slate-950/60 rounded-2xl border border-white/10 overflow-hidden">
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-left text-xs sm:text-sm">
+                        <thead className="bg-white/5 border-b border-white/10 text-white/50 text-xs uppercase tracking-wider">
+                          <tr>
+                            <th className="p-3 sm:p-4 font-bold">Assessment Title</th>
+                            <th className="p-3 sm:p-4 font-bold">Category</th>
+                            <th className="p-3 sm:p-4 font-bold">Target Batch</th>
+                            <th className="p-3 sm:p-4 font-bold text-right">Guardian Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {selectedStudent.pending_tests.map((pt: any) => (
+                            <tr key={pt.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                              <td className="p-3 sm:p-4">
+                                <span className="font-bold text-white block">{pt.title}</span>
+                                <span className="text-[10px] text-white/40 font-mono">ID: {pt.id.substring(0,8)}</span>
+                              </td>
+                              <td className="p-3 sm:p-4">
+                                <span className="px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-orange-500/15 text-orange-400 border border-orange-500/25">
+                                  {pt.exam_type || 'Quiz'}
+                                </span>
+                              </td>
+                              <td className="p-3 sm:p-4 text-xs text-white/60 font-medium">
+                                {pt.target_batch || 'All Students'}
+                              </td>
+                              <td className="p-3 sm:p-4 text-right">
+                                <span className="px-2.5 py-1 rounded-md text-[10px] font-extrabold uppercase tracking-wider bg-red-500/20 text-red-400 border border-red-500/30">
+                                  Must Attempt
+                                </span>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
+              </div>
+
               {/* Subject-Wise Exam/Quiz Analysis Card */}
               {selectedStudent.test_history && selectedStudent.test_history.length > 0 && (
                 <div className="bg-slate-950/40 p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl border border-white/10 space-y-4">
@@ -1262,13 +1549,13 @@ function StudentManagementView() {
                       <select
                         value={selectedStatsTestKey}
                         onChange={(e) => setSelectedStatsTestKey(e.target.value)}
-                        className="bg-slate-900 border border-white/10 rounded-xl px-3 py-1.5 text-white text-xs font-semibold focus:outline-none focus:border-cyan-500 transition-all cursor-pointer shadow-inner w-full sm:w-auto sm:max-w-[280px] min-w-0 truncate"
+                        className="bg-slate-900 border border-white/10 rounded-xl px-3 py-1.5 text-white text-xs font-semibold focus:outline-none focus:border-cyan-500 transition-all cursor-pointer shadow-inner w-full sm:w-auto sm:max-w-[320px] min-w-0"
                       >
                         {selectedStudent.test_history.map((test: any) => {
                           const testKey = `${test.test_id}_${test.attempt_number}`;
                           return (
                             <option key={testKey} value={testKey}>
-                              {test.title || test.exam_type} (Attempt {test.attempt_number})
+                              {test.title || test.exam_type} (Attempt {test.attempt_number} • {test.score} Marks)
                             </option>
                           );
                         })}
