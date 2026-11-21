@@ -784,24 +784,24 @@ export default function TestCreationEngine() {
       <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-orange-600/10 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] bg-cyan-600/10 rounded-full blur-[120px] pointer-events-none" />
 
-      <div className="max-w-5xl mx-auto relative z-10 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-20">
+      <div className="max-w-5xl mx-auto relative z-10 space-y-6 sm:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-20 px-2 sm:px-4">
         
         {/* Header */}
-        <div className="flex items-center gap-4 border-b border-white/10 pb-6">
-          <Link href="/admin" className="p-3 bg-white/5 hover:bg-white/10 rounded-xl transition-colors text-white/50 hover:text-white">
+        <div className="flex items-center gap-3 sm:gap-4 border-b border-white/10 pb-4 sm:pb-6">
+          <Link href="/admin" className="p-2.5 sm:p-3 bg-white/5 hover:bg-white/10 rounded-xl transition-colors text-white/50 hover:text-white shrink-0">
             <ArrowLeft className="w-5 h-5" />
           </Link>
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight text-white flex items-center gap-3">
-              <Target className="w-8 h-8 text-orange-500" />
-              Mock Test Creator
+          <div className="min-w-0">
+            <h1 className="text-xl sm:text-3xl font-bold tracking-tight text-white flex items-center gap-2 sm:gap-3 truncate">
+              <Target className="w-6 h-6 sm:w-8 sm:h-8 text-orange-500 shrink-0" />
+              <span>Mock Test Creator</span>
             </h1>
-            <p className="text-white/50 mt-1">Deploy automated exams from PDF question booklets & answer sheets.</p>
+            <p className="text-white/50 text-xs sm:text-sm mt-0.5 sm:mt-1 truncate">Deploy automated exams from PDF question booklets & answer sheets.</p>
           </div>
         </div>
 
         {/* Configuration Panel */}
-        <div className="p-6 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-xl space-y-6">
+        <div className="p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-xl space-y-5 sm:space-y-6">
           <h2 className="text-lg font-bold flex items-center gap-2 border-b border-white/5 pb-3">
             <Settings className="w-5 h-5 text-orange-500" /> Basic Details & Settings
           </h2>
@@ -977,7 +977,7 @@ export default function TestCreationEngine() {
 
         {/* Upload Mode UI */}
         {creationMode === "upload" && !showPreview && (
-          <div className="p-8 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-xl space-y-8 animate-in fade-in duration-300">
+          <div className="p-4 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-xl space-y-6 sm:space-y-8 animate-in fade-in duration-300">
             <div className="text-center space-y-2">
               <h2 className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-orange-400 flex items-center justify-center gap-2">
                 <Sparkles className="w-6 h-6 text-orange-400 animate-pulse" />

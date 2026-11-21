@@ -227,7 +227,7 @@ export default function StudentPortalClient({ user, profile }: { user: any, prof
               </button>
 
               {showNotifications && (
-                <div className="fixed md:absolute top-16 md:top-auto left-4 right-4 md:left-auto md:right-0 mt-2 md:w-80 bg-slate-900 border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50 animate-in fade-in slide-in-from-top-2">
+                <div className="fixed md:absolute top-16 md:top-auto left-3 right-3 md:left-auto md:right-0 mt-2 max-w-sm md:w-80 bg-slate-900 border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 mx-auto md:mx-0">
                   <div className="p-4 border-b border-white/5 flex justify-between items-center bg-slate-950/40">
                     <span className="text-sm font-bold text-white">Notifications</span>
                     {unreadCount > 0 && (
@@ -304,7 +304,7 @@ export default function StudentPortalClient({ user, profile }: { user: any, prof
           </div>
         </header>
 
-        <div className="p-4 md:p-8 pb-24 md:pb-8 max-w-6xl mx-auto w-full">
+        <div className="p-3.5 sm:p-6 md:p-8 pb-24 md:pb-8 max-w-6xl mx-auto w-full">
           {activeTab === "dashboard" && <DashboardView displayName={displayName} setActiveTab={setActiveTab} user={user} />}
           {activeTab === "note" && <ResourceView title="My Notes" type="note" profile={profile} icon={FileText} color="text-blue-400" />}
           {activeTab === "dpp" && <ResourceView title="Daily Practice Problems" type="dpp" profile={profile} icon={ClipboardList} color="text-cyan-400" />}
@@ -412,7 +412,7 @@ function ResourceView({ title, type, profile, icon: Icon, color }: any) {
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white/5 p-5 md:p-6 rounded-3xl border border-white/10 mb-8">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white/5 p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-white/10 mb-6 sm:mb-8">
         <div className="flex items-center gap-4">
           <div className={`p-3 bg-white/5 rounded-xl ${color}`}>
             <Icon className="w-8 h-8" />
@@ -535,7 +535,7 @@ function DashboardView({ displayName, setActiveTab, user }: { displayName: strin
     <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
       
       {/* Welcome Hero */}
-      <div className="relative p-6 md:p-8 rounded-3xl bg-gradient-to-br from-cyan-950/40 to-blue-900/20 border border-cyan-500/20 overflow-hidden">
+      <div className="relative p-5 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl bg-gradient-to-br from-cyan-950/40 to-blue-900/20 border border-cyan-500/20 overflow-hidden">
         <div className="absolute -right-20 -top-20 w-64 h-64 bg-cyan-500/10 rounded-full blur-[50px] pointer-events-none" />
         <div className="relative z-10">
           <p className="text-cyan-400 font-bold tracking-widest text-xs uppercase mb-2">Current Status: Optimal</p>
@@ -721,7 +721,7 @@ function ProfileView({ email, userId, profile, avatarUrl, handleLogout, isProfil
       </div>
 
       {/* Basic Details Card */}
-      <div className="p-5 md:p-8 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-xl space-y-5">
+      <div className="p-4 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-xl space-y-4 sm:space-y-5">
         <h3 className="text-lg font-bold text-white border-b border-white/10 pb-3 mb-5">Profile Details</h3>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -903,7 +903,7 @@ function ResultsView({ user }: { user: any }) {
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white/5 p-5 md:p-6 rounded-3xl border border-white/10 mb-8">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white/5 p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-white/10 mb-6 sm:mb-8">
         <div className="flex items-center gap-4">
           <div className="p-3 bg-white/5 rounded-xl text-cyan-400">
             <Award className="w-8 h-8" />
@@ -931,7 +931,7 @@ function ResultsView({ user }: { user: any }) {
               : "0";
 
             return (
-              <div key={res.id} className="bg-white/5 border border-white/10 rounded-3xl p-6 hover:border-cyan-500/30 transition-all flex flex-col justify-between group">
+              <div key={res.id} className="bg-white/5 border border-white/10 rounded-2xl sm:rounded-3xl p-4 sm:p-6 hover:border-cyan-500/30 transition-all flex flex-col justify-between group">
                 <div>
                   <div className="flex justify-between items-start mb-4">
                     <span className="px-2.5 py-1 rounded-md bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-[10px] font-bold uppercase tracking-wider">

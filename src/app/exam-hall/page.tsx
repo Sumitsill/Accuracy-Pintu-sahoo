@@ -1538,13 +1538,13 @@ function SecureExamHallContent() {
           )}
 
           {/* Persistent Header */}
-          <div className="flex items-center gap-2 md:gap-3 bg-slate-950 border border-white/10 px-3 md:px-6 py-2 md:py-3 rounded-xl shadow-inner">
+          <div className="flex items-center gap-1.5 sm:gap-3 bg-slate-950 border border-white/10 px-2.5 sm:px-6 py-1.5 sm:py-3 rounded-xl shadow-inner">
             {showSolutions ? (
-              <span className="text-green-400 font-bold uppercase tracking-widest text-xs md:text-sm flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4"/> Solution Mode</span>
+              <span className="text-green-400 font-bold uppercase tracking-widest text-[11px] sm:text-sm flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4"/> Solution Mode</span>
             ) : (
               <>
-                <Clock className={`w-4 h-4 md:w-5 md:h-5 ${timeLeft < 300 ? 'text-red-500 animate-pulse' : 'text-cyan-400'}`} />
-                <span className={`text-lg md:text-2xl font-bold tracking-widest font-mono ${timeLeft < 300 ? 'text-red-500' : 'text-white'}`}>
+                <Clock className={`w-3.5 h-3.5 sm:w-5 sm:h-5 ${timeLeft < 300 ? 'text-red-500 animate-pulse' : 'text-cyan-400'}`} />
+                <span className={`text-sm sm:text-2xl font-bold tracking-widest font-mono ${timeLeft < 300 ? 'text-red-500' : 'text-white'}`}>
                   {formatTime(timeLeft)}
                 </span>
               </>
@@ -1628,7 +1628,7 @@ function SecureExamHallContent() {
               </div>
 
               {activeSectionTab === "Section B" && (
-                <div className="hidden sm:flex items-center gap-2 text-[10px] md:text-xs text-orange-400 font-bold bg-orange-500/5 px-3 py-1.5 rounded-lg border border-orange-500/20">
+                <div className="flex items-center gap-1.5 sm:gap-2 text-[10px] md:text-xs text-orange-400 font-bold bg-orange-500/5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg border border-orange-500/20 shrink-0">
                   <span className="relative flex h-2 w-2">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
@@ -1795,26 +1795,26 @@ function SecureExamHallContent() {
           </div>
 
           {/* Action Footer */}
-          <footer className="flex-shrink-0 bg-slate-900 border-t border-white/10 p-4 md:p-6 flex flex-col sm:flex-row gap-3 sm:gap-0 justify-between items-center z-20">
+          <footer className="flex-shrink-0 bg-slate-900 border-t border-white/10 p-3.5 sm:p-4 md:p-6 flex flex-col sm:flex-row gap-3 sm:gap-0 justify-between items-center z-20">
             {!showSolutions ? (
-              <div className="flex gap-3 w-full sm:w-auto justify-between sm:justify-start">
+              <div className="flex gap-2 sm:gap-3 w-full sm:w-auto justify-between sm:justify-start">
                 <button
                   onClick={handleClearResponse}
-                  className="flex-1 sm:flex-none px-4 md:px-6 py-2.5 md:py-3 rounded-xl border border-white/20 text-white/70 font-bold hover:bg-white/5 hover:text-white transition-colors flex items-center justify-center gap-1.5 text-sm md:text-base"
+                  className="flex-1 sm:flex-none px-3.5 sm:px-6 py-2.5 sm:py-3 rounded-xl border border-white/20 text-white/70 font-bold hover:bg-white/5 hover:text-white transition-colors flex items-center justify-center gap-1.5 text-xs sm:text-base"
                 >
-                  <XCircle className="w-4.5 h-4.5 md:w-5 md:h-5" /> Clear Response
+                  <XCircle className="w-4 h-4 sm:w-5 sm:h-5" /> Clear Response
                 </button>
               </div>
             ) : (
-              <Link href="/dashboard" className="w-full sm:w-auto px-5 md:px-6 py-2.5 md:py-3 rounded-xl border border-cyan-500/50 text-cyan-400 font-bold hover:bg-cyan-500/10 transition-colors text-sm md:text-base flex items-center justify-center">
+              <Link href="/dashboard" className="w-full sm:w-auto px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl border border-cyan-500/50 text-cyan-400 font-bold hover:bg-cyan-500/10 transition-colors text-xs sm:text-base flex items-center justify-center">
                 Back to Dashboard
               </Link>
             )}
             <button
               onClick={handleSaveAndNext}
-              className="w-full sm:w-auto px-6 md:px-8 py-2.5 md:py-3 rounded-xl bg-cyan-500 text-slate-950 font-bold text-base md:text-lg hover:bg-cyan-400 transition-all shadow-[0_0_15px_rgba(34,211,238,0.4)] flex items-center justify-center gap-2"
+              className="w-full sm:w-auto px-5 sm:px-8 py-2.5 sm:py-3 rounded-xl bg-cyan-500 text-slate-950 font-bold text-sm sm:text-lg hover:bg-cyan-400 transition-all shadow-[0_0_15px_rgba(34,211,238,0.4)] flex items-center justify-center gap-2"
             >
-              {showSolutions ? "Next Question" : "Save & Next"} <SkipForward className="w-4.5 h-4.5 md:w-5 md:h-5" />
+              {showSolutions ? "Next Question" : "Save & Next"} <SkipForward className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
           </footer>
         </main>
@@ -1829,7 +1829,7 @@ function SecureExamHallContent() {
 
         {/* Right Side: Question Palette */}
         <aside
-          className={`fixed inset-y-0 right-0 z-40 w-80 bg-slate-900 flex flex-col border-l lg:border-l-0 border-white/10 transform transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0 lg:z-0 ${
+          className={`fixed inset-y-0 right-0 z-40 w-[85vw] max-w-xs sm:w-80 bg-slate-900 flex flex-col border-l lg:border-l-0 border-white/10 transform transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0 lg:z-0 ${
             showPalette ? "translate-x-0" : "translate-x-full"
           }`}
         >

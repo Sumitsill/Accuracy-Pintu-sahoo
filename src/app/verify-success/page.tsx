@@ -23,7 +23,7 @@ export default function VerifySuccess() {
 
   return (
     <main 
-      className="flex min-h-screen flex-col items-center justify-center p-6 text-neutral font-body relative bg-cover bg-center bg-no-repeat overflow-hidden"
+      className="flex min-h-screen flex-col items-center justify-center p-4 sm:p-6 text-neutral font-body relative bg-cover bg-center bg-no-repeat overflow-hidden"
       style={{ backgroundImage: "url('/physics-bg.jpg.png')" }}
     >
       <div className="absolute inset-0 bg-primary/90 backdrop-blur-md -z-20" />
@@ -32,7 +32,7 @@ export default function VerifySuccess() {
       
       {mounted && (
         <div className="w-full max-w-md z-10 animate-in fade-in zoom-in-95 duration-700">
-          <div className="glassmorphism rounded-3xl p-10 border border-green-500/30 relative shadow-[0_0_50px_rgba(34,197,94,0.15)] backdrop-blur-xl bg-dark/60 text-center flex flex-col items-center">
+          <div className="glassmorphism rounded-2xl sm:rounded-3xl p-6 sm:p-10 border border-green-500/30 relative shadow-[0_0_50px_rgba(34,197,94,0.15)] backdrop-blur-xl bg-dark/60 text-center flex flex-col items-center">
             
             <div className="relative mb-6">
               <div className="absolute inset-0 bg-green-500 rounded-full blur-xl opacity-20 animate-pulse" />

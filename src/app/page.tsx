@@ -70,7 +70,7 @@ export default function Home() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-6 relative overflow-hidden bg-transparent text-neutral">
+    <main className="flex min-h-screen flex-col items-center justify-center p-4 sm:p-6 relative overflow-hidden bg-transparent text-neutral">
       <div className="fixed inset-0 -z-10 w-full h-full bg-[#0a192f]">
         <Hyperspeed
           effectOptions={{
@@ -115,7 +115,7 @@ export default function Home() {
       {!isStandalone && (
         <button
           onClick={handleInstallClick}
-          className="absolute top-4 right-4 md:top-6 md:right-6 z-50 flex items-center gap-1.5 md:gap-2 px-3 py-1.5 md:px-4 md:py-2.5 bg-dark/50 hover:bg-dark/80 border border-white/10 hover:border-secondary/50 rounded-xl text-white/70 hover:text-white transition-all shadow-[0_0_15px_rgba(0,242,255,0.15)] hover:shadow-[0_0_25px_rgba(0,242,255,0.3)] backdrop-blur-md group animate-in fade-in slide-in-from-top-4 duration-500 font-headline text-xs md:text-sm"
+          className="absolute top-3 right-3 md:top-6 md:right-6 z-50 flex items-center gap-1.5 md:gap-2 px-3 py-1.5 md:px-4 md:py-2.5 bg-dark/50 hover:bg-dark/80 border border-white/10 hover:border-secondary/50 rounded-xl text-white/70 hover:text-white transition-all shadow-[0_0_15px_rgba(0,242,255,0.15)] hover:shadow-[0_0_25px_rgba(0,242,255,0.3)] backdrop-blur-md group animate-in fade-in slide-in-from-top-4 duration-500 font-headline text-xs md:text-sm"
         >
           <Download className="w-3.5 h-3.5 md:w-4 md:h-4 text-secondary group-hover:scale-110 transition-transform" />
           <span className="hidden sm:inline font-bold tracking-wide">Download App</span>
@@ -123,34 +123,34 @@ export default function Home() {
         </button>
       )}
       
-      <div className="z-10 flex flex-col items-center text-center max-w-lg w-full">
-        <div className="mb-6 p-4 rounded-2xl glassmorphism border-secondary/30 relative group mt-10 md:mt-0">
+      <div className="z-10 flex flex-col items-center text-center max-w-lg w-full px-2">
+        <div className="mb-4 sm:mb-6 p-3 sm:p-4 rounded-2xl glassmorphism border-secondary/30 relative group mt-8 sm:mt-10 md:mt-0">
           <div className="absolute inset-0 bg-secondary/20 rounded-2xl blur-md group-hover:bg-secondary/30 transition-all duration-500" />
-          <FlaskConical className="w-10 h-10 text-secondary relative z-10" />
+          <FlaskConical className="w-8 h-8 sm:w-10 sm:h-10 text-secondary relative z-10" />
         </div>
         
-        <p className="text-secondary font-semibold tracking-[0.2em] text-sm mb-2 uppercase drop-shadow-md">Precision Learning</p>
-        <h1 className="text-5xl font-bold mb-2 font-headline tracking-tight text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]">ACCURACY</h1>
-        <p className="text-lg text-white/90 font-medium">By Pintu Sahoo</p>
+        <p className="text-secondary font-semibold tracking-[0.2em] text-xs sm:text-sm mb-1.5 uppercase drop-shadow-md">Precision Learning</p>
+        <h1 className="text-4xl sm:text-5xl font-bold mb-1.5 font-headline tracking-tight text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]">ACCURACY</h1>
+        <p className="text-base sm:text-lg text-white/90 font-medium">By Pintu Sahoo</p>
         
         {/* Transparent spacer to let the 3D atom show through clearly */}
-        <div className="h-64 sm:h-[350px] w-full" aria-hidden="true" />
+        <div className="h-32 sm:h-52 md:h-64 w-full" aria-hidden="true" />
         
-        <h2 className="text-2xl font-bold mb-3 drop-shadow-md">Welcome to the Frontier</h2>
-        <p className="text-white/80 mb-10 leading-relaxed text-sm max-w-sm drop-shadow-sm">
+        <h2 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3 drop-shadow-md">Welcome to the Frontier</h2>
+        <p className="text-white/80 mb-6 sm:mb-10 leading-relaxed text-xs sm:text-sm max-w-sm drop-shadow-sm px-2">
           Master physics with a high-fidelity environment designed for high-achievers.
         </p>
         
-        <div className="w-full flex flex-col gap-4">
+        <div className="w-full flex flex-col gap-3 sm:gap-4">
           <Link 
             href="/login?role=student" 
-            className="w-full py-4 px-6 rounded-xl bg-secondary text-primary font-bold text-lg flex items-center justify-center gap-2 hover:bg-secondary/90 transition-all duration-300 shadow-[0_0_20px_rgba(0,242,255,0.4)] hover:shadow-[0_0_30px_rgba(0,242,255,0.6)] hover:-translate-y-1 backdrop-blur-sm"
+            className="w-full py-3.5 sm:py-4 px-4 sm:px-6 rounded-xl bg-secondary text-primary font-bold text-base sm:text-lg flex items-center justify-center gap-2 hover:bg-secondary/90 transition-all duration-300 shadow-[0_0_20px_rgba(0,242,255,0.4)] hover:shadow-[0_0_30px_rgba(0,242,255,0.6)] hover:-translate-y-1 backdrop-blur-sm"
           >
             Student Login / Sign Up <ArrowRight className="w-5 h-5" />
           </Link>
           <Link 
             href="/login?role=admin" 
-            className="w-full py-4 px-6 rounded-xl bg-transparent border border-tertiary/50 text-tertiary font-bold text-lg flex items-center justify-center gap-2 hover:bg-tertiary/10 transition-all duration-300 shadow-[0_0_10px_rgba(255,138,0,0.1)] hover:-translate-y-1 backdrop-blur-sm"
+            className="w-full py-3.5 sm:py-4 px-4 sm:px-6 rounded-xl bg-transparent border border-tertiary/50 text-tertiary font-bold text-base sm:text-lg flex items-center justify-center gap-2 hover:bg-tertiary/10 transition-all duration-300 shadow-[0_0_10px_rgba(255,138,0,0.1)] hover:-translate-y-1 backdrop-blur-sm"
           >
             Admin Login / Sign Up <ArrowRight className="w-5 h-5" />
           </Link>

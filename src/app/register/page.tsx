@@ -79,7 +79,7 @@ function RegisterForm() {
         <p className="text-white/50 text-sm font-semibold">Master the Laws of the Universe</p>
       </div>
       
-      <div className="glassmorphism rounded-3xl p-6 sm:p-8 border border-white/10 relative shadow-2xl backdrop-blur-xl bg-dark/60">
+      <div className="glassmorphism rounded-2xl sm:rounded-3xl p-4 sm:p-8 border border-white/10 relative shadow-2xl backdrop-blur-xl bg-dark/60">
         
         {/* Role Selector Tabs */}
         <div className="flex p-1 bg-dark/50 rounded-xl mb-6 border border-white/5">
@@ -222,7 +222,7 @@ function RegisterForm() {
 export default function Register() {
   return (
     <main 
-      className="flex min-h-screen flex-col items-center justify-center p-6 text-neutral font-body relative bg-cover bg-center bg-no-repeat overflow-hidden"
+      className="flex min-h-screen flex-col items-center justify-center p-3.5 sm:p-6 text-neutral font-body relative bg-cover bg-center bg-no-repeat overflow-hidden"
       style={{ backgroundImage: "url('/physics-bg.jpg.png')" }}
     >
       <div className="absolute inset-0 bg-primary/80 backdrop-blur-[3px] -z-20" />

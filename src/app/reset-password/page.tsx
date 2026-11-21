@@ -65,7 +65,7 @@ export default function ResetPassword() {
 
   return (
     <main 
-      className="flex min-h-screen flex-col items-center justify-center p-6 text-neutral font-body relative bg-cover bg-center bg-no-repeat overflow-hidden"
+      className="flex min-h-screen flex-col items-center justify-center p-3.5 sm:p-6 text-neutral font-body relative bg-cover bg-center bg-no-repeat overflow-hidden"
       style={{ backgroundImage: "url('/physics-bg.jpg.png')" }}
     >
       <div className="absolute inset-0 bg-primary/80 backdrop-blur-[3px] -z-20" />
@@ -76,7 +76,7 @@ export default function ResetPassword() {
       {/* Home Button */}
       <Link 
         href="/" 
-        className="absolute top-6 left-6 z-50 flex items-center gap-2 px-4 py-2.5 bg-dark/40 hover:bg-dark/80 border border-white/10 hover:border-secondary/50 rounded-xl text-white/70 hover:text-white transition-all shadow-lg backdrop-blur-md group"
+        className="absolute top-3 left-3 sm:top-6 sm:left-6 z-50 flex items-center gap-1.5 sm:gap-2 px-3 py-1.5 sm:px-4 sm:py-2.5 bg-dark/40 hover:bg-dark/80 border border-white/10 hover:border-secondary/50 rounded-xl text-white/70 hover:text-white transition-all shadow-lg backdrop-blur-md group text-xs sm:text-sm"
       >
         <Home className="w-4 h-4 group-hover:text-secondary transition-colors" />
         <span className="text-sm font-bold tracking-wide">Home</span>
@@ -104,7 +104,7 @@ export default function ResetPassword() {
           </p>
         </div>
 
-        <div className="glassmorphism rounded-3xl p-6 sm:p-8 border border-white/10 relative overflow-hidden shadow-2xl backdrop-blur-xl bg-dark/40">
+        <div className="glassmorphism rounded-2xl sm:rounded-3xl p-4 sm:p-8 border border-white/10 relative overflow-hidden shadow-2xl backdrop-blur-xl bg-dark/40">
           <div className="absolute -top-32 -right-32 w-64 h-64 bg-secondary/10 rounded-full blur-[80px] pointer-events-none" />
           <div className="absolute -bottom-32 -left-32 w-64 h-64 bg-tertiary/10 rounded-full blur-[80px] pointer-events-none" />
           

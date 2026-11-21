@@ -105,7 +105,7 @@ export default function Onboarding() {
           <p className="text-white/60">Let's initialize your profile to customize your experience.</p>
         </div>
 
-        <div className="glassmorphism rounded-3xl p-5 sm:p-8 border border-white/10 shadow-2xl relative overflow-hidden">
+        <div className="glassmorphism rounded-2xl sm:rounded-3xl p-4 sm:p-8 border border-white/10 shadow-2xl relative overflow-hidden">
           {error && (
             <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm">
               <p>{error}</p>
@@ -188,13 +188,13 @@ export default function Onboarding() {
 
                 <div className="space-y-1.5 mt-4">
                   <label className="text-xs font-bold tracking-widest text-white/50 uppercase font-label">Target Aspiration</label>
-                  <div className="grid grid-cols-3 gap-2">
+                  <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
                     {["JEE", "NEET", "Boards Only"].map((asp) => (
                       <button
                         key={asp}
                         type="button"
                         onClick={() => setAspiration(asp)}
-                        className={`py-3 rounded-xl border font-bold transition-all text-xs sm:text-sm ${
+                        className={`py-2.5 sm:py-3 px-1 sm:px-2 rounded-xl border font-bold transition-all text-xs sm:text-sm truncate ${
                           aspiration === asp 
                             ? "bg-orange-500/20 text-orange-400 border-orange-500 shadow-[0_0_10px_rgba(249,115,22,0.3)]" 
                             : "bg-dark/50 border-white/10 text-white/50 hover:bg-white/5 hover:text-white"
